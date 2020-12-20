@@ -1,0 +1,103 @@
+<?php
+
+namespace danolez\lib\DB\Controller;
+
+abstract class Controller
+{
+    protected $api;
+    protected $result;
+    protected $data;
+    protected $query;
+
+    const TABLE = "table";
+    const DB = "dataBase";
+    const TB_NAME = "tableName";
+    const API = "api";
+    const SUCCESS = "success";
+
+    public function __construct($query)
+    {
+        $this->setQuery($this->getAction($query));
+    }
+
+    protected function getAction($query)
+    {
+        $ntc = explode("/", $query);
+        return $ntc[count($ntc) - 1];
+    }
+
+    protected function header()
+    {
+        header("Access-Control-Allow-Origin: *");
+        header("Content-Type: application/json; charset=UTF-8");
+        header("Access-Control-Allow-Methods: POST");
+        header("Access-Control-Max-Age: 3600");
+        header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+    }
+
+
+    protected function footer($code)
+    {
+        http_response_code($code);
+        return json_encode($this->result, JSON_FORCE_OBJECT, JSON_PRETTY_PRINT);
+    }
+
+    abstract protected function decode();
+    /**
+     * Set the value of api
+     *
+     * @return  self
+     */
+    abstract public function setApi($api);
+    abstract protected function setProperties();
+
+    /**
+     * Get the value of api
+     */
+    public function getApi()
+    {
+        return $this->api;
+    }
+
+    /**
+     * Set the value of data
+     *
+     * @return  self
+     */
+    public function setData($data)
+    {
+        $this->data = $data;
+        $this->decode();
+        $this->setProperties();
+
+        return $this;
+    }
+    /**
+     * Get the value of data
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
+
+    /**
+     * Get the value of query
+     */
+    public function getQuery()
+    {
+        return $this->query;
+    }
+
+    /**
+     * Set the value of query
+     *
+     * @return  self
+     */
+    public function setQuery($query)
+    {
+        $this->query = $query;
+
+        return $this;
+    }
+}
