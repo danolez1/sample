@@ -2,16 +2,16 @@
 
 use danolez\lib\Security\Encoding\Encoding;
 
-if (!is_null($addBranch_error)) { ?>
+if (!is_null($dashboardController_error)) { ?>
     <script>
         webToast.Danger({
             status: "<?php echo ($_COOKIE['lingo'] == 'jp') ?  'エラーが発生しました' :  'Error Occured'; ?>",
-            message: dictionary<?php echo "['" . $addBranch_error->{"trn"} . "']." . $_COOKIE['lingo']; ?>,
+            message: dictionary<?php echo "['" . $dashboardController_error->{"trn"} . "']." . $_COOKIE['lingo']; ?>,
             delay: 10000
         });
     </script>
     <?php } else {
-    if ($branchInfo) { ?>
+    if ($showDashboardController_result) { ?>
         <script>
             webToast.Success({
                 status: "<?php echo ($_COOKIE['lingo'] == 'jp') ?  '成功' :  'Successful'; ?>",
@@ -66,7 +66,7 @@ if (!is_null($addBranch_error)) { ?>
                                     </div>
                                 </td>
                                 <td> <i class="icofont-ui-edit hover click "></i>
-                                    <i class="icofont-ui-delete hover click ml-3 async" data-page="delete-product" data-id="<?php echo Encoding::encode(json_encode(array($this->admin->getId(), $branch->getId()))); ?>"></i> </td>
+                                    <i class="icofont-ui-delete hover click ml-3 async" data-page="delete-branch" data-id="<?php echo Encoding::encode(json_encode(array($this->admin->getId(), $branch->getId()))); ?>"></i> </td>
                             </tr>
                         <?php } ?>
                         <form method="post" class="php-form" action="">
@@ -91,7 +91,7 @@ if (!is_null($addBranch_error)) { ?>
                                     <button type="submit" name="add-branch" class=" btn btn-light text-success font-weight-bold h5">save</button>
                             </tr>
                         </form>
-                        <?php if (!is_null($addBranch_error)) {
+                        <?php if (!is_null($dashboardController_error)) {
                             keepFormValues($_POST);
                         } ?>
                         <tr>

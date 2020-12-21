@@ -4,8 +4,8 @@ namespace danolez\lib\Res\Orientation;
 
 abstract class Orientation
 {
-    const HORIZONTAL = "HORIZONTAL";
-    const VERTICAL = "VERTICAL";
-    const GRID = "grid";
-    const LIST = "list";
+    const HORIZONTAL = 2;
+    const VERTICAL = 1;
+    const GRID = 1;
+    const LIST = 2;
 }

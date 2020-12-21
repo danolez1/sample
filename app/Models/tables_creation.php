@@ -3,6 +3,7 @@
 use danolez\lib\DB\Attribute\Attribute;
 use danolez\lib\DB\Credential\Credential;
 use danolez\lib\DB\Database\Database;
+use danolez\lib\DB\Database\DBBackup;
 use danolez\lib\DB\DataType\DataType;
 
 

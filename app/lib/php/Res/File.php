@@ -103,10 +103,9 @@ class File
 
     public function delete(string $path = null)
     {
-        if (is_null($path)) {
-        }
+        if (is_null($path)) return true;
         $this->close();
-        unlink($path);
+        return unlink($path);
     }
     public function isExist()
     {

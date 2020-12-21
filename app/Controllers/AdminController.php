@@ -6,6 +6,7 @@ use danolez\lib\DB\Controller\Controller;
 use danolez\lib\DB\Model\Model;
 use danolez\lib\Res\Session\Session;
 use danolez\lib\Security\Encoding\Encoding;
+use DashboardController;
 use Demae\Auth\Models\Error\Error;
 use Demae\Auth\Models\Shop\Administrator\Administrator;
 use Demae\Auth\Models\Shop\Branch\Branch;
@@ -25,6 +26,7 @@ class AdminController extends Controller
     private $products;
     private $customers;
     private $staff;
+    private $editProduct;
     private $branches;
     private $ceoPages = ['dashboard', 'branches', 'settings', 'promotions', 'users', 'staffs', 'add-product', 'products'];
     private $managerPages = ['users', 'add-product', 'products', 'branch-dashboard', 'branch-setting', 'staffs'];
@@ -78,6 +80,12 @@ class AdminController extends Controller
                 $this->page = "app/Views/admin/pages/products.php";
                 break;
             case 'add-product':
+                if (isset($_COOKIE['editProductId'])) {
+                    $this->editProduct = $_COOKIE['editProductId'];
+                    // $_COOKIE['editProductId'];
+                }
+
+                // var_dump($_COOKIE);
                 $this->page = "app/Views/admin/pages/add_product.php";
                 break;
             case 'staffs':
@@ -106,7 +114,7 @@ class AdminController extends Controller
                 break;
             case 'admin-logout':
                 $this->session->destroy();
-                header('location:' . 'shop');
+                header('location:' . 'admin-auth');
                 break;
             default:
                 $this->page = "app/Views/admin/home.php";
@@ -118,7 +126,8 @@ class AdminController extends Controller
     public function renderPage()
     {
         $userController = new UserController($_POST);
-        $userController = $userController->authentication();
+        $userController->setAdmin($this->admin);
+        $userController = $userController->adminAuth();
         if ($userController != null) {
             $userController_error = (json_decode($userController)->{Model::ERROR});
             $userController_result = isset(json_decode($userController)->{Model::RESULT});
@@ -136,52 +145,16 @@ class AdminController extends Controller
             }
         }
 
-
-        // if (isset($_POST['register'])) {
-        //     $register = $this->createAdmin();
-        //     $registration_error = (json_decode($register)->{Model::ERROR});
-        //     $registration_result = isset(json_decode($register)->{Model::RESULT});
-        // }
-        // if (isset($_POST['auth'])) {
-        //     $login = $this->authenticate();
-        //     $authentication_error = (json_decode($login)->{Model::ERROR});
-        //     $authentication_result = isset(json_decode($login)->{Model::RESULT});
-        //     if (isset(json_decode($login)->{Model::DATA})) {
-        //         $data = (json_decode($login)->{Model::DATA});
-        //         $this->session->set(
-        //             self::ADMIN_ID,
-        //             Encoding::encode($data->id, self::VALUE_ENCODE_ITERTATION)
-        //         );
-        //         $this->session->set(
-        //             self::ADMIN_USERNAME,
-        //             Encoding::encode($data->username, self::VALUE_ENCODE_ITERTATION)
-        //         );
-        //         header('location:' . 'dashboard');
-        //     }
-        // }
-
+        $dashboardController = new DashboardController($_POST);
+        $dashboardController->setAdmin($this->admin);
 
         if (!is_null($this->session->get(self::ADMIN_ID))) {
             if (intval($this->admin->getRole()) == 1 || intval($this->admin->getRole()) == 2) {
-
-                if (isset($_POST['add-branch'])) {
-                    $addBranch = $this->createBranch();
-                    $addBranch_error = (json_decode($addBranch)->{Model::ERROR});
-                    $addBranch_result = isset(json_decode($addBranch)->{Model::RESULT});
-                    $branchInfo = true;
-                }
-                if (isset($_POST['add-staff'])) {
-                    $addStaff = $this->createAdmin();
-                    $addStaff_error = (json_decode($addStaff)->{Model::ERROR});
-                    $addStaff_result = isset(json_decode($addStaff)->{Model::RESULT});
-                    $staffInfo = true;
-                }
-
-                if (isset($_POST['create-product'])) {
-                    $newProduct = $this->createProduct();
-                    $newProduct_error = (json_decode($newProduct)->{Model::ERROR});
-                    $newProduct_result = isset(json_decode($newProduct)->{Model::RESULT});
-                    $newProductInfo = true;
+                $dashboardController = $dashboardController->management();
+                if ($dashboardController != null) {
+                    $dashboardController_error = (json_decode($dashboardController)->{Model::ERROR});;
+                    $dashboardController_result = isset(json_decode($dashboardController)->{Model::RESULT});;
+                    $showDashboardController_result = true;
                 }
                 $this->branches = new Branch();
                 $this->branches = $this->branches->get($this->admin);
@@ -191,6 +164,8 @@ class AdminController extends Controller
                 $this->customers = $this->customers->getAllUser();
             }
         }
+        $this->products = new Product();
+        $this->products = $this->products->get();
         $productCategories = new Category();
         $productCategories->setType(Category::TYPE_PRODUCT);
         $productCategories = $productCategories->get();
@@ -211,33 +186,6 @@ class AdminController extends Controller
     }
 
     public function getAnalytics()
-    {
-        # code...
-    }
-
-
-    public function createProduct()
-    {
-        $product = new Product();
-        $product->setAvailability($_POST['product-availability']);
-        $product->setPrice($_POST['product-price']);
-        $product->setName($_POST['product-name']);
-        $product->setDescription($_POST['product-description']);
-        $product->setDisplayImage($_POST['product-img']);
-        if (isset($_POST['product-category']))
-            $product->setCategory($_POST['product-category']);
-        $product->setProductOptions($_POST['options']);
-        $product->setTimeCreated(time());
-        $product->setAuthor(array($this->admin->getUsername(), $this->admin->getId()));
-        if ($this->admin->getRole() == '1' && isset($_POST['product-branch'])) {
-            $product->setBranchId($_POST['product-branch']);
-        } else {
-            $product->setBranchId($this->admin->getBranchId());
-        }
-        return $product->create();
-    }
-
-    public function sendMail()
     {
         # code...
     }
@@ -279,49 +227,7 @@ class AdminController extends Controller
 
     public function addSettings()
     {
-        # code...
-    }
-
-
-
-    public function createBranch()
-    {
-        if ($this->admin->getRole() == 1) {
-            $branch = new Branch();
-            $branch->setName($_POST['name']);
-            $branch->setLocation($_POST['location']);
-            $branch->setStaffNo($_POST['staff-no'] ?? 0);
-            $branch->setStatus($_POST['status'] ?? 1);
-            $log = new Log();
-            $branch->setLog(json_encode($log->properties()));
-            $branch->setAdmin($this->admin->getId());
-            $branch->setTimeCreated(time());
-            return $branch->add();
-        } else {
-            $return[Model::ERROR] = Error::Unauthorised;
-            return json_encode($return);
-        }
-    }
-
-    public function createAdmin()
-    {
-        $admin = new Administrator();
-        $admin->setEmail($_POST['email']);
-        $admin->setName($_POST['name']);
-        $admin->setRole($_POST['role']);
-        $log = new Log();
-        $admin->setLog(json_encode($log->properties()));
-        $admin->setAddedBy($this->admin->getId());
-        $admin->setBranchId($_POST['branch']);
-        return $admin->register();
-    }
-
-    public function authenticate()
-    {
-        $admin = new Administrator();
-        $admin->setUsername($_POST['username']);
-        $admin->setPassword($_POST['password']);
-        return ($admin->authenticate());
+        # 7-14
     }
 
     protected function decode()

@@ -20,6 +20,7 @@ use Demae\Auth\Models\Shop\Product\Product;
 use Demae\Auth\Models\Shop\Setting\Setting;
 use Demae\Auth\Models\Shop\User\Administrator;
 use Demae\Auth\Models\Shop\User\User;
+use UserController;
 
 class HomeController extends Controller
 {
@@ -85,18 +86,15 @@ class HomeController extends Controller
 
     public function renderPage()
     {
-        if (isset($_POST["sign-up"])) {
-            $register = $this->register();
-            $registration_error = (json_decode($register)->{Model::ERROR});
-            $registration_result = isset(json_decode($register)->{Model::RESULT});
-            //login after
-        }
-        if (isset($_POST["login"])) {
-            $login = $this->auth();
-            $authentication_error = (json_decode($login)->{Model::ERROR});
-            $authentication_result = isset(json_decode($login)->{Model::RESULT});
-            if (isset(json_decode($login)->{Model::DATA})) {
-                $data = (json_decode($login)->{Model::DATA});
+        $userController = new UserController($_POST);
+        $userController->setUser($this->user);
+        $userController = $userController->profileManagement();
+        if ($userController != null) {
+            $showUserController_result = true;
+            $userController_error = (json_decode($userController)->{Model::ERROR});
+            $userController_result = isset(json_decode($userController)->{Model::RESULT});
+            if (isset(json_decode($userController)->{Model::DATA})) {
+                $data = (json_decode($userController)->{Model::DATA});
                 $this->session->set(
                     self::USER_ID,
                     Encoding::encode($data->id, self::VALUE_ENCODE_ITERTATION)
@@ -107,18 +105,6 @@ class HomeController extends Controller
                 );
                 header('location:' . 'profile');
             }
-        }
-        if (isset($_POST["save-card"])) {
-            $saveCard = $this->savePayment();
-            $saveCard_error = (json_decode($saveCard)->{Model::ERROR});
-            $saveCard_result = isset(json_decode($saveCard)->{Model::RESULT});
-            $showAddCard = true;
-        }
-        if (isset($_POST['save-address'])) {
-            $saveAddress = $this->saveAddress();
-            $saveAddress_error = (json_decode($saveAddress)->{Model::ERROR});
-            $saveAddress_result = isset(json_decode($saveAddress)->{Model::RESULT});
-            $showAddAddress = true;
         }
 
         if (!is_null($this->session->get(self::USER_ID))) {
@@ -136,67 +122,10 @@ class HomeController extends Controller
         $this->categories = [];
         $this->branches = [];
         $settings = $this->getSettings();
+
         include 'app/Views/header.php';
         if (@include($this->page));
         include 'app/Views/footer.php';
-    }
-
-    public function savePayment()
-    {
-        $creditCard = new CreditCard();
-        $creditCard->cardName = $_POST['name'];
-        $creditCard->cardNumber = removeSpace($_POST['number']);
-        $creditCard->expiryDate = removeSpace($_POST['expiry']);
-        $creditCard->cardType = get_card_brand($creditCard->cardNumber);
-        $creditCard->cvv = $_POST['cvc'];
-        $paymentDetails = new PaymentDetails();
-        $paymentDetails->setTimeCreated(time());
-        $paymentDetails->setUserId($this->user->getId());
-        $log = new Log();
-        $paymentDetails->setLog(json_encode($log->properties()));
-        $paymentDetails->setCreditCard($creditCard);
-        return ($paymentDetails->saveCard());
-    }
-
-    public function saveAddress()
-    {
-        $address = new Address();
-        $address->setFirstName($_POST['fname']);
-        $address->setLastName($_POST['lname']);
-        $address->setPhoneNumber($_POST['phone']);
-        $address->setEmail($_POST['email']);
-        $address->setZip($_POST['zip']);
-        $address->setCity($_POST['city']);
-        $address->setState($_POST['state']);
-        $address->setAddress($_POST['address']);
-        $address->setStreet($_POST['street']);
-        $address->setBuilding($_POST['building']);
-        $address->setUserId($this->user->getId());
-        $address->setTimeCreated(time());
-        $log = new Log();
-        $address->setLog(json_encode($log->properties()));
-        return $address->save();
-    }
-
-    public function auth()
-    {
-        $user = new User();
-        $user->setEmail($_POST['lemail']);
-        $user->setPassword($_POST['lpassword']);
-        return ($user->authenticate());
-    }
-
-    public function register()
-    {
-        $user = new User();
-        $user->setName($_POST['name']);
-        $user->setEmail($_POST['remail']);
-        $user->setPhoneNumber($_POST['phone']);
-        $user->setPassword($_POST['rpassword']);
-        $log = new Log();
-        $user->setLog(json_encode($log->properties()));
-        $user->setTimeCreated(time());
-        return $user->register();
     }
 
     public function getSettings()
@@ -212,7 +141,7 @@ class HomeController extends Controller
         $settings->setTitle('OITA');
         $settings->setMetaContent('something');
         $settings->setBannerImage('assets/images/shop/sushi1.png'); //../images/shop/meatball.png   ../images/shop/sushi.png
-        $settings->setDisplayRating(false);
+        $settings->setDisplayRating(true);
         $settings->setScripts('');
         $settings->setWebsiteUrl('https://');
         $settings->setStoreName('IOTA');
@@ -223,10 +152,10 @@ class HomeController extends Controller
         $settings->setBannerText('Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit.');
         //Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitation veniam consequat sunt nostrud amet.
         $settings->setTheme('');
-        $settings->setMenuDisplayOrientation(Orientation::VERTICAL);
+        $settings->setMenuDisplayOrientation(Orientation::HORIZONTAL);
         $settings->setInfoDisplayOrientation(Orientation::HORIZONTAL);
-        $settings->setProductDisplayOrientation(Orientation::LIST);
-        $settings->setSliderType(2);
+        $settings->setProductDisplayOrientation(Orientation::GRID);
+        $settings->setSliderType(3);
         $settings->setFooterType(0);
         $settings->setDeliveryDistance('');
         $settings->setMinOrder(1400);

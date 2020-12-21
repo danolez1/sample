@@ -16,13 +16,13 @@
          </div>
      </div>
 
-     <div id="payment_form" class="contact col-12 text-left mt-3" style="padding: 0;display:<?php echo (($showAddCard)) ? 'block' : 'none' ?>;">
+     <div id="payment_form" class="contact col-12 text-left mt-3" style="padding: 0;display:<?php echo (($showUserController_result)) ? 'block' : 'none' ?>;">
          <div class="col-lg-9 col-sm-12 col-12 mb-4">
-             <?php if (!is_null($saveCard_error)) { ?>
+             <?php if (!is_null($userController_error)) { ?>
                  <div class="alert alert-danger text-center col-lg-6 col-md-6 col-sm-12" role="alert" style="margin: auto;">
-                     <strong style="font-size:12px;" trn="<?php echo $saveCard_error->{"trn"} ?>"><?php echo $saveCard_error->{0}; ?></strong>
+                     <strong style="font-size:12px;" trn="<?php echo $userController_error->{"trn"} ?>"><?php echo $userController_error->{0}; ?></strong>
                  </div>
-             <?php } else if (!is_null($saveCard_result)) {?>
+             <?php } else if (!is_null($userController_result)) { ?>
                  <div class="alert alert-success alert-dismissible fade show col-lg-9 col-md-10 col-sm-12" style="margin: auto;" role="alert">
                      <strong trn="card-added"> Card Successfull Added</strong>
                      <button type="button" class="close" data-dismiss="alert" id="close-card-success" aria-label="Close">
@@ -57,7 +57,7 @@
                          <div class="col-lg-4 col-md-0  col-0"></div>
                      </div>
                  </form>
-                 <?php if (!is_null($saveCard_error)) {
+                 <?php if (!is_null($userController_error)) {
                         keepFormValues($_POST);
                     } ?>
              </div>

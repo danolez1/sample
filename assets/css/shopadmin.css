@@ -77,7 +77,6 @@ body {
 .add-product-category-check {
 }
 
-
 @media (max-width: 991px) and (min-width: 854px) {
   .preview-footer {
     margin-right: 8em;
@@ -291,4 +290,98 @@ body {
 }
 .click-obj:active {
   padding: 2%;
+}
+
+.grid-product-card {
+  font-size: 1em;
+  overflow: hidden;
+  padding: 0;
+  border: none;
+  background: #fcffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 #d4d4d5, 0 0 0 1px #d4d4d5;
+  cursor: pointer;
+}
+.grid-product-card:hover {
+  background: #fffefe;
+  box-shadow: 1.5px 1.5px 2.5px 1px rgba(0, 0, 0, 0.5);
+}
+.grid-product-card-block {
+  font-size: 1em;
+  position: relative;
+  margin: 0;
+  padding: 1em;
+  border: none;
+  border-top: 1px solid rgba(34, 36, 38, 0.1);
+  box-shadow: none;
+}
+.grid-product-card-img-top {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.grid-product-img-info {
+  position: absolute;
+  top: 0;
+  background-color: #000;
+  opacity: 0.8;
+  right: 0;
+  left: 0;
+  display: inline-block;
+  overflow: hidden;
+  font-size: 16px;
+  margin: 0 0.89em;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  padding-top: 30%;
+  color: #fff;
+  text-align: center;
+}
+.grid-product-card-title {
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 140%;
+  letter-spacing: -0.2px;
+  color: #141414;
+}
+.grid-product-card-text {
+  clear: both;
+  margin-top: 0.5em;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 24px;
+  color: #666666;
+}
+.grid-product-card-footer {
+  font-size: 1em;
+  position: static;
+  top: 0;
+  left: 0;
+  max-width: 100%;
+  padding: 0.75em 1em;
+  color: rgba(0, 0, 0, 0.4);
+  border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
+  background: #fff;
+}
+.grid-product-card-inverse .btn {
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+.grid-product-inline {
+  position: relative;
+  top: 0;
+  display: inline-block;
+}
+.grid-product-inline ~ .grid-product-card-title {
+  display: inline-block;
+  margin-left: 4px;
+  vertical-align: top;
+}
+.price-tag {
+  background-color: #c2fcfe;
+  color: #024f51;
+  font-size: 16px;
 }

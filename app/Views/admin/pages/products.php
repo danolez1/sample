@@ -1,3 +1,8 @@
+<?php
+
+use Demae\Auth\Models\Shop\Product\Product;
+
+?>
 <main class="content-wrapper">
     <div class="row col-12">
         <div class="col-lg-8 col-md-8 col-sm-6">
@@ -35,7 +40,26 @@
             </div>
         </div>
 
-        <?php include 'app/Views/admin/pages/product_item.php'; ?>
+        <div class="card">
+            <div class="card-body">
+                <!-- if grid or list -->
+                <div class="row tab-content d-flex col-12">
+                    <?php
+                    for ($i = 0; $i < count($this->products); $i++) {
+                        $product = $this->products[$i];
+                        // $product->setDisplayImage('assets/images/shop/food.png');
+                        // $product->setAvailability(0);
+                        // $product->setName('Beef Rose Lemon Steak');
+                        // $product->setDescription('The best steak garished with some lemon trust it to leave your mouth slightly sour.');
+                        // $product->setPrice(200);
+                        // $product->setRatings(3.0);
+
+                        include 'app/Views/admin/pages/product-grid.php';
+                    }
+                    ?>
+                </div>
+            </div>
+        </div>
 
     </div>
 </main>

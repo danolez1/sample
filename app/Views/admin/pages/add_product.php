@@ -6,17 +6,17 @@ include 'app/Views/admin/pages/add_category.php';
 ?>
 <main class="content-wrapper">
     <h4>Add Product</h4>
-    <?php if (!is_null($newProduct_error)) {
+    <?php if (!is_null($dashboardController_error)) {
         echo "WTH"; ?>
         <script>
             webToast.Danger({
                 status: "<?php echo ($_COOKIE['lingo'] == 'jp') ?  'エラーが発生しました' :  'Error Occured'; ?>",
-                message: dictionary<?php echo "['" . $newProduct_error->{"trn"} . "']." . $_COOKIE['lingo']; ?>,
+                message: dictionary<?php echo "['" . $dashboardController_error->{"trn"} . "']." . $_COOKIE['lingo']; ?>,
                 delay: 500000000
             });
         </script>
         <?php } else {
-        if ($newProductInfo) {
+        if ($showDashboardController_result) {
         ?> <script>
                 webToast.Success({
                     status: "<?php echo ($_COOKIE['lingo'] == 'jp') ?  '成功' :  'Successful'; ?>",
@@ -215,7 +215,7 @@ include 'app/Views/admin/pages/add_category.php';
             </div>
 
             <div class="col-lg-4 col-md-12 col-sm-12 col-12 mt-5">
-                <img id="preview-small col-12" class="img img-fluid" src="assets/images/dashboard/placeholder.svg" />
+                <img id="preview-small" class="img img-fluid" src="assets/images/dashboard/placeholder.svg" />
                 <div class="card-footer p-2 save-changes preview-footer">
                     <a class="btn btn-danger btn-sm tx-14">Preview</a>
                 </div>
@@ -252,7 +252,7 @@ include 'app/Views/admin/pages/add_category.php';
                 </div>
             </div>
     </form>
-    <?php if (!is_null($newProduct_error)) {
+    <?php if (!is_null($dashboardController_error)) {
         keepFormValues($_POST);
     } ?>
 </main>

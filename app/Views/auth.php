@@ -107,9 +107,9 @@
                     <h3 class="font-weight-bold card-title text-center mt-2" trn='login'>Sign In</h3>
                     <form method="post" role="form" class="form-signin mt-4" action="">
                         <div class="row col-12 justify-content-center pr-0 pl-0 ml-0 mr-0" style="margin-top: -1em;">
-                            <?php if (!is_null($authentication_error)) { ?>
+                            <?php if (!is_null($userController_error)) { ?>
                                 <div class="alert alert-danger text-center col-lg-6 col-md-6 col-sm-12" role="alert">
-                                    <strong style="font-size:12px;" trn="<?php echo $authentication_error->{"trn"} ?>"><?php echo $authentication_error->{0}; ?></strong>
+                                    <strong style="font-size:12px;" trn="<?php echo $userController_error->{"trn"} ?>"><?php echo $userController_error->{0}; ?></strong>
                                 </div>
                             <?php } ?>
                         </div>
@@ -131,7 +131,7 @@
                         <button class="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i class="bx bxl-twitter"></i> <span trn=""> Sign in with Google</span></button>
                         <button class="btn btn-lg btn-facebook btn-block text-uppercase" type="submit"><i class='bx bxl-facebook'></i> <span trn=""> Sign in with Facebook</span> </button>
                     </form>
-                    <?php if (!is_null($authentication_error)) {
+                    <?php if (!is_null($userController_error)) {
                         $_POST['lpassword'] = "";
                         keepFormValues($_POST);
                     } ?>
@@ -149,9 +149,9 @@
                     <h3 class="font-weight-bold card-title text-center mt-2" trn="sign-up">Sign Up</h3>
                     <form method="post" role="form" class="form-signin mt-4" action="">
                         <div class="row col-12 justify-content-center pr-0 pl-0 ml-0 mr-0" style="margin-top:-1em;">
-                            <?php if (!is_null($registration_error)) { ?>
+                            <?php if (!is_null($userController_error)) { ?>
                                 <div class="alert alert-danger text-center col-lg-6 col-md-6 col-sm-12 p-1" role="alert">
-                                    <strong style="font-size:12px;" trn="<?php echo $registration_error->{"trn"} ?>"><?php echo $registration_error->{0}; ?></strong>
+                                    <strong style="font-size:12px;" trn="<?php echo $userController_error->{"trn"} ?>"><?php echo $userController_error->{0}; ?></strong>
                                 </div>
                             <?php } else if ($registration_result) { ?>
                                 <div class="alert alert-success text-center col-lg-6 col-md-6 col-sm-12" role="alert">
@@ -178,7 +178,7 @@
                         <button class="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i class="bx bxl-twitter"></i><span trn=""> Sign up with Google</span> </button>
                         <button class="btn btn-lg btn-facebook btn-block text-uppercase" type="submit"><i class='bx bxl-facebook'></i> <span trn=""> Sign up with Facebook</span> </button>
                     </form>
-                    <?php if (!is_null($registration_error)) {
+                    <?php if (!is_null($userController_error)) {
                         $_POST['rpassword'] = "";
                         keepFormValues($_POST);
                     }; ?>

@@ -81,24 +81,29 @@
                         </a>
                     </div>
                 <?php } ?>
-                <div class="mdc-card premium-card mt-5">
-                    <div class="d-flex align-items-center">
-                        <div class="mdc-card icon-card box-shadow-0">
-                            <i class="mdi mdi-shield-outline"></i>
-                        </div>
-                        <div>
-                            <p class="mt-0 mb-1 ml-2 font-weight-bold tx-12"><?php echo $this->admin->getName(); ?></p>
-                            <p class="mt-0 mb-0 ml-2 tx-10" trn="<?php echo $this->admin->getRoleName()["trn"]; ?>"><?php echo $this->admin->getRoleName()[0]; ?></p>
-                        </div>
-                    </div>
-                    <p class="tx-10 mt-3 mb-1">Info about Daniel...................</p>
-                    <div class="text-center">
-                        <a href="admin-logout ">
-                            <span class="mdc-button mdc-button--raised mdc-button--white ">Logout</span>
-                        </a>
-                    </div>
-                </div>
             </nav>
+        </div>
+        <div class="profile-actions">
+            <a href="javascript:;" class="lang" lang="en">English</a>
+            <span class="divider mt-1"></span>
+            <a href="javascript:;" class="lang" lang="jp">日本語</a>
+        </div>
+        <div class="mdc-card premium-card mt-5">
+            <div class="d-flex align-items-center">
+                <div class="mdc-card icon-card box-shadow-0">
+                    <i class="mdi mdi-shield-outline"></i>
+                </div>
+                <div>
+                    <p class="mt-0 mb-1 ml-2 font-weight-bold tx-12"><?php echo $this->admin->getName(); ?></p>
+                    <p class="mt-0 mb-0 ml-2 tx-10" trn="<?php echo $this->admin->getRoleName()["trn"]; ?>"><?php echo $this->admin->getRoleName()[0]; ?></p>
+                </div>
+            </div>
+            <p class="tx-10 mt-3 mb-1">Branch: <br>Info: Daniel...................</p>
+            <div class="text-center mt-2">
+                <a href="admin-logout">
+                    <span class="mdc-button mdc-button--raised mdc-button--white p-1 col-6">Logout</span>
+                </a>
+            </div>
         </div>
     </div>
 </aside>

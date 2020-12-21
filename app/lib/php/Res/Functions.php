@@ -64,6 +64,10 @@ function keepFormValues($input)
     echo $script;
 }
 
+function isEmpty($var)
+{
+    return (is_null($var) || $var == "");
+}
 function returnJsFunc($input)
 {
     $script = '<script type="text/javascript" hidden>';

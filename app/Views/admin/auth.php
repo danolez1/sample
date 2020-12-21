@@ -8,9 +8,9 @@
                         <div class="mdc-card">
                             <form method="post" role="form" action="">
                                 <div class="row col-12 justify-content-center pr-0 pl-0 ml-0 mr-0" style="margin-top: -1em;">
-                                    <?php if (!is_null($authentication_error)) { ?>
+                                    <?php if (!is_null($userController_error)) { ?>
                                         <div class="alert alert-danger text-center col-lg-6 col-md-6 col-sm-12" role="alert">
-                                            <strong style="font-size:12px;" trn="<?php echo $authentication_error->{"trn"} ?>"><?php echo $authentication_error->{0}; ?></strong>
+                                            <strong style="font-size:12px;" trn="<?php echo $userController_error->{"trn"} ?>"><?php echo $userController_error->{0}; ?></strong>
                                         </div>
                                     <?php } ?>
                                 </div>

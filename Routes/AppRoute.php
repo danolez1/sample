@@ -23,9 +23,9 @@ class AppRoute extends Router
             $query = explode(AppRoute::DIR, $query)[1];
         }
         $pages = explode("/", $query);
-        if (in_array($query, $this->home)) { //|| in_array($pages[0], $this->home)
+        if (in_array($query, $this->home) || in_array($pages[0], $this->home)) {
             new HomeController($query);
-        } else if (in_array($query, $this->admin)) { //||  in_array($pages[0], $this->admin)
+        } else if (in_array($query, $this->admin) ||  in_array($pages[0], $this->admin)) {
             new AdminController($query);
         } else if (in_array($query, $this->apiMethod) || in_array($pages[0], $this->apiMethod)) {
             new ApiRoute($query);

@@ -12,15 +12,15 @@
     </div>
     <button type="button" id="add_address" class="btn btn-sm btn-outline-danger ml-2"> <i class='bx bx-plus'></i><span trn="add-address"> Add New Address</span> </button>
 
-    <div id="contact_form" class="contact col-12 text-left" style="padding: 0;display:<?php echo (($showAddAddress)) ? 'block' : 'none' ?>">
+    <div id="contact_form" class="contact col-12 text-left" style="padding: 0;display:<?php echo (($showUserController_result)) ? 'block' : 'none' ?>">
         <form action="" method="post" role="form" class="php-email-form" style="background-color: #fefefe;">
             <div class="mt-3">
                 <div class="col-lg-9">
-                    <?php if (!is_null($saveAddress_error)) { ?>
+                    <?php if (!is_null($userController_error)) { ?>
                         <div class="alert alert-danger text-center col-lg-9 col-md-10 col-sm-12 mt-4" role="alert" style="margin: auto;">
-                            <strong style="font-size:12px;" trn="<?php echo $saveAddress_error->{"trn"} ?>"><?php echo $saveAddress_error->{0}; ?></strong>
+                            <strong style="font-size:12px;" trn="<?php echo $userController_error->{"trn"} ?>"><?php echo $userController_error->{0}; ?></strong>
                         </div>
-                    <?php } else if (!is_null($saveAddress_result)) { ?>
+                    <?php } else if (!is_null($userController_result)) { ?>
                         <div class="alert alert-success alert-dismissible fade show col-lg-9 col-md-10 col-sm-12 mt-4" style="margin: auto;" role="alert">
                             <strong trn="address-added">Information Successfull Added</strong>
                             <button type="button" class="close" data-dismiss="alert" id="close-card-success" aria-label="Close">
@@ -81,7 +81,7 @@
                 <div class="col-lg-5 col-sm-0"></div>
             </div>
         </form>
-        <?php if (!is_null($saveAddress_error)) {
+        <?php if (!is_null($userController_error)) {
             keepFormValues($_POST);
         } ?>
     </div>

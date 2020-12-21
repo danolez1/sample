@@ -102,11 +102,10 @@ function getUpload(inputId, imgId, inputName, otherPreview) {
             var reader = new FileReader();
             reader.onload = function (e) {
                 $(imgId).attr('src', e.target.result);
-
-                console.log((otherPreview));
                 if (otherPreview != undefined && otherPreview != null) {
                     $(otherPreview).attr('src', e.target.result);
-                    console.log($(otherPreview));
+                    // console.log($(otherPreview));
+                    // console.log($(otherPreview).attr('src'));
                 }
                 $('input[name="' + inputName + '"]').val(e.target.result);
             }
@@ -138,6 +137,8 @@ function delOption(nodeList, element) {
 
 
 $(document).ready(function () {
+    var lang = getCookie('lingo');
+
     show("#add-staff", "#add-staff-form", 'table-row', true);
     show("#add-branch", "#add-branch-form", 'table-row', true);
     show("#delivery-time-fab", "#timer", 'block', true);
@@ -153,8 +154,29 @@ $(document).ready(function () {
         $('#add-btn').attr("data", e.relatedTarget.getAttribute('data-id'));
         $('#add-btn').attr("page", e.relatedTarget.getAttribute('data-page'));
     });
+    $('.edit-product').click(function () {
+        var productId = $(this).parent().parent().attr('data-id');
+        setCookie('editProductId', productId, 1);
+    });
+    $('.del-product').click(function () {
+
+    });
+
+    getCookie('lingo') == 'en' ? $('a[lang="en"]').addClass('text-light') : $('a[lang="jp"]').addClass('text-light');
+    $('.lang').click(function () {
+
+        if ($(this).attr('lang') == 'en') {
+            setCookie("lingo", 'en', 365);
+            $('a[lang="jp"]').removeClass('text-light')
+        } else {
+            setCookie("lingo", 'jp', 365);
+            $('a[lang="en"]').removeClass('text-light')
+        }
+        $(this).addClass('text-white');
+    });
 
     $('#add-btn').click(function () {
+        lang = getCookie('lingo');
         switch ($(this).attr("page")) {
             case 'add-product-category':
             case 'add-option-category':
@@ -175,8 +197,8 @@ $(document).ready(function () {
                         data = JSON.parse(data);
                         if (data.result == true) {
                             webToast.Success({
-                                status: getCookie('lingo') == 'jp' ? '成功' : 'Successful',
-                                message: getCookie('lingo') == 'jp' ? 'カテゴリを追加されました' : 'Category Added',
+                                status: dictionary['successful'][lang],
+                                message: dictionary['category-added'][lang],
                                 delay: 5000
                             });
                             if ($('#add-btn').attr("page") == "add-product-category") {
@@ -189,7 +211,7 @@ $(document).ready(function () {
                                 ul.html(ul.html() + '<li class="mdc-list-item" data-value="' + data.data.id + '">' + data.data.name + '</li>');
                             }
                         } else {
-                            errorDiv.html(getCookie('lingo') == 'en' ? "Category name exist" : "カテゴリ名が既に存在します");
+                            errorDiv.html(dictionary['category-exist'][lang]);
                             errorDiv.css("display", "block");
                         }
                     });
@@ -227,7 +249,6 @@ $(document).ready(function () {
                     }
                 });
                 if (!exist) {
-                    console.log(encode(value));
                     former.push(value);
                     storage.val(JSON.stringify(former));
                     display.html(display.html() + '<span class="badge rounded-pill bg-primary text-light option-span ml-1 mr-1">' + value.name + '<i class="icofont-close-line" onclick="delOption(this.parentNode.parentNode.childNodes,this.parentNode)"></i></span>');
@@ -318,13 +339,14 @@ $(document).ready(function () {
 
     $('.async').click(function () {
         var async = $(this);
-        mcxDialog.confirm(getCookie('lingo' == 'en') ? "Are You Sure?" : "よろしいですか?", {
+        lang = getCookie('lingo');
+        mcxDialog.confirm(dictionary['are-you-sure'][lang], {
             // titleText: "",
-            cancelBtnText: getCookie('lingo' == 'en') ? "Cancel" : '取消',
-            sureBtnText: getCookie('lingo' == 'en') ? "Confirm" : '確認',
+            cancelBtnText: dictionary['cancel'][lang],
+            sureBtnText: dictionary['proceed'][lang],
             sureBtnClick: function () {
                 switch (async.attr("data-page")) {
-                    case "delete-product":
+                    case "delete-branch":
                         return $.post("post/deleteBranch",
                             {
                                 id: async.attr("data-id")
@@ -337,8 +359,8 @@ $(document).ready(function () {
                                         window.history.replaceState(null, null, window.location.href);
                                     }
                                     webToast.Success({
-                                        status: getCookie('lingo') == 'en' ? 'Successful' : '成功',
-                                        message: getCookie('lingo') == 'en' ? 'Branch Deleted' : '枝店舗を削除されました',
+                                        status: dictionary['successful'][lang],
+                                        message: dictionary['branch-deleted'][lang],
                                         delay: 5000
                                     });
                                     location.reload();
@@ -359,8 +381,8 @@ $(document).ready(function () {
                                         window.history.replaceState(null, null, window.location.href);
                                     }
                                     webToast.Success({
-                                        status: getCookie('lingo') == 'en' ? 'Successful' : '成功',
-                                        message: getCookie('lingo') == 'en' ? 'Staff Deleted' : 'スタッフを削除されました',
+                                        status: dictionary['successful'][lang],
+                                        message: dictionary['staff-deleted'][lang],
                                         delay: 5000
                                     });
                                     location.reload();

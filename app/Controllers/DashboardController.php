@@ -11,6 +11,7 @@ use Demae\Auth\Models\Shop\User\User;
 
 class DashboardController extends Controller
 {
+    private $admin;
 
     public function __construct($data)
     {
@@ -19,46 +20,44 @@ class DashboardController extends Controller
 
     public function management()
     {
-        if (isset($_POST['add-branch'])) {
-        } else if (isset($_POST['add-staff'])) {
-        } else if (isset($_POST['create-product'])) {
+        if (isset($this->data['add-branch'])) {
+            return  $this->createBranch();
+        } else if (isset($this->data['add-staff'])) {
+            return $this->createAdmin();
+        } else if (isset($this->data['create-product'])) {
+            return $this->createProduct();
         } else return null;
     }
 
-    public function general()
-    {
-        # code...
-    }
-
-    public function createProduct()
+    protected function createProduct()
     {
         $product = new Product();
-        $product->setAvailability($_POST['product-availability']);
-        $product->setPrice($_POST['product-price']);
-        $product->setName($_POST['product-name']);
-        $product->setDescription($_POST['product-description']);
-        $product->setDisplayImage($_POST['product-img']);
-        if (isset($_POST['product-category']))
-            $product->setCategory($_POST['product-category']);
-        $product->setProductOptions($_POST['options']);
+        $product->setAvailability($this->data['product-availability']);
+        $product->setPrice($this->data['product-price']);
+        $product->setName($this->data['product-name']);
+        $product->setDescription($this->data['product-description']);
+        $product->setDisplayImage($this->data['product-img']);
+        if (isset($this->data['product-category']))
+            $product->setCategory($this->data['product-category']);
+        $product->setProductOptions($this->data['options']);
         $product->setTimeCreated(time());
         $product->setAuthor(array($this->admin->getUsername(), $this->admin->getId()));
-        if ($this->admin->getRole() == '1' && isset($_POST['product-branch'])) {
-            $product->setBranchId($_POST['product-branch']);
+        if ($this->admin->getRole() == '1' && isset($this->data['product-branch'])) {
+            $product->setBranchId($this->data['product-branch']);
         } else {
             $product->setBranchId($this->admin->getBranchId());
         }
         return $product->create();
     }
 
-    public function createBranch()
+    protected function createBranch()
     {
         if ($this->admin->getRole() == 1) {
             $branch = new Branch();
-            $branch->setName($_POST['name']);
-            $branch->setLocation($_POST['location']);
-            $branch->setStaffNo($_POST['staff-no'] ?? 0);
-            $branch->setStatus($_POST['status'] ?? 1);
+            $branch->setName($this->data['name']);
+            $branch->setLocation($this->data['location']);
+            $branch->setStaffNo($this->data['staff-no'] ?? 0);
+            $branch->setStatus($this->data['status'] ?? 1);
             $log = new Log();
             $branch->setLog(json_encode($log->properties()));
             $branch->setAdmin($this->admin->getId());
@@ -70,16 +69,16 @@ class DashboardController extends Controller
         }
     }
 
-    public function createAdmin()
+    protected function createAdmin()
     {
         $admin = new Administrator();
-        $admin->setEmail($_POST['email']);
-        $admin->setName($_POST['name']);
-        $admin->setRole($_POST['role']);
+        $admin->setEmail($this->data['email']);
+        $admin->setName($this->data['name']);
+        $admin->setRole($this->data['role']);
         $log = new Log();
         $admin->setLog(json_encode($log->properties()));
         $admin->setAddedBy($this->admin->getId());
-        $admin->setBranchId($_POST['branch']);
+        $admin->setBranchId($this->data['branch']);
         return $admin->register();
     }
 
@@ -111,6 +110,26 @@ class DashboardController extends Controller
     public function setData($data)
     {
         $this->data = $data;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of admin
+     */
+    public function getAdmin()
+    {
+        return $this->admin;
+    }
+
+    /**
+     * Set the value of admin
+     *
+     * @return  self
+     */
+    public function setAdmin($admin)
+    {
+        $this->admin = $admin;
 
         return $this;
     }

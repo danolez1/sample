@@ -1,32 +1,37 @@
 <?php
 
 use danolez\lib\DB\Controller\Controller;
+use Demae\Auth\Models\Shop\Address\Address;
 use Demae\Auth\Models\Shop\Administrator\Administrator;
 use Demae\Auth\Models\Shop\Log\Log;
+use Demae\Auth\Models\Shop\PaymentDetails\CreditCard;
+use Demae\Auth\Models\Shop\PaymentDetails\PaymentDetails;
 use Demae\Auth\Models\Shop\User\User;
 
 class UserController extends Controller
 {
+    private $user;
+    private $admin;
 
     public function __construct($data)
     {
         $this->setData($data);
     }
 
-    public function authentication()
+    public function profileManagement()
     {
-        if (isset($data['login'])) {
-            return $this->auth();
-        } else if (isset($data['sign-up'])) {
-            return $this->register();
-        } else if (isset($data['register'])) {
-            return $this->createAdmin();
-        } else if (isset($data['auth'])) {
-            return $this->authenticate();
+        if (isset($this->data['login'])) {
+            return $this->userAuth();
+        } else if (isset($this->data['sign-up'])) {
+            return $this->createUser();
+        } else if (isset($this->data["save-card"])) {
+            return $this->savePayment();
+        } else if (isset($this->data['save-address'])) {
+            return  $this->saveAddress();
         } else return null;
     }
 
-    protected function auth()
+    protected function userAuth()
     {
         $user = new User();
         $user->setEmail($this->data['lemail']);
@@ -34,7 +39,7 @@ class UserController extends Controller
         return ($user->authenticate());
     }
 
-    protected function register()
+    protected function createUser()
     {
         $user = new User();
         $user->setName($this->data['name']);
@@ -47,25 +52,51 @@ class UserController extends Controller
         return $user->register();
     }
 
-    protected function createAdmin()
+    public function adminAuth()
     {
-        $admin = new Administrator();
-        $admin->setEmail($this->data['email']);
-        $admin->setName($this->data['name']);
-        $admin->setRole($this->data['role']);
-        $log = new Log();
-        $admin->setLog(json_encode($log->properties()));
-        $admin->setAddedBy($this->admin->getId());
-        $admin->setBranchId($this->data['branch']);
-        return $admin->register();
+        if (isset($this->data['auth'])) {
+            $admin = new Administrator();
+            $admin->setUsername($this->data['username']);
+            $admin->setPassword($this->data['password']);
+            return ($admin->authenticate());
+        } else return null;
     }
 
-    protected function authenticate()
+    protected function savePayment()
     {
-        $admin = new Administrator();
-        $admin->setUsername($this->data['username']);
-        $admin->setPassword($this->data['password']);
-        return ($admin->authenticate());
+        $creditCard = new CreditCard();
+        $creditCard->cardName = $this->data['name'];
+        $creditCard->cardNumber = removeSpace($this->data['number']);
+        $creditCard->expiryDate = removeSpace($this->data['expiry']);
+        $creditCard->cardType = get_card_brand($creditCard->cardNumber);
+        $creditCard->cvv = $this->data['cvc'];
+        $paymentDetails = new PaymentDetails();
+        $paymentDetails->setTimeCreated(time());
+        $paymentDetails->setUserId($this->user->getId());
+        $log = new Log();
+        $paymentDetails->setLog(json_encode($log->properties()));
+        $paymentDetails->setCreditCard($creditCard);
+        return ($paymentDetails->saveCard());
+    }
+
+    protected function saveAddress()
+    {
+        $address = new Address();
+        $address->setFirstName($this->data['fname']);
+        $address->setLastName($this->data['lname']);
+        $address->setPhoneNumber($this->data['phone']);
+        $address->setEmail($this->data['email']);
+        $address->setZip($this->data['zip']);
+        $address->setCity($this->data['city']);
+        $address->setState($this->data['state']);
+        $address->setAddress($this->data['address']);
+        $address->setStreet($this->data['street']);
+        $address->setBuilding($this->data['building']);
+        $address->setUserId($this->user->getId());
+        $address->setTimeCreated(time());
+        $log = new Log();
+        $address->setLog(json_encode($log->properties()));
+        return $address->save();
     }
 
     protected function decode()
@@ -94,6 +125,46 @@ class UserController extends Controller
     public function setData($data)
     {
         $this->data = $data;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of user
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Set the value of user
+     *
+     * @return  self
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of admin
+     */
+    public function getAdmin()
+    {
+        return $this->admin;
+    }
+
+    /**
+     * Set the value of admin
+     *
+     * @return  self
+     */
+    public function setAdmin($admin)
+    {
+        $this->admin = $admin;
 
         return $this;
     }

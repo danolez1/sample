@@ -53,9 +53,21 @@ var dictionary = {
     }, "error-product-name": {
         en: "Enter product name",
         jp: "商品名を入力してください"
-    }, "": {
-        en: "",
-        jp: ""
+    }, "successful": {
+        en: "Successful",
+        jp: "成功"
+    }, "branch-deleted": {
+        en: "Branch Deleted",
+        jp: "枝店舗を削除されました"
+    }, "staff-deleted": {
+        en: "Staff Deleted",
+        jp: "スタッフを削除されました"
+    }, "category-added": {
+        en: "Category Added",
+        jp: "カテゴリを追加されました"
+    }, "category-exist": {
+        en: "Category name exist",
+        jp: "カテゴリ名が既に存在します"
     }, "": {
         en: "",
         jp: ""

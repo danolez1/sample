@@ -3,16 +3,16 @@
 use danolez\lib\Security\Encoding\Encoding;
 use Demae\Auth\Models\Shop\Branch\Branch;
 
-if (!is_null($addStaff_error)) { ?>
+if (!is_null($dashboardController_error)) { ?>
     <script>
         webToast.Danger({
             status: "<?php echo ($_COOKIE['lingo'] == 'jp') ?  'エラーが発生しました' :  'Error Occured'; ?>",
-            message: dictionary<?php echo "['" . $addStaff_error->{"trn"} . "']." . $_COOKIE['lingo']; ?>,
+            message: dictionary<?php echo "['" . $dashboardController_error->{"trn"} . "']." . $_COOKIE['lingo']; ?>,
             delay: 10000
         });
     </script>
     <?php } else {
-    if ($staffInfo) { ?>
+    if ($showDashboardController_result) { ?>
         <script>
             webToast.Success({
                 status: "<?php echo ($_COOKIE['lingo'] == 'jp') ?  '成功' :  'Successful'; ?>",
@@ -113,7 +113,7 @@ if (!is_null($addStaff_error)) { ?>
                                     <button type="submit" name="add-staff" class=" btn btn-light text-success font-weight-bold h5">save</button>
                             </tr>
                         </form>
-                        <?php if (!is_null($addStaff_error)) {
+                        <?php if (!is_null($dashboardController_error)) {
                             keepFormValues($_POST);
                         } ?>
                         <tr>

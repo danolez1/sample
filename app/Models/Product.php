@@ -155,9 +155,12 @@ class Product extends Model
             $encKey = $key->name;
             //$encKey = Encoding::encode($key, self::KEY_ENCODE_ITERTATION);
 
-
-            //  $obj->{$key} = $data->{$encKey};
-            $obj->{$key} =  Credential::decrypt($data->{$encKey}); //,$key
+            if ($encKey == ProductColumn::DISPLAYIMAGE) {
+                if (isEmpty($data->$encKey)) {
+                    $obj->$encKey = 'assets/images/shop/food_placeholder.png';
+                } else   $obj->{$encKey} =  ($data->{$encKey});
+            } else
+                $obj->{$encKey} =  ($data->{$encKey}); //,$key
         }
         return $obj;
     }
