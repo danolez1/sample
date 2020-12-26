@@ -7,7 +7,7 @@
         <h4 class="text-white font-weight-bold"><?php echo $available ? '<span trn="opened">Opened</span>' : '<span trn="closed">Closed</span>'; ?></h4>
     </div>
     <div class="col-4 text-center">
-        <span class="text-white" style="font-size: 14px;"> <span trn="min-order"> Min. order</span> <b class="ml-2 mr-3"> <?php echo $settings->getCurrency() . $settings->getMinOrder(); ?></b></span>
+        <span class="text-white" style="font-size: 14px;"> <span trn="min-order"> Min. order</span> <b class="ml-2 mr-3"> <?php echo $settings->getCurrency() . number_format($settings->getMinOrder()); ?></b></span>
         <a type="button" data-toggle="modal" data-target="#cart"> <img src="assets/images/shop/cart.svg" alt="cart" width="46" height="46"></a>
     </div>
 </div>

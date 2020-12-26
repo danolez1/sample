@@ -11,6 +11,10 @@ abstract class Model
     protected $dataBase;
     protected $tableName;
     protected $dbName;
+    protected $file;
+    private $type;
+
+    const EXTENSION = '.json';
     const KEYS = "keys";
     const VALUES = "values";
     const DATA = "data";
@@ -18,13 +22,27 @@ abstract class Model
     const ERROR = "error";
     const RESULT = "result";
     const COMMENT = "comment";
+    const PATH = 'app/storage/';
 
-    public function __construct()
+    const MYSQL_MODEL = 'mysql-table';
+    const FILE_MODEL = 'json-file';
+
+    public function __construct($type = self::MYSQL_MODEL)
     {
+        $this->type = $type;
         $this->setDBName();
         $this->setTableName();
-        $this->dataBase = new Database($this->dbName);
-        $this->table =  $this->dataBase->Table($this->tableName);
+        switch ($type) {
+            case self::MYSQL_MODEL:
+                $this->dataBase = new Database($this->dbName);
+                $this->table =  $this->dataBase->Table($this->tableName);
+                break;
+            case self::FILE_MODEL:
+                $this->file = new File(self::PATH . $this->tableName . self::EXTENSION);
+                break;
+            default:
+                break;
+        }
         return $this;
     }
 
@@ -54,10 +72,12 @@ abstract class Model
         $p = stripcslashes($p);
         $p = strip_tags($p);
         $p = htmlentities($p);
-        $p = $this->dataBase->DB()->real_escape_string($p);
+        if ($this->type == self::MYSQL_MODEL)
+            $p = $this->dataBase->DB()->real_escape_string($p);
         return $p;
     }
 }
+
 
 /**
  * 
@@ -80,14 +100,14 @@ abstract class Model
         $data = json_decode(json_encode($data, JSON_FORCE_OBJECT));
         $obj = new Mode();
         foreach (array_values($properties) as $key) {
-            //$encKey = $key->name;
-            $encKey = Encoding::encode($key, self::KEY_ENCODE_ITERTATION);
+            $encKey = $key->name;
+          //  $encKey = Encoding::encode($key, self::KEY_ENCODE_ITERTATION);
             // Specific case decryption
             // if($encKey == AccountColumn::PASSWORD){            
             // }
 
-            //  $obj->{$key} = $data->{$encKey};
-            $obj->{$key} =  Credential::decrypt($data->{$encKey}); //,$key
+              $obj->{$encKey} = $data->{$encKey};
+            //$obj->{$encKey} =  Credential::decrypt($data->{$encKey}); //,$key
         }
         return $obj;
     }
@@ -110,6 +130,7 @@ abstract class Model
             return $this->encrypt($object, true);
         }
     }
+    $array = array_combine(array $key, array $values);
     protected function encode($data)
     {
         if (is_array($data)) {
@@ -139,5 +160,7 @@ abstract class Model
         } else {
             return Credential::encrypt($data); //,$key
         }
+
+    
     }
  */

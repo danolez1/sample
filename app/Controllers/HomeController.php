@@ -10,6 +10,7 @@ use danolez\lib\Res\Session\Session;
 use danolez\lib\Security\Encoding\Encoding;
 use Demae\Auth\Models\Contact\Contact;
 use Demae\Auth\Models\Shop\Address\Address;
+use Demae\Auth\Models\Shop\Branch\Branch;
 use Demae\Auth\Models\Shop\Cart\CartItem;
 use Demae\Auth\Models\Shop\Favourite\Favourite;
 use Demae\Auth\Models\Shop\Log\Log;
@@ -32,9 +33,14 @@ class HomeController extends Controller
     private $products;
     private $categories;
     private $branches;
+    private $cart;
+    private $orderData;
 
+    const GUEST = "a0283fef1780f643a0639b0621eeeeeeee40ee40";
     const USER_ID = '942826bb3efa2237a02ad2e56b29f64c80b3ee8043d902d69cf96bf221eeeeeeee40ee40';
     const USER_EMAIL = '502826bb3efa2237a02ad2e56b29f64c80b3ee80434b0243d9d963d1a0939b28f17d1eeeee40ee40';
+    const ORDER = 'a0f82a3ed980d2b39c939bf221eeeeeeee40ee40';
+    const ORDER_TIME = 'aw0f82at3ed98i0d2b39mc939bf221eeeeeeeee40ee40';
     const KEY_ENCODE_ITERTATION = 1;
     const VALUE_ENCODE_ITERTATION = 2;
 
@@ -56,12 +62,24 @@ class HomeController extends Controller
                 header('location:' . 'auth');
             }
         }
-
+        if (isset($_COOKIE["order"])) {
+            $cookie = json_decode($_COOKIE['order']);
+            $orderKey = iterativeBase64Decode($cookie->id, 1);
+            $orderData = iterativeBase64Decode($cookie->data, $orderKey);
+            $this->session->set(self::ORDER, $orderData);
+            $this->session->set(self::ORDER_TIME, time());
+        } else {
+            if (is_null($this->session->get(self::ORDER)) && ($pages[0] == 'checkout')) {
+                echo "no session order, and page is checkout";
+                header('location:' . 'home');
+            }
+        }
         switch ($pages[0]) {
             case 'profile':
                 $this->page = "app/Views/profile/profile.php";
                 break;
             case 'checkout':
+                $this->orderData = json_decode($this->session->get(self::ORDER));
                 $this->page = "app/Views/shop/checkout.php";
                 break;
             case 'track':
@@ -89,6 +107,7 @@ class HomeController extends Controller
         $userController = new UserController($_POST);
         $userController->setUser($this->user);
         $userController = $userController->profileManagement();
+        $this->cart = new CartItem();
         if ($userController != null) {
             $showUserController_result = true;
             $userController_error = (json_decode($userController)->{Model::ERROR});
@@ -106,7 +125,6 @@ class HomeController extends Controller
                 header('location:' . 'profile');
             }
         }
-
         if (!is_null($this->session->get(self::USER_ID))) {
             $favorites = [];
             $history = [];
@@ -114,13 +132,29 @@ class HomeController extends Controller
             $this->payment = $this->payment->get();
             $this->addresses = new Address($this->user->getId());
             $this->addresses = $this->addresses->get();
-            $cart = [];
+            $this->cart = $this->cart->get($this->user->getId());
+        } else {
+            if (!is_null($this->session->get(self::GUEST))) {
+                $this->cart = $this->cart->get($this->session->get(self::GUEST));
+            } else {
+                $log = new Log();
+                $this->session->set(
+                    self::GUEST,
+                    Encoding::encode(json_encode($log->properties()), self::VALUE_ENCODE_ITERTATION)
+                );
+            }
         }
 
-        $this->products = [];
+
+        $this->branches = new Branch();
+        $this->branches = $this->branches->get();
+        // var_dump($this->branches);
+
+
+        $this->products = new Product();
+        $this->products = $this->products->get();
         $available = !true;
         $this->categories = [];
-        $this->branches = [];
         $settings = $this->getSettings();
 
         include 'app/Views/header.php';
@@ -131,56 +165,39 @@ class HomeController extends Controller
     public function getSettings()
     {
         $settings  =  new Setting();
-        // $class_methods = get_class_methods($settings);
+        $settings->setMetaContent($settings->getLogo());
+        if ($settings->getUseTitleAsLogo()) {
+            $settings->setLogo('<h1 class="title">' . $settings->getStoreName() . '</h1>');
+            $settings->setMobileLogo('<h1 class="title-m">' . $settings->getStoreName() . '</h1>');
+        } else {
+            $settings->setLogo('<img src="' . $settings->getLogo() . '" alt="" height="48" width="120"  class="img img-fluid">');
+            $settings->setMobileLogo('<img src="' . $settings->getLogo() . '" alt="" height="48" width="120" class="img img-fluid">');
+        } //'<i class="icofont-stripe"></i>',
+        $payment = ((bool)$settings->getPaymentMethods()->card) ? array(
+            '<i class="icofont-mastercard"></i>', '<i class="icofont-visa"></i>',
+            '<i class="icofont-diners-club"></i>', '<i class="icofont-amazon-alt"></i>', '<i class="icofont-american-express"></i>'
+        ) : array();
+        // <!-- <img class="img-fluid" src="assets/images/shop/mastercard.svg" height="48"><img class="img-fluid ml-4" src="assets/images/shop/amex.svg" height="48"><br>
+        // <img class="img-fluid mt-4" src="assets/images/shop/stripe.svg" height="32"><img class="img-fluid ml-4 mt-4" src="assets/images/shop/visa.svg" height="32"> -->
 
-        // foreach ($class_methods as $method_name) {
-        //     echo '$settings->' . "$method_name();<br>";
-        // }
-        $settings->setLogo('<h1 class="title">IOTA</h1>'); // <img src="assets/images/home/logo.svg" alt="" height="48" width="120">
-        $settings->setMobileLogo('<h1 class="title-m">IOTA</h1>'); // <img src="assets/images/home/logo.svg" alt="" height="48" width="120">
-        $settings->setTitle('OITA');
-        $settings->setMetaContent('something');
-        $settings->setBannerImage('assets/images/shop/sushi1.png'); //../images/shop/meatball.png   ../images/shop/sushi.png
-        $settings->setDisplayRating(true);
-        $settings->setScripts('');
-        $settings->setWebsiteUrl('https://');
-        $settings->setStoreName('IOTA');
-        $settings->setDisplayOrderCount(true);
-        $settings->setBannerTitle('The best meat balls in town');
-        //The <b>Best Sushi</b><br> in Sapporo</h1> 
-        //The <b>Best Turkey</b> Resturant in town
-        $settings->setBannerText('Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit.');
-        //Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitation veniam consequat sunt nostrud amet.
-        $settings->setTheme('');
-        $settings->setMenuDisplayOrientation(Orientation::HORIZONTAL);
-        $settings->setInfoDisplayOrientation(Orientation::HORIZONTAL);
-        $settings->setProductDisplayOrientation(Orientation::GRID);
-        $settings->setSliderType(3);
-        $settings->setFooterType(0);
+        $payment[] =  ((bool)$settings->getPaymentMethods()->cash) ? '<i class="icofont-cash-on-delivery-alt"></i>' : '';
+        $settings->setPaymentMethods($payment);
+        $settings->setScripts('<script> setCookie("currency","' . $settings->getCurrencyLocale() . '",20);</script>');
+
+
+        //selected Branch
+        //language determination
+        //location determination for closet branch
+        //location based distance restriction 
+        //order condition display
         $settings->setDeliveryDistance('');
-        $settings->setMinOrder(1400);
-        $settings->setDeliveryTime(30); //array("branchId"=>30);
+        $settings->setDeliveryTime(30);
         $settings->setOperationalTime('');
-        $settings->setCurrency('¥');
-        $colors = new Colors();
-        $colors->setMainColor('');
-        $settings->setColors($colors);
+        // $settings->setColors();
         $settings->setAddress('4-9-15 Ebisu, Shibuya-ku, Tokyo HAGIWA Building 5 3F');
         $settings->setAddressName('Wagyu Creation 411 Hanare');
-        $settings->setPhoneNumber('07063809604');
         $settings->setShippingFee(0);
-        $settings->setPaymentMethods(array(
-            '<i class="icofont-cash-on-delivery-alt"></i>', '<i class="icofont-mastercard"></i>', '<i class="icofont-visa"></i>',
-            '<i class="icofont-diners-club"></i>', '<i class="icofont-stripe"></i>', '<i class="icofont-amazon-alt"></i>', '<i class="icofont-american-express"></i>',
-        ));
-        $settings->setSocials(array('facebook' => '', 'twitter' => '', 'instagram' => '',));
-        $settings->setDeliveryAreas(array("Kasuga Elementary School", "Nishidai Elementary School", "Omichi Elementary School", " Kanaike Elementary School", "Nagahama Elementary School", "Sumiyoshi Elementary School"));
-        // $settings->getDeliveryTime();
-        // $settings->getOperationalTime();
-        // $settings->getTheme();
-        // $settings->getDeliveryDistance();
-        // $settings->getBranches();
-        // $settings->setBranches('');
+
         return $settings;
     }
 

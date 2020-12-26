@@ -59,6 +59,9 @@ var dictionary = {
     }, "branch-deleted": {
         en: "Branch Deleted",
         jp: "枝店舗を削除されました"
+    }, "branch-updated": {
+        en: "Branch Updated",
+        jp: "枝店が更新されました"
     }, "staff-deleted": {
         en: "Staff Deleted",
         jp: "スタッフを削除されました"
@@ -68,6 +71,60 @@ var dictionary = {
     }, "category-exist": {
         en: "Category name exist",
         jp: "カテゴリ名が既に存在します"
+    }, "product-deleted": {
+        en: "Product Deleted",
+        jp: "商品を削除されました"
+    }, "error-occured": {
+        en: "Error Occured",
+        jp: "エラーが発生しました"
+    }, "product-created": {
+        en: "Product Created",
+        jp: "商品が作成されました"
+    }, "staff-added": {
+        en: "Staff Added",
+        jp: "スタッフを追加されました"
+    }, "save": {
+        en: "Save",
+        jp: "保存する"
+    }, "create": {
+        en: "Create",
+        jp: "作成する"
+    }, "product-updated": {
+        en: "Product Updated",
+        jp: "商品が更新されました"
+    }, "seo-url-placeholder": {
+        en: "e.g",
+        jp: "例："
+    }, "seo-title-placeholder": {
+        en: "e.g",
+        jp: "例："
+    }, "seo-description-placeholder": {
+        en: "e.g",
+        jp: "例："
+    }, "seo-store-placeholder": {
+        en: "e.g",
+        jp: "例："
+    }, "seo-tags-placeholder": {
+        en: "e.g",
+        jp: "例："
+    }, "banner-title": {
+        en: "",
+        jp: ""
+    }, "banner-content": {
+        en: "",
+        jp: ""
+    }, "settings-updated": {
+        en: "Settings Updated",
+        jp: "設定が更新されました"
+    }, "horizontal": {
+        en: "",
+        jp: ""
+    }, "vertical": {
+        en: "",
+        jp: ""
+    }, "invalid-email": {
+        en: "Enter a valid email",
+        jp: "有効なメールアドレスを入力してください"
     }, "": {
         en: "",
         jp: ""
@@ -75,4 +132,5 @@ var dictionary = {
         en: "",
         jp: ""
     },
+
 }

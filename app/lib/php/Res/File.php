@@ -74,7 +74,6 @@ class File
         $this->initalPath = $path;
         $this->setAccess($access);
         $this->read();
-
         return $this;
     }
 

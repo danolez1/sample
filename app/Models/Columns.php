@@ -8,6 +8,11 @@ use danolez\lib\DB\Column\Column;
         foreach ($keys as $k) {
             echo 'const ' . strtoupper($k) . ' = "' . ($k) . '";<br>';
         }
+
+        // $class_methods = get_class_methods($settings);
+        // foreach ($class_methods as $method_name) {
+        //     echo '$settings->' . "$method_name();<br>";
+        // }
  */
 class ContactColumn extends Column
 {
@@ -115,12 +120,15 @@ class BranchColumn extends Column
     const TIMECREATED = "timeCreated";
     const LOG = "log";
     const ADMIN = "admin";
-
     const MINORDER = "minOrder";
     const AVERAGEDELIVERYTIME = "averageDeliveryTime";
-    const OPENING = "opening";
-    const CLOSING = "closing";
-    const BREAK = "break";
+    const OPERATIONTIME = "operationTime";
+    const SHIPPINGFEE = "shippingFee";
+    const DELIVERYTIME = "deliveryTime";
+    const DELIVERYTIMERANGE = "deliveryTimeRange";
+    const DELIVERYAREAS = "deliveryAreas";
+    const DELIVERYDISTANCE = "deliveryDistance";
+    const ADDRESS = "address";
 }
 
 class CartColumn extends Column
@@ -134,6 +142,7 @@ class CartColumn extends Column
     const PRODUCTOPTIONS = "productOptions";
     const ADDITIONALNOTE = "additionalNote";
     const TIMECREATED = "timeCreated";
+    const PRODUCTDETAILS = "productDetails";
 }
 
 class DeliveryColumn extends Column
@@ -175,6 +184,11 @@ class OrderColumn extends Column
     const TIMECREATED = "timeCreated";
     const LOG = "log";
     const TAX = "tax";
+
+
+    const HOME_DELIVERY = 1;
+    const TAKE_OUT = 2;
+    const RESERVATION = 3;
 }
 class PaymentDetailsColumn extends Column
 {
@@ -192,39 +206,40 @@ class PromotionColumn extends Column
 }
 class SettingsColumn extends Column
 {
-    const SN = "sn";
-    const PAYMENTMETHODS = "paymentMethods";
+    const TITLE = "title";
     const LOGO = "logo";
+    const STORENAME = "storeName";
+    const BANNERTITLE = "bannerTitle";
+    const BANNERTEXT = "bannerText";
+    const MOBILELOGO = "mobileLogo";
+    const BANNERIMAGE = "bannerImage";
+    const SLIDERTYPE = "sliderType";
+    const FOOTERTYPE = "footerType";
+    const COLORS = "colors";
+    const MENUDISPLAYORIENTATION = "menuDisplayOrientation";
+    const INFODISPLAYORIENTATION = "infoDisplayOrientation";
+    const PRODUCTDISPLAYORIENTATION = "productDisplayOrientation";
     const ADDRESS = "address";
     const PHONENUMBER = "phoneNumber";
     const ADDRESSNAME = "addressName";
     const SOCIALS = "socials";
-    const BANNERTITLE = "bannerTitle";
-    const BANNERTEXT = "bannerText";
-    const DELIVERYTIME = "deliveryTime";
-    const OPERATIONALTIME = "operationalTime";
-    const MINORDER = "minOrder";
-    const DISPLAYRATING = "displayRating";
-    const TITLE = "title";
     const WEBSITEURL = "websiteUrl";
-    const STORENAME = "storeName";
-    const METACONTENT = "metaContent";
-    const MOBILELOGO = "mobileLogo";
-    const BANNERIMAGE = "bannerImage";
-    const SLIDERTYPE = "sliderType";
-    const MENU_DISPLAY_ORIENTATION = "menuDisplayOrientation";
-    const INFO_DISPLAY_ORIENTATION = "infoDisplayOrientation";
-    const PRODUCT_DISPLAY_ORIENTATION = "productDisplayOrientation";
-    const DISPLAY_ORDER_COUNT = "displayOrderCount";
-    const THEME = "theme";
-    const DELIVERYDISTANCE = "deliveryDistance";
-    const FOOTERTYPE = "footerType";
-    const SCRIPTS = "scripts";
-    const BRANCHES = "branches";
-    const COLORS = "colors";
+    const DISPLAYORDERCOUNT = "displayOrderCount";
     const CURRENCY = "currency";
     const SHOWTAX = "showTax";
+    const MINORDER = "minOrder";
+    const DISPLAYRATING = "displayRating";
+    const IMAGEPLACEHOLDER = "imagePlaceholder";
     const SHIPPINGFEE = "shippingFee";
-    const DELIVERYAREAS = "deliveryAreas";
+    const DELIVERYTIME = "deliveryTime";
     const DELIVERYTIMERANGE = "deliveryTimeRange";
+    const DELIVERYAREAS = "deliveryAreas";
+    const DELIVERYDISTANCE = "deliveryDistance";
+    const PAYMENTMETHODS = "paymentMethods";
+    const OPERATIONALTIME = "operationalTime";
+    const METACONTENT = "metaContent";
+    const THEME = "theme";
+    const SCRIPTS = "scripts";
+    const BRANCHES = "branches";
+    const SUBSCRIPTIONS = "subscriptions";
 }

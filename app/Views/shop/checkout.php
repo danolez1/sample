@@ -60,18 +60,6 @@
                             </div>
                         </div>
 
-                        <div class="row col-12  mt-2">
-                            <div class="form-check col-10">
-                                <input class="form-check-input mt-3" type="radio" name="delivery_option" value="option1" checked>
-                                <label class="form-check-label font-weight-bold ml-3">
-                                    Reservation
-                                </label>
-                                <p class="ml-3">Shedule your delivery to a time convineint for you</p>
-                            </div>
-                            <div class="col-2 mt-3 text-right">
-                                <h4>$2</h4>
-                            </div>
-                        </div>
                         <div class=" row mt-2 justify-content-center">
                             <div class="col-lg-11 col-sm-12">
                                 <div class="form-row">
@@ -144,38 +132,36 @@
                         </div>
 
                         <h3 class="mt-5">Payment details</h3>
-                        <h6>Chose between home delivery or eat in resturant </h6>
+                        <h6>We accept : </h6>
 
-                        <div class="form-check col-10 mt-4">
-                            <input class="form-check-input mt-3" type="radio" name="payment_option" value="option1" checked>
-                            <label class="form-check-label font-weight-bold ml-3">
-                                Pay cash on delivery
-                            </label>
-                            <p class="ml-4">You will be paying <b>$690</b> after we deliver your order</p>
-                        </div>
+                        <?php if (in_array('<i class="icofont-cash-on-delivery-alt"></i>', $settings->getPaymentMethods())) { ?>
 
-                        <div class="form-check col-10 mt-4">
-                            <input class="form-check-input mt-3" type="radio" name="payment_option" value="option1" checked>
-                            <label class="form-check-label font-weight-bold ml-3">
-                                Pay with credit card
-                            </label>
-                            <p class="ml-4" style="font-size: 32px;">
-                                <i class="icofont-jcb"></i>
-                                <i class="icofont-mastercard"></i>
-                                <i class="icofont-diners-club"></i>
-                                <i class="icofont-discover"></i>
-                                <i class="icofont-maestro"></i>
-                                <i class="icofont-visa"></i>
-                                <i class="icofont-american-express"></i>
-                            </p>
-                        </div>
+                            <div class="form-check col-10 mt-4">
+                                <input class="form-check-input mt-3" type="radio" name="payment_option" value="option1" checked>
+                                <label class="form-check-label font-weight-bold ml-3">
+                                    Pay cash on delivery
+                                </label>
+                                <p class="ml-4">You will be paying <b>$690</b> after we deliver your order</p>
+                            </div>
+                        <?php } ?>
+                        <?php if (in_array('<i class="icofont-mastercard"></i>', $settings->getPaymentMethods())) { ?>
+
+                            <div class="form-check col-10 mt-4">
+                                <input class="form-check-input mt-3" type="radio" name="payment_option" value="option1" checked>
+                                <label class="form-check-label font-weight-bold ml-3">
+                                    Pay with credit card
+                                </label>
+                                <p class="ml-4" style="font-size:32px;"><?php foreach ($settings->getPaymentMethods() as $payment) echo $payment . ' '; ?></p>
+                            </div>
+                        <?php } ?>
 
 
 
                         <div class="row col-12 justify-content-center mt-5 mb-5">
                             <button type="button" class="btn btn-sm btn-danger add-to-cart col-10"><span>Place Order</span><span class="mdi mdi-arrow-right-bold ml-2"></span></button>
-
-                            <p class="mt-3"><a href=""><span class="text-danger">Sign up</span></a> to save Address & billing information </p>
+                            <?php if (is_null($this->session->get(self::USER_ID))) { ?>
+                                <p class="mt-3"><a href="profile"><span class="text-danger">Sign up</span></a> to save Address & billing information </p>
+                            <?php } ?>
                         </div>
 
                     </div>

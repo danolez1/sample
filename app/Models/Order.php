@@ -45,6 +45,36 @@ class Order extends Model
         $this->dbName = Credential::SHOP_DB;
     }
 
+    public function get()
+    {
+        // $query = (array) $this->table->get(
+        //     null,
+        //     Condition::WHERE,
+        //     array(
+        //         ProductColumn::ID => $id,
+        //     )
+        // );
+        // return $this->setData($query);
+    }
+
+    public function add()
+    {
+        // $this->setId(Encoding::encode(($this->table->getLastSN() + 1), self::VALUE_ENCODE_ITERTATION));
+        //         $obj = $this->object();
+        //         $stmt = $this->table->insert($obj[parent::PROPERTIES], $obj[parent::VALUES]);
+        //         $return[parent::RESULT] = (bool) $stmt->affected_rows;
+
+    }
+
+    public function hide()
+    {
+        // $stmt = $this->table->remove(
+        //     array(
+        //         ProductColumn::ID => $obj[ProductColumn::ID],
+        //     )
+        // );
+    }
+
     public function properties($display = false): array
     {
         $return = array();
@@ -67,7 +97,7 @@ class Order extends Model
             $encKey = $key->name;
             //$encKey = Encoding::encode($key, self::KEY_ENCODE_ITERTATION);
             //  $obj->{$key} = $data->{$encKey};
-            $obj->{$key} =  Credential::decrypt($data->{$encKey}); //,$key
+            $obj->{$encKey} =  ($data->{$encKey}); //,$key
         }
         return $obj;
     }

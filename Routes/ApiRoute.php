@@ -8,14 +8,17 @@ use danolez\lib\Security\Encoding\Encoding;
 use Demae\Auth\Models\Shop\Address\Address;
 use Demae\Auth\Models\Shop\Administrator\Administrator;
 use Demae\Auth\Models\Shop\Branch\Branch;
+use Demae\Auth\Models\Shop\Cart\CartItem;
 use Demae\Auth\Models\Shop\PaymentDetails\PaymentDetails;
 use Demae\Auth\Models\Shop\Product\Category;
+use Demae\Auth\Models\Shop\Product\Product;
+use Demae\Controller\ShopController\HomeController;
 
 class ApiRoute extends Router
 {
     private $endPoint = [
         'get/postalGeoCode', 'post/deleteMOP', 'post/deleteAddress', 'post/addFavorite',
-        'post/addToCart', 'post/deleteBranch', 'post/deleteStaff', 'post/addCategory'
+        'post/addToCart', 'post/deleteBranch', 'post/deleteStaff', 'post/addCategory', 'post/deleteProduct'
     ];
 
     const POSTAL_GEOCODE_URL = "https://dev.virtualearth.net/REST/v1/Locations?";
@@ -41,7 +44,9 @@ class ApiRoute extends Router
                 echo $this->addFavorite();
                 break;
             case $this->endPoint[4]:
-                echo $this->addToCart();
+                $key = iterativeBase64Decode($_POST['id'], 1);
+                $data = iterativeBase64Decode($_POST['data'], $key);
+                echo $this->addToCart($data);
                 break;
             case $this->endPoint[5]:
                 $data = json_decode(Encoding::decode($_POST['id']));
@@ -54,6 +59,10 @@ class ApiRoute extends Router
             case $this->endPoint[7]:
                 $data = json_encode($_POST);
                 echo $this->addCategory($data);
+                break;
+            case $this->endPoint[8]:
+                $data = json_decode(Encoding::decode($_POST['id']));
+                echo $this->deleteProduct($data);
                 break;
             default:
                 echo "Error 404: Page not found";
@@ -80,9 +89,24 @@ class ApiRoute extends Router
         # code...
     }
 
-    private function addToCart()
+    private function addToCart($data)
     {
-        # code...
+        $data = (json_decode($data));
+        $cart = new CartItem();
+        $cart->setProductId($data->pId->id);
+        $cart->setProductDetails($data->pId->name);
+        $cart->setProductOptions($data->options);
+        $cart->setUserId(Encoding::decode($data->sId, HomeController::VALUE_ENCODE_ITERTATION));
+        $cart->setAmount($data->total);
+        $cart->setAdditionalNote($data->note);
+        return $cart->add();
+    }
+    private function deleteProduct($data)
+    {
+        $product = new Product();
+        $product->setId($data[0]);
+        $product->tempAuthor = array($data[2], $data[1]);
+        return $product->delete();
     }
     private function deleteBranch($data)
     {

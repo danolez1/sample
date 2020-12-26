@@ -14,21 +14,30 @@ use ReflectionProperty;
 
 class ProductOption
 {
+    const SINGLE_ITEM = 'single';
+    const MULTIPLE_ITEM = 'multiple';
     public $name;
     public $category;
     public $price;
-    public $limit;
+    public $type;
+    public $available;
     public $amount;
-    public $availability;
+
+    public function __construct($object = null)
+    {
+        if ($object != null)
+            foreach ($object as $property => $value) {
+                $this->$property = $value;
+            }
+    }
 }
 
 class Product extends Model
 {
-
     const KEY_ENCODE_ITERTATION = -1;
     const VALUE_ENCODE_ITERTATION = 2;
     const TAX = .08;
-
+    public $tempAuthor;
     private $id;
     private $quantity;
     private $availability; //0-available,1-sold out
@@ -44,6 +53,7 @@ class Product extends Model
     private $author; //array(username,id);
     private $tax;
     private $branchId;
+    protected $orderCount;
 
     public function __construct()
     {
@@ -61,9 +71,8 @@ class Product extends Model
 
     public function availabilityText()
     {
-        switch ($this->availability) {
-            case '1':
-                return '<span trn="sold-out">Sold Out</span>';
+        if (intval($this->availability) == 0) {
+            return '<span trn="sold-out">Sold Out</span>';
         }
     }
 
@@ -86,10 +95,9 @@ class Product extends Model
         $validate = json_decode($this->validate())->{parent::ERROR};
         if (is_null($validate)) {
             $admin = new Administrator();
-            $admin->setUsername($this->getAuthor()[0]);
-            $admin->setId($this->getAuthor()[1]);
+            $admin->setUsername($this->tempAuthor[0]);
+            $admin->setId($this->tempAuthor[1]);
             $admin = $admin->get();
-            // var_dump($admin);
             if ($admin->getRole() == '1' || $admin->getRole() == '2') {
                 $this->setId(Encoding::encode(($this->table->getLastSN() + 1), self::VALUE_ENCODE_ITERTATION));
                 $obj = $this->object();
@@ -105,12 +113,46 @@ class Product extends Model
 
     public function update()
     {
-        # code...
+        $return = array();
+        $validate = json_decode($this->validate())->{parent::ERROR};
+        if (is_null($validate)) {
+            $admin = new Administrator();
+            $admin->setUsername($this->tempAuthor[0]);
+            $admin->setId($this->tempAuthor[1]);
+            $admin = $admin->get();
+            if ($admin->getRole() == '1' || $admin->getRole() == '2') {
+                $obj = $this->object();
+                $stmt = $this->table->update($obj[parent::PROPERTIES], $obj[parent::VALUES], array(ProductColumn::ID => $this->getId()));
+                $return[parent::RESULT] = (bool) $stmt->affected_rows;
+            } else {
+                $validate = Error::Unauthorised;
+            }
+        }
+        $return[parent::ERROR] = $validate;
+        return json_encode($return);
     }
 
     public function delete()
     {
-        # code...
+        $return = array();
+        $validate = '';
+        $admin = new Administrator();
+        $admin->setUsername($this->tempAuthor[0]);
+        $admin->setId($this->tempAuthor[1]);
+        $admin = $admin->get();
+        if ($admin->getRole() == '1' || $admin->getRole() == '2') {
+            $obj = $this->object(false);
+            $stmt = $this->table->remove(
+                array(
+                    ProductColumn::ID => $obj[ProductColumn::ID],
+                )
+            );
+            $return[parent::RESULT] = (bool) $stmt->affected_rows;
+        } else {
+            $validate = Error::Unauthorised;
+        }
+        $return[parent::ERROR] = $validate;
+        return json_encode($return);
     }
 
     public function get($id = null)
@@ -134,6 +176,22 @@ class Product extends Model
         }
     }
 
+    public function getDetails()
+    {
+        $ppt = $this->object(false);
+        unset($ppt['quantity']);
+        unset($ppt['availability']);
+        unset($ppt['images']);
+        unset($ppt['timeCreated']);
+        unset($ppt['author']);
+        unset($ppt['tax']);
+        unset($ppt['category']);
+        unset($ppt['branchId']);
+        $ppt['orderCount'] =  $this->orderCount;
+        return json_encode($ppt);
+    }
+
+
     public function properties($display = false): array
     {
         $return = array();
@@ -155,10 +213,14 @@ class Product extends Model
             $encKey = $key->name;
             //$encKey = Encoding::encode($key, self::KEY_ENCODE_ITERTATION);
 
-            if ($encKey == ProductColumn::DISPLAYIMAGE) {
-                if (isEmpty($data->$encKey)) {
-                    $obj->$encKey = 'assets/images/shop/food_placeholder.png';
-                } else   $obj->{$encKey} =  ($data->{$encKey});
+            if ($encKey == ProductColumn::PRODUCTOPTIONS) {
+                $options =  fromDbJson($data->{$encKey});
+                $this->productOptions = array();
+                if ($options != null && count($options) > 0) {
+                    foreach ($options as $option) {
+                        $obj->productOptions[] =  new ProductOption($option);
+                    }
+                }
             } else
                 $obj->{$encKey} =  ($data->{$encKey}); //,$key
         }
@@ -512,6 +574,26 @@ class Product extends Model
     public function setBranchId($branchId)
     {
         $this->branchId = $branchId;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of orderCount
+     */
+    public function getOrderCount()
+    {
+        return $this->orderCount;
+    }
+
+    /**
+     * Set the value of orderCount
+     *
+     * @return  self
+     */
+    public function setOrderCount($orderCount)
+    {
+        $this->orderCount = $orderCount;
 
         return $this;
     }

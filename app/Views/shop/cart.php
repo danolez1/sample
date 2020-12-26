@@ -15,26 +15,20 @@ use Demae\Auth\Models\Shop\Product\ProductOption; ?>
             <div class="row-hr mt-4"></div>
             <form method="post" action="">
                 <?php
-
-                for ($i = 0; $i < count($cart) + 3; $i++) { //foreach($cart as $cartItem)  
-                    $cartItem = new CartItem();
-                    $product = new Product(); //id input
-                    // amount, name, note
-                    $product->setName('Beef Rose lemon steak');
-                    $productOption = new ProductOption();
-                    // name x amount,
-                    $cartItem->setQuantity(5);
+                $total = 0;
+                foreach ($this->cart as $cartItem) {
                     include 'app/Views/shop/cart_item.php';
+                    $total = $total + (intval($cartItem->getAmount()) * intval($cartItem->getQuantity()));
                 } ?>
 
 
                 <div class="modal-footer modal-footer-fixed">
                     <span>Total</span><br>
                     <div class="row col-12 text-left ml-2" style="padding: 0">
-                        <div class="col-4 text-start" style="padding: 0;">
-                            <span class="badge total-price">¥200</span>
+                        <div class="col-5 text-start" style="padding: 0;">
+                            <span class="badge total-price"><?php echo $settings->getCurrency() . number_format($total); ?></span>
                         </div>
-                        <div class="col-8 text-right pr-2" style="padding: 0;">
+                        <div class="col-7 text-right pr-2" style="padding: 0;">
                             <button type="button" class="btn btn-sm btn-success add-to-cart col-11"><span>Check Out</span><span class="mdi mdi-arrow-right-bold ml-2"></span></button>
                         </div>
                     </div>

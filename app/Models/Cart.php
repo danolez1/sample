@@ -3,9 +3,14 @@
 namespace Demae\Auth\Models\Shop\Cart;
 
 use CartColumn;
+use danolez\lib\DB\Condition\Condition;
 use danolez\lib\DB\Credential\Credential;
 use danolez\lib\DB\Model\Model;
 use danolez\lib\Security\Encoding\Encoding;
+use Demae\Auth\Models\Error\Error;
+use Demae\Auth\Models\Shop\Product\Product;
+use Demae\Auth\Models\Shop\User\User;
+use Demae\Controller\ShopController\HomeController;
 use ReflectionClass;
 use ReflectionProperty;
 //getall
@@ -19,6 +24,7 @@ class CartItem extends Model
     private $productOptions;
     private $additionalNote;
     private $timeCreated;
+    private $productDetails;
 
     const KEY_ENCODE_ITERTATION = -1;
     const VALUE_ENCODE_ITERTATION = 2;
@@ -36,6 +42,130 @@ class CartItem extends Model
     protected function setDBName()
     {
         $this->dbName = Credential::SHOP_DB;
+    }
+
+    public function get($id)
+    {
+        $cart = [];
+        $query = (array) $this->table->get(
+            null,
+            Condition::WHERE,
+            array(
+                CartColumn::USERID => $id,
+            )
+        );
+        foreach ($query as $item) {
+            $cart[] = $this->setData($item);
+        }
+
+        return $cart;
+    }
+
+    public function add()
+    {
+        $return = array();
+        $verify = $this->verifyItem();
+        if ($verify instanceof CartItem) {
+            $obj = $this->object(false);
+            $query = (array) $this->table->get(
+                null,
+                Condition::WHERE,
+                array(
+                    CartColumn::PRODUCTDETAILS => $obj[CartColumn::PRODUCTDETAILS],
+                    CartColumn::AMOUNT => $obj[CartColumn::AMOUNT],
+                    CartColumn::PRODUCTOPTIONS => $obj[CartColumn::PRODUCTOPTIONS],
+                ),
+                array('AND', 'AND')
+            );
+            if (count($query) > 0) {
+                foreach ($query as $item) {
+                    $item = $this->setData($item);
+                    // $db = Encoding::encode(json_encode(fromDbJson($item->getProductOptions())));
+                    // $added = Encoding::encode($this->getProductOptions());
+                    // // if (($db == $added)) {
+                    $quantity = $item->getQuantity() + 1;
+                    $stmt = $this->table->update(array(CartColumn::QUANTITY), array($quantity), array(CartColumn::ID => $item->getId()));
+                    $return[parent::RESULT] = (bool) $stmt->affected_rows;
+                    // } 
+                }
+            } else {
+                $return[parent::RESULT] = $this->save();
+            }
+        } else {
+            $return[parent::ERROR] = Error::CouldNotAddToCart;
+        }
+
+
+
+
+        return json_encode($return);
+    }
+
+    public function verifyItem()
+    {
+        try {
+            $product = new Product();
+            $product = $product->get($this->getProductId());
+            $basePrice = $product->getPrice();
+            $options = [];
+            for ($i = 0; $i < count($product->getProductOptions()); $i++) {
+                for ($j = 0; $j < count($this->getProductOptions()); $j++) {
+                    if ($product->getProductOptions()[$i]->name == $this->getProductOptions()[$j]->name) {
+                        if (intval($this->getProductOptions()[$j]->value) > 0) {
+                            $product->getProductOptions()[$i]->amount = $this->getProductOptions()[$j]->value;
+                            $options[] = $product->getProductOptions()[$i];
+                        }
+                    }
+                }
+            }
+            $optionPrice = 0;
+            foreach ($options as $option) {
+                $optionPrice += intval($option->amount) * intval($option->price);
+            }
+            $this->setProductOptions(json_encode($options));
+            $this->setAmount($basePrice + $optionPrice);
+            $guest = json_decode($this->getUserId());
+
+            if (count($guest) == 2) { //user
+                // $user = new User();
+                // $user->setEmail($guest[0]);
+                // $user->setId($guest[1]);
+                // $user = $user->get();
+                $this->setUserId($guest[1]);
+            } else {
+                $this->setUserId(Encoding::encode(json_encode($guest), HomeController::VALUE_ENCODE_ITERTATION));
+            }
+            $this->setTimeCreated(time());
+            $this->setQuantity(1);
+            $this->setId(Encoding::encode(($this->table->getLastSN() + 1), self::VALUE_ENCODE_ITERTATION));
+            return $this;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    private function save()
+    {
+        $obj = $this->object();
+        $stmt = $this->table->insert($obj[parent::PROPERTIES], $obj[parent::VALUES]);
+        return (bool) $stmt->affected_rows;
+    }
+
+    public function delete()
+    {
+        // $stmt = $this->table->remove(
+        //     array(
+        //         ProductColumn::ID => $obj[ProductColumn::ID],
+        //     )
+        // );
+    }
+
+    public function update()
+    {
+        // $obj = $this->object();
+        // $stmt = $this->table->update($obj[parent::PROPERTIES], $obj[parent::VALUES], array(ProductColumn::ID => $this->getId()));
+        // $return[parent::RESULT] = (bool) $stmt->affected_rows;
+
     }
 
     public function properties($display = false): array
@@ -60,7 +190,7 @@ class CartItem extends Model
             $encKey = $key->name;
             //$encKey = Encoding::encode($key, self::KEY_ENCODE_ITERTATION);
             //  $obj->{$key} = $data->{$encKey};
-            $obj->{$key} =  Credential::decrypt($data->{$encKey}); //,$key
+            $obj->{$encKey} =  ($data->{$encKey});
         }
         return $obj;
     }
@@ -272,6 +402,26 @@ class CartItem extends Model
     public function setTimeCreated($timeCreated)
     {
         $this->timeCreated = $timeCreated;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of productDetails
+     */
+    public function getProductDetails()
+    {
+        return $this->productDetails;
+    }
+
+    /**
+     * Set the value of productDetails
+     *
+     * @return  self
+     */
+    public function setProductDetails($productDetails)
+    {
+        $this->productDetails = $productDetails;
 
         return $this;
     }

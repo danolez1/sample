@@ -3,6 +3,9 @@
 // ini_set('display_errors', '1');
 // ini_set('display_startup_errors', '1');
 // error_reporting(E_ALL);
+// file_uploads = On
+// post_max_size = 100M
+// upload_max_filesize = 100M
 define("ROOT", dirname(__DIR__) . DIRECTORY_SEPARATOR . 'demae-sample' . DIRECTORY_SEPARATOR);
 define("APP", ROOT . 'app' . DIRECTORY_SEPARATOR);
 define("PHP_LIB", APP . 'lib' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR);

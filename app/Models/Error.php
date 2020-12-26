@@ -25,12 +25,12 @@ class Error
     const ExpiredCard = array("Card Expired", "trn" => "error-expired");
     const NullBranchName = array("Enter Branch Name", "trn" => "error-branch-name");
     const NullLocation = array("Enter Branch Location", "trn" => "error-branch-location");
-    const Unauthorised = array("Unauthorised","trn"=>"unauthorised");
-    const NullCategoryName = array("Enter category name","trn"=>"error-category-name");
-    const CategoryNameExist = array("Category name exist","trn"=>"category-name-exist");
-    const NullProductName = array("Enter product name","trn"=>"error-product-name");
-    const NullPrice = array("Enter product price","trn"=>"error-product-price");
-    // const  = array("","trn"=>"");
+    const Unauthorised = array("Unauthorised", "trn" => "unauthorised");
+    const NullCategoryName = array("Enter category name", "trn" => "error-category-name");
+    const CategoryNameExist = array("Category name exist", "trn" => "category-name-exist");
+    const NullProductName = array("Enter product name", "trn" => "error-product-name");
+    const NullPrice = array("Enter product price", "trn" => "error-product-price");
+    const CouldNotAddToCart  = array("Could not add product to cart", "trn" => "could-not-add-to-cart");
     // const  = array("","trn"=>"");
     // const  = array("","trn"=>"");
     // const  = array("","trn"=>"");

@@ -5,6 +5,7 @@ namespace Demae\Auth\Models\Shop\Setting;
 use danolez\lib\DB\Credential\Credential;
 use danolez\lib\DB\Model\Model;
 use danolez\lib\Security\Encoding\Encoding;
+use Demae\Auth\Models\Shop\PaymentDetails\CreditCard;
 use ReflectionClass;
 use ReflectionProperty;
 use SettingsColumn;
@@ -19,7 +20,10 @@ class Setting extends Model
     private $bannerText;
     private $mobileLogo;
     private $bannerImage;
+    private $tags;
+    private $description;
     // WEBSITE DESIGN
+    private $useTitleAsLogo;
     private $sliderType;
     private $footerType;
     private $colors;
@@ -32,18 +36,21 @@ class Setting extends Model
     private $addressName;
     private $socials;
     private $websiteUrl;
+    private $email;
     // PRODUCT
     private $displayOrderCount;
     private $currency;
     private $showTax;
     private $minOrder;
     private $displayRating;
+    private $imagePlaceholder;
     // DELIVERY
     private $shippingFee;
     private $deliveryTime;
     private $deliveryTimeRange;
     private $deliveryAreas;
     private $deliveryDistance;
+    private $timeCreated;
     // PAYMENT
     private $paymentMethods;
     private $operationalTime; //show Image
@@ -53,14 +60,23 @@ class Setting extends Model
     private $theme;
     private $scripts;
     private $branches;
-
+    private $subscriptions;
 
     const KEY_ENCODE_ITERTATION = -1;
     const VALUE_ENCODE_ITERTATION = 2;
 
     public function __construct()
     {
-        parent::__construct();
+        parent::__construct(parent::FILE_MODEL);
+        if ($this->file->getFile() == '[]') {
+            $this->file->setFile(json_encode($this->object(false)));
+            //default values
+            $this->file->save();
+        } else {
+            foreach ($this->file->getFile() as $property => $value) {
+                $this->$property = $value;
+            }
+        }
     }
 
 
@@ -73,14 +89,27 @@ class Setting extends Model
         $this->dbName = Credential::SHOP_DB;
     }
 
-    public function add()
+    public function getOrientationWords($ppt)
     {
-        // if doesn not exist add
-        //if exist update
+        if (intval($ppt) == 1) {
+            return array("Horizontal", "trn" => "horizontal", 'other' => array("Vertical", "trn" => "vertical"));
+        } elseif (intval($ppt) == 2) {
+            return array("Vertical", "trn" => "vertical", "other" => array("Horizontal", "trn" => "horizontal",));
+        } else return null;
     }
 
-    public function get()
+    public static function getInstance()
     {
+        return new Setting();
+    }
+
+    public function update()
+    {
+        $return = array();
+        $this->file->setFile(json_encode($this->object(false)));
+        $return[parent::RESULT] = $this->file->save();
+        $return[parent::ERROR] = null;
+        return json_encode($return);
     }
 
     public function properties($display = false): array
@@ -103,9 +132,7 @@ class Setting extends Model
         $obj = new Setting();
         foreach (array_values($properties) as $key) {
             $encKey = $key->name;
-            //$encKey = Encoding::encode($key, self::KEY_ENCODE_ITERTATION);
-            //  $obj->{$key} = $data->{$encKey};
-            $obj->{$key} =  ($data->{$encKey}); //,$key
+            $obj->{$encKey} =  ($data->{$encKey}); //,$key
         }
         return $obj;
     }
@@ -134,7 +161,6 @@ class Setting extends Model
             $temp  = array();
             foreach ($data as $key) {
                 $temp[$key->name] = $key->name;
-                //$temp[$key->name] = Encoding::encode($key->name, self::KEY_ENCODE_ITERTATION);
             }
             return $temp;
         } else {
@@ -277,7 +303,7 @@ class Setting extends Model
      */
     public function setOperationalTime($operationalTime)
     {
-        $this->operationalTime = $this->purify($operationalTime);
+        $this->operationalTime = ($operationalTime);
 
         return $this;
     }
@@ -307,7 +333,7 @@ class Setting extends Model
      */
     public function getDisplayRating()
     {
-        return $this->displayRating;
+        return (bool) $this->displayRating;
     }
 
     /**
@@ -447,7 +473,7 @@ class Setting extends Model
      */
     public function getSliderType()
     {
-        return $this->sliderType;
+        return intval($this->sliderType) - 1;
     }
 
     /**
@@ -467,7 +493,7 @@ class Setting extends Model
      */
     public function getMenuDisplayOrientation()
     {
-        return $this->menuDisplayOrientation;
+        return intval($this->menuDisplayOrientation);
     }
 
     /**
@@ -487,7 +513,7 @@ class Setting extends Model
      */
     public function getInfoDisplayOrientation()
     {
-        return $this->infoDisplayOrientation;
+        return intval($this->infoDisplayOrientation);
     }
 
     /**
@@ -507,7 +533,7 @@ class Setting extends Model
      */
     public function getDisplayOrderCount()
     {
-        return $this->displayOrderCount;
+        return (bool) $this->displayOrderCount;
     }
 
     /**
@@ -527,7 +553,7 @@ class Setting extends Model
      */
     public function getProductDisplayOrientation()
     {
-        return $this->productDisplayOrientation;
+        return intval($this->productDisplayOrientation);
     }
 
     /**
@@ -587,7 +613,7 @@ class Setting extends Model
      */
     public function getFooterType()
     {
-        return $this->footerType;
+        return intval($this->footerType) - 1;
     }
 
     /**
@@ -662,12 +688,22 @@ class Setting extends Model
         return $this;
     }
 
+
+    /**
+     * Get the value of currency
+     */
+    public function getCurrencyLocale()
+    {
+        return strtoupper($this->currency);
+    }
+
     /**
      * Get the value of currency
      */
     public function getCurrency()
     {
-        return $this->currency;
+        $json = json_decode(file_get_contents('app\lib\php\Res\json\currency_code.json'));
+        return $json->{strtoupper($this->currency)};
     }
 
     /**
@@ -838,6 +874,126 @@ class Setting extends Model
     public function setDeliveryTimeRange($deliveryTimeRange)
     {
         $this->deliveryTimeRange = $deliveryTimeRange;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of imagePlaceholder
+     */
+    public function getImagePlaceholder()
+    {
+        return $this->imagePlaceholder;
+    }
+
+    /**
+     * Set the value of imagePlaceholder
+     *
+     * @return  self
+     */
+    public function setImagePlaceholder($imagePlaceholder)
+    {
+        $this->imagePlaceholder = $imagePlaceholder;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of subscriptions
+     */
+    public function getSubscriptions()
+    {
+        return $this->subscriptions;
+    }
+
+    /**
+     * Set the value of subscriptions
+     *
+     * @return  self
+     */
+    public function setSubscriptions($subscriptions)
+    {
+        $this->subscriptions = $subscriptions;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of tags
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    /**
+     * Set the value of tags
+     *
+     * @return  self
+     */
+    public function setTags($tags)
+    {
+        $this->tags = $tags;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of description
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Set the value of description
+     *
+     * @return  self
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of useTitleAsLogo
+     */
+    public function getUseTitleAsLogo()
+    {
+        return (bool) $this->useTitleAsLogo;
+    }
+
+    /**
+     * Set the value of useTitleAsLogo
+     *
+     * @return  self
+     */
+    public function setUseTitleAsLogo($useTitleAsLogo)
+    {
+        $this->useTitleAsLogo = $useTitleAsLogo;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of email
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Set the value of email
+     *
+     * @return  self
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
 
         return $this;
     }

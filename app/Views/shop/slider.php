@@ -67,7 +67,7 @@ if ($slider == 0) { ?>
                     <h6 class="text-white font-weight-bold"><?php echo $available ? '<span trn="opened">Opened</span>' : '<span trn="closed">Closed</span>'; ?></h6>
                 </div>
                 <div class="col-lg-4  col-md-4 col-sm-6 text-center">
-                    <span class="text-white" style="font-size: 15px;"><span trn="min-order"> Min. order</span> <b class="ml-3 mr-3"> <?php echo $settings->getCurrency() . $settings->getMinOrder(); ?></b></span>
+                    <span class="text-white" style="font-size: 15px;"><span trn="min-order"> Min. order</span> <b class="ml-3 mr-3"> <?php echo $settings->getCurrency() . number_format($settings->getMinOrder()); ?></b></span>
                     <a type="button" data-toggle="modal" data-target="#cart"> <img src="assets/images/shop/cart.svg" alt="cart" width="40"></a>
                 </div>
             </div>
@@ -104,7 +104,7 @@ if ($slider == 0) { ?>
                         </h6>
                     </div>
                     <div class="mt-5 mt-lg-0 col-lg-4  col-sm-6 col-md-5">
-                        <img src="assets/images/shop/turkey.svg" id="marsmello" class="img-fluid mt-5 mt-lg-0" data-aos="zoom-in-up">
+                        <img src="<?php echo $settings->getBannerImage() ?>" id="marsmello" class="img-fluid mt-5 mt-lg-0" data-aos="zoom-in-up">
                     </div>
                 </div>
             </div>
@@ -119,7 +119,7 @@ if ($slider == 0) { ?>
                     <h5 class="text-white font-weight-bold"><?php echo $available ? '<span trn="opened">Opened</span>' : '<span trn="closed">Closed</span>'; ?></h5>
                 </div>
                 <div class="col-lg-4 text-center">
-                    <span class="text-white" style="font-size: 15px;"> <span trn="min-order"> Min. order</span> <b class="ml-3 mr-3"> <?php echo $settings->getCurrency() . $settings->getMinOrder(); ?></b></span>
+                    <span class="text-white" style="font-size: 15px;"> <span trn="min-order"> Min. order</span> <b class="ml-3 mr-3"> <?php echo $settings->getCurrency() . number_format($settings->getMinOrder()); ?></b></span>
                     <a type="button" data-toggle="modal" data-target="#cart"> <img src="assets/images/shop/cart.svg" alt="cart" width="40"></a>
                 </div>
             </div>

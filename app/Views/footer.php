@@ -36,14 +36,14 @@
                 <div class="row">
                     <p class="col-10  text-start pt-4">© 2020 <a href="<?php echo $settings->getWebsiteUrl(); ?>"><?php echo $settings->getStoreName(); ?>.</a> All rights reserved.</p>
                     <div class="col-2  pt-4 sd-fnm" id="contact-details-section">
-                        <?php if (isset($settings->getSocials()['facebook'])) { ?>
-                            <a href="<?php echo $settings->getSocials()['facebook']; ?>"><span class="mdi mdi-facebook"></span></a>
+                        <?php if (isset($settings->getSocials()->facebook)) { ?>
+                            <a href="<?php echo $settings->getSocials()->facebook; ?>"><span class="mdi mdi-facebook"></span></a>
                         <?php } ?>
-                        <?php if (isset($settings->getSocials()['instagram'])) { ?>
-                            <a href="<?php echo $settings->getSocials()['instagram']; ?>"><span class="mdi mdi-instagram"></span></a>
+                        <?php if (isset($settings->getSocials()->instagram)) { ?>
+                            <a href="<?php echo $settings->getSocials()->instagram; ?>"><span class="mdi mdi-instagram"></span></a>
                         <?php } ?>
-                        <?php if (isset($settings->getSocials()['twitter'])) { ?>
-                            <a href="<?php echo $settings->getSocials()['twitter']; ?>"><span class="mdi mdi-twitter"></span></a>
+                        <?php if (isset($settings->getSocials()->twitter)) { ?>
+                            <a href="<?php echo $settings->getSocials()->twitter; ?>"><span class="mdi mdi-twitter"></span></a>
                         <?php } ?>
                     </div>
                 </div>
@@ -95,14 +95,14 @@
                 <div class="row col-12">
                     <p class="col-lg-10 col-sm-6  text-start pt-4">© 2020 <a href="<?php echo $settings->getWebsiteUrl(); ?>"><?php echo $settings->getStoreName(); ?>.</a> All rights reserved.</p>
                     <div class="col-lg-2 col-sm-6 text-end contact-details d-flex justify-content-center justify-content-md-end  pt-4" id="contact-details-section">
-                        <?php if (isset($settings->getSocials()['facebook'])) { ?>
-                            <a href="<?php echo $settings->getSocials()['facebook']; ?>"><span class="mdi mdi-facebook"></span></a>
+                        <?php if (isset($settings->getSocials()->facebook)) { ?>
+                            <a href="<?php echo $settings->getSocials()->facebook; ?>"><span class="mdi mdi-facebook"></span></a>
                         <?php } ?>
-                        <?php if (isset($settings->getSocials()['instagram'])) { ?>
-                            <a href="<?php echo $settings->getSocials()['instagram']; ?>"><span class="mdi mdi-instagram"></span></a>
+                        <?php if (isset($settings->getSocials()->instagram)) { ?>
+                            <a href="<?php echo $settings->getSocials()->instagram; ?>"><span class="mdi mdi-instagram"></span></a>
                         <?php } ?>
-                        <?php if (isset($settings->getSocials()['twitter'])) { ?>
-                            <a href="<?php echo $settings->getSocials()['twitter']; ?>"><span class="mdi mdi-twitter"></span></a>
+                        <?php if (isset($settings->getSocials()->twitter)) { ?>
+                            <a href="<?php echo $settings->getSocials()->twitter; ?>"><span class="mdi mdi-twitter"></span></a>
                         <?php } ?>
                     </div>
                 </div>
@@ -110,17 +110,17 @@
         </div>
     </div>
 <?php } ?>
-<script src="assets/vendors/jquery/jquery.min.js"></script>
 <script src="assets/vendors/bootstrap/bootstrap.min.js"></script>
 <script src="assets/vendors/owl-carousel/js/owl.carousel.min.js"></script>
 <script src="assets/vendors/aos/js/aos.js"></script>
+<script src="assets/js/jquery-spinner.min.js"></script>
+<script src="assets/js/mcx-dialog.min.js"></script>
 <script src="assets/js/jquery.card.js"></script>
 <script src="assets/js/shop.js"></script>
 <script src="assets/js/404.js"></script>
 <script src="assets/js/dictionary.js"></script>
 <script src="assets/js/translator.js"></script>
-<?php //echo $settings->getScripts(); 
-?>
+<?php echo $settings->getScripts(); ?>
 </body>
 
 </html>

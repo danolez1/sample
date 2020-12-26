@@ -2,10 +2,12 @@ function loadFormData(input) {
     for (const [key, value] of Object.entries(input)) {
         var element = document.getElementsByName(key)[0];
         if (element.nodeName == "INPUT") {
-            element.setAttribute("value", value);
+            if (value != '')
+                element.setAttribute("value", value);
         }
         if (element.nodeName == "TEXTAREA") {
-            element.innerText = value;
+            if (value != '')
+                element.innerText = value;
         }
     };
 }
@@ -30,6 +32,50 @@ function postalGeocoding(zip) {
         xmlhttp.open("GET", "get/postalGeoCode?zip=" + zip, true);
         xmlhttp.send();
     }
+}
+
+function encode(str) {
+    if (!str) str = "";
+    str = (str == "undefined" || str == "null") ? "" : str;
+    try {
+        var key = 146;
+        var pos = 0;
+        var ostr = '';
+        while (pos < str.length) {
+            ostr = ostr + String.fromCharCode(str.charCodeAt(pos) ^ key);
+            pos += 1;
+        }
+
+        return ostr;
+    } catch (ex) {
+        return '';
+    }
+}
+
+function decode(str) {
+    if (!str) str = "";
+    str = (str == "undefined" || str == "null") ? "" : str;
+    try {
+        var key = 146;
+        var pos = 0;
+        var ostr = '';
+        while (pos < str.length) {
+            ostr = ostr + String.fromCharCode(key ^ str.charCodeAt(pos));
+            pos += 1;
+        }
+
+        return ostr;
+    } catch (ex) {
+        return '';
+    }
+}
+
+function listToArray(list) {
+    var nodes = [];
+    for (var i = 0; i < list.length; i++) {
+        nodes.push(list[i]);
+    }
+    return nodes;
 }
 
 function cardBrand(cardNumber) {
@@ -59,3 +105,27 @@ function cardBrand(cardNumber) {
         }
     }
 }
+
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    var expires = "expires=" + d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+var lang = getCookie('lingo');

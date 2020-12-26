@@ -6,14 +6,15 @@
                 <h5 class="span-circle" style="background-color:#05C776;">x<?php echo  $cartItem->getQuantity(); ?></h5>
             </div>
             <div class="col-lg-8 col-md-8 col-sm-5 text-left pl-4 mt-1">
-                <h4 class="order-sub-title font-weight-bold"><?php echo  $product->getName(); ?></h4>
+                <h4 class="order-sub-title font-weight-bold"><?php echo  $cartItem->getProductDetails(); ?></h4>
                 <div style="font-size:14px">
-                    <span class="text-muted">Fanta <strong>X2</strong>・Onions <strong>X3</strong>・Ketup <strong>X1</strong></span><br>
-                    <span class="text-muted">Note: “plese keep it hot” </span>
+                    <span class="text-muted"><?php foreach (fromDbJson($cartItem->getProductOptions()) as $option) echo $option->name . ' <strong> X' . $option->amount . '</strong> ・'; ?></span><br>
+                    <!-- Fanta Onions <strong>X3</strong>・Ketup <strong>X1</strong> -->
+                    <span class="text-muted"><span>Note</span>: "<?php echo $cartItem->getAdditionalNote(); ?>" </span>
                 </div>
             </div>
             <div class="col-lg-3 col-md-3 col-sm-6 text-lg-center text-sm-right">
-                <span class="order-sub-title font-weight-bold ml-2">$3200</span>
+                <span class="order-sub-title font-weight-bold ml-2"><?php echo $settings->getCurrency() . number_format($cartItem->getAmount() * $cartItem->getQuantity()); ?></span>
                 <div class="qty text-right">
                     <i class="mdi mdi-minus-circle"></i>
                     <input type="number" class="count" name="qty" value="1">

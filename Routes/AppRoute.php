@@ -12,7 +12,7 @@ class AppRoute extends Router
     private const DIR2 = '/demae-sample/';
     private const DIR = '/';
     private $home = ["", 'home', 'shop', 'profile', 'track', 'checkout', 'cart', 'auth', 'logout'];
-    private $admin = ['admin', 'admin-auth', 'add-product', 'branch-dashboard', 'branch-setting', 'admin-faqs', 'admin-logout', 'admin-profile', 'dashboard', 'orders', 'branches', 'products', 'staffs', 'users', 'promotions', 'documentation', 'settings'];
+    private $admin = ['admin', 'admin-auth', 'add-product', 'edit-product', 'branch-setting', 'admin-faqs', 'admin-logout', 'admin-profile', 'dashboard', 'orders', 'branches', 'products', 'staffs', 'users', 'promotions', 'documentation', 'settings'];
     private $apiMethod = ['get', 'post'];
     public function __construct($query)
     {

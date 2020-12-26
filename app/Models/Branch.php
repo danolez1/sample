@@ -24,9 +24,14 @@ class Branch extends Model
     private $admin;
     private $minOrder;
     private $averageDeliveryTime;
-    private $opening;
-    private $closing;
-    private $break;
+    private $operationTime;
+    private $shippingFee;
+    private $deliveryTime;
+    private $deliveryTimeRange;
+    private $deliveryAreas;
+    private $deliveryDistance;
+    private $address;
+    protected $details;
 
     const KEY_ENCODE_ITERTATION = -1;
     const VALUE_ENCODE_ITERTATION = 2;
@@ -126,22 +131,31 @@ class Branch extends Model
 
     public function update()
     {
-        # code...
+        $obj = $this->object();
+        $stmt = $this->table->update($obj[parent::PROPERTIES], $obj[parent::VALUES], array(BranchColumn::ID => $this->getId()));
+        if ((bool) $stmt->affected_rows) {
+            $this->sendNotificationMail();
+        }
+        return (bool) $stmt->affected_rows;
     }
 
 
     public function get($admin = null, $id = null)
     {
         $branches = [];
-        $query = (array) $this->table->get(
-            null,
-            Condition::WHERE,
-            $id == null ? array(
-                BranchColumn::ADMIN => $admin->getId(),
-                BranchColumn::ID => $admin->getBranchId(),
-            ) : array(BranchColumn::ID => $id),
-            array("OR")
-        );
+        if (is_null($admin) && is_null($id)) {
+            $query = (array) $this->table->get();
+        } else {
+            $query = (array) $this->table->get(
+                null,
+                Condition::WHERE,
+                $id == null ? array(
+                    BranchColumn::ADMIN => $admin->getId(),
+                    BranchColumn::ID => $admin->getBranchId(),
+                ) : array(BranchColumn::ID => $id),
+                array("OR")
+            );
+        }
         if (count($query) > 0) {
             foreach ($query as $branch) {
                 $branches[] = $this->setData($branch);
@@ -329,33 +343,152 @@ class Branch extends Model
         $this->averageDeliveryTime = $averageDeliveryTime;
     }
 
-    public function getOpening()
+    /**
+     * Get the value of operationTime
+     */
+    public function getOperationTime()
     {
-        return $this->opening;
+        return $this->operationTime;
     }
 
-    public function  setOpening($opening)
+    /**
+     * Set the value of operationTime
+     *
+     * @return  self
+     */
+    public function setOperationTime($operationTime)
     {
-        $this->opening = $opening;
+        $this->operationTime = $operationTime;
+
+        return $this;
     }
 
-    public function getClosing()
+    /**
+     * Get the value of shippingFee
+     */
+    public function getShippingFee()
     {
-        return $this->closing;
+        return $this->shippingFee;
     }
 
-    public function  setClosing($closing)
+    /**
+     * Set the value of shippingFee
+     *
+     * @return  self
+     */
+    public function setShippingFee($shippingFee)
     {
-        $this->closing = $closing;
+        $this->shippingFee = $shippingFee;
+
+        return $this;
     }
 
-    public function getBreak()
+    /**
+     * Get the value of deliveryTime
+     */
+    public function getDeliveryTime()
     {
-        return $this->break;
+        return $this->deliveryTime;
     }
 
-    public function  setBreak($break)
+    /**
+     * Set the value of deliveryTime
+     *
+     * @return  self
+     */
+    public function setDeliveryTime($deliveryTime)
     {
-        $this->break = $break;
+        $this->deliveryTime = $deliveryTime;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of deliveryTimeRange
+     */
+    public function getDeliveryTimeRange()
+    {
+        return $this->deliveryTimeRange;
+    }
+
+    /**
+     * Set the value of deliveryTimeRange
+     *
+     * @return  self
+     */
+    public function setDeliveryTimeRange($deliveryTimeRange)
+    {
+        $this->deliveryTimeRange = $deliveryTimeRange;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of deliveryAreas
+     */
+    public function getDeliveryAreas()
+    {
+        return $this->deliveryAreas;
+    }
+
+    /**
+     * Set the value of deliveryAreas
+     *
+     * @return  self
+     */
+    public function setDeliveryAreas($deliveryAreas)
+    {
+        $this->deliveryAreas = $deliveryAreas;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of deliveryDistance
+     */
+    public function getDeliveryDistance()
+    {
+        return $this->deliveryDistance;
+    }
+
+    /**
+     * Set the value of deliveryDistance
+     *
+     * @return  self
+     */
+    public function setDeliveryDistance($deliveryDistance)
+    {
+        $this->deliveryDistance = $deliveryDistance;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of address
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * Set the value of address
+     *
+     * @return  self
+     */
+    public function setAddress($address)
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of details
+     */
+    public function getDetails()
+    {
+        $this->details = array('shipping-fee' => $this->shippingFee, 'min-order' => $this->minOrder, 'delivery-time' => $this->deliveryTime, 'time-range' => $this->deliveryTimeRange, 'address' => $this->address, 'delivery-area' => $this->deliveryAreas, 'delivery-distance' => $this->deliveryDistance,);
+        return $this->details;
     }
 }

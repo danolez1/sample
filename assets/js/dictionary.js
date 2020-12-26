@@ -224,6 +224,24 @@ var dictionary = {
     }, "building": {
         en: "Building Name, Room Number",
         jp: "建物名、部屋番号"
+    }, "could-not-add-to-cart": {
+        en: "Could not add product to cart",
+        jp: "カートに商品を追加できませんでした"
+    }, "successful": {
+        en: "Successful",
+        jp: "成功"
+    }, "cart-added": {
+        en: "Product added to cart",
+        jp: "  カートに商品が追加されました"
+    }, "error-occured": {
+        en: "Error Occured",
+        jp: "エラーが発生しました"
+    }, "": {
+        en: "",
+        jp: ""
+    }, "": {
+        en: "",
+        jp: ""
     }, "": {
         en: "",
         jp: ""
@@ -237,4 +255,5 @@ var dictionary = {
         en: "",
         jp: ""
     },
+
 }

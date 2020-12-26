@@ -15,7 +15,7 @@
     <div class="row col-md-12 pt-1">
         <div class="row col-12">
             <a type="button" data-toggle="modal" data-target="#cart"> <img src="assets/images/shop/cart.svg" class="top-notice-icon" alt="cart"></a>
-            <span class="mt-1"> <span trn="min-order"> Min. order</span> <b class="ml-1"> <?php echo $settings->getCurrency().$settings->getMinOrder();?></b></span>
+            <span class="mt-1"> <span trn="min-order"> Min. order</span> <b class="ml-1"> <?php echo $settings->getCurrency() . number_format($settings->getMinOrder()); ?></b></span>
         </div>
 
     </div>

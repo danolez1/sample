@@ -76,6 +76,50 @@ function returnJsFunc($input)
     echo $script;
 }
 
+function fromDbJson($object)
+{
+    return json_decode(str_replace('&quot;', '"', $object));
+}
+
+function daysOfWeek()
+{
+    return array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday');
+}
+
+function toDbJson($object)
+{
+    if (!isEmpty($object))
+        return (str_replace('"', '&quot;', json_encode($object)));
+}
+
+function uploadFile($inputName, $path = "images/", $fileName = null)
+{
+    $file = $_FILES[$inputName]['name'];
+    $folder =  $path;
+    if (!is_dir($folder)) mkdir($folder);
+    $fileName = $fileName ?? $file;
+    $target = $folder . $fileName  . "." . pathinfo($file, PATHINFO_EXTENSION);
+    $upload = move_uploaded_file($_FILES[$inputName]['tmp_name'], $target);
+    return $upload ? $target : null;
+}
+
+function iterativeBase64Encode($data, $k)
+{
+    $rt = $data;
+    for ($i = 0; $i < $k; $i++) {
+        $rt =  base64_encode($rt);
+    }
+    return $rt;
+}
+function iterativeBase64Decode($data, $k = 0)
+{
+    $rt = $data;
+    for ($i = 0; $i < $k; $i++) {
+        $rt =  base64_decode($rt);
+    }
+    return $rt;
+}
+
 function maskString($number, $left = 4)
 {
     // check for input

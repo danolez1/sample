@@ -22,42 +22,6 @@ function setColor(selector) {
     }
 }
 
-function encode(str) {
-    if (!str) str = "";
-    str = (str == "undefined" || str == "null") ? "" : str;
-    try {
-        var key = 146;
-        var pos = 0;
-        var ostr = '';
-        while (pos < str.length) {
-            ostr = ostr + String.fromCharCode(str.charCodeAt(pos) ^ key);
-            pos += 1;
-        }
-
-        return ostr;
-    } catch (ex) {
-        return '';
-    }
-}
-
-function decode(str) {
-    if (!str) str = "";
-    str = (str == "undefined" || str == "null") ? "" : str;
-    try {
-        var key = 146;
-        var pos = 0;
-        var ostr = '';
-        while (pos < str.length) {
-            ostr = ostr + String.fromCharCode(key ^ str.charCodeAt(pos));
-            pos += 1;
-        }
-
-        return ostr;
-    } catch (ex) {
-        return '';
-    }
-}
-
 function show(btn, div, display, hide = false) {
     $(btn).click(function () {
         var form = $(div);
@@ -113,15 +77,34 @@ function getUpload(inputId, imgId, inputName, otherPreview) {
         }
     });
 }
+
+function trim(x) {
+    try {
+        return x.replace(/^\s+|\s+$/gm, '');
+    } catch (error) {
+        return x;
+    }
+}
+
 function delOption(nodeList, element) {
     var nodes = [];
     var index;
     for (i = 0; i < nodeList.length; i++) {
-        nodes.push(nodeList[i]);
-        if (element == nodeList[i]) {
+        var node = nodeList[i];
+        try {
+            if (node.tagName.toLowerCase() == "span") {
+                nodes.push(nodeList[i]);
+            }
+        } catch (E) {
+        }
+    }
+
+    for (i = 0; i < nodes.length; i++) {
+        if (element == nodes[i]) {
             index = i;
         }
     }
+
     var display = $('#options-input-div');
     var storage = $('input[name="options"]');
     var former = JSON.parse(storage.val());
@@ -144,6 +127,7 @@ $(document).ready(function () {
     show("#delivery-time-fab", "#timer", 'block', true);
     getUpload("#browse", "#browse-preview", "banner");
     getUpload("#browse1", "#browse-preview1", "logo");
+    getUpload("#browse2", "#browse-preview2", "image-placeholder");
     getUpload("#browse-product", "#browse-preview", "product-img", "#preview-small");
     //preview-small
     $('#save-average-time').click(function () {
@@ -155,11 +139,10 @@ $(document).ready(function () {
         $('#add-btn').attr("page", e.relatedTarget.getAttribute('data-page'));
     });
     $('.edit-product').click(function () {
+        spinner('products-main').show();
         var productId = $(this).parent().parent().attr('data-id');
         setCookie('editProductId', productId, 1);
-    });
-    $('.del-product').click(function () {
-
+        window.location.href = 'edit-product';
     });
 
     getCookie('lingo') == 'en' ? $('a[lang="en"]').addClass('text-light') : $('a[lang="jp"]').addClass('text-light');
@@ -174,6 +157,89 @@ $(document).ready(function () {
         }
         $(this).addClass('text-white');
     });
+
+    $('#color-picker').spectrum({
+        type: "text",
+        togglePaletteOnly: "true",
+        hideAfterPaletteSelect: "true",
+        showInput: "true",
+        showInitial: "true"
+    });
+    try {
+        if ($('data#branchData') != undefined) {
+            loadFormData(JSON.parse($('data#branchData').attr('data-details')));
+            if ($('data#branchData').attr('data-times') != "null") {
+                var times = ($('data#branchData').attr('data-times').replace(/(&quot\;)/g, "\""));
+                times = JSON.parse(times);
+                times.forEach(function (time) {
+                    var open = $('input[data-day="open[' + time.day + ']"]');
+                    open.val(time.open);
+                    var close = $('input[data-day="close[' + time.day + ']"]');
+                    close.val(time.close);
+                    var breakStart = $('input[data-day="breakStart[' + time.day + ']"]');
+                    breakStart.val(time.breakStart);
+                    var breakEnd = $('input[data-day="breakEnd[' + time.day + ']"]');
+                    breakEnd.val(time.breakEnd);
+                });
+            }
+        }
+    } catch (e) {
+
+    }
+
+    $('.branch').click(function () {
+        if ($('#selectedBranch').val() == $(this).attr('data-id')) {
+            $('.branch').css('background-color', '#FFF');
+            $('#selectedBranch').val('');
+            $('input[name="branch-id"]').val($(this).attr('data-id'));
+            if ($('#branchInfo').css('display') == 'block') {
+                $('#branchInfo').css('display', "none");
+
+            }
+            if ($('#operationalTimes').css('display') == 'block') {
+                $('#operationalTimes').css('display', "none");
+
+            }
+        } else {
+            loadFormData(JSON.parse($(this).attr('data-details')));
+            if ($(this).attr('data-times') != "null") {
+
+                var times = JSON.parse($(this).attr('data-times'));
+                //replace(/(&quot\;)/g, "\"")
+                times.forEach(function (time) {
+                    var open = $('input[data-day="open[' + time.day + ']"]');
+                    open.val(time.open);
+                    var close = $('input[data-day="close[' + time.day + ']"]');
+                    close.val(time.close);
+                    var breakStart = $('input[data-day="breakStart[' + time.day + ']"]');
+                    breakStart.val(time.breakStart);
+                    var breakEnd = $('input[data-day="breakEnd[' + time.day + ']"]');
+                    breakEnd.val(time.breakEnd);
+                });
+            }
+            $('.branch').css('background-color', '#FFF');
+            $(this).css('background-color', '#00AB55');
+            $('#selectedBranch').val($(this).attr('data-id'));
+            $('input[name="branch-id"]').val($(this).attr('data-id'));
+            if ($('#branchInfo').css('display') == 'none') {
+                $('#branchInfo').css('display', "block");
+
+            }
+            if ($('#operationalTimes').css('display') == 'none') {
+                $('#operationalTimes').css('display', "block");
+
+            }
+        }
+
+    });
+    setInterval(function () {
+        listToArray($(".grid-product-card-img-top")).forEach(function (elem) {
+            if (elem.nextElementSibling.className == 'grid-product-img-info') {
+                elem.nextElementSibling.style.height = $(elem).css("height");
+
+            }
+        });
+    }, 100);
 
     $('#add-btn').click(function () {
         lang = getCookie('lingo');
@@ -234,11 +300,12 @@ $(document).ready(function () {
         var name = $('input[name="option-name"]');
         var availability = $('input[name="option-availability"]');
         var price = $('input[name="option-price"]');
+        var type = $('input[name="option-type"]');
         var display = $('#options-input-div');
         var storage = $('input[name="options"]');
         errText(name, name.val());
         if (name.val() != undefined && name.val() != "") {
-            var value = { category: category.val(), name: name.val(), available: availability.val(), price: price.val() };
+            var value = { category: { name: $('#option-category-name').html(), id: category.val() }, name: name.val(), available: availability.val(), price: price.val(), type: type.val() };
             if (storage.val() != "" && storage.val() != undefined) {
                 var former = JSON.parse(storage.val());
                 var exist = false;
@@ -284,13 +351,6 @@ $(document).ready(function () {
             input.removeClass("mdc-select--invalid");
         }
     }
-
-    // $('.upload-image').click(function (e) {
-    //     e.preventDefault();
-    //     var input = $(this).find('input');
-    //     input.click();
-    //     console.log(input.attr('type'));
-    // });
 
     $("#pending-order").click(function () {
         var pendingDisplay = $('#pending-order-display');
@@ -383,6 +443,30 @@ $(document).ready(function () {
                                     webToast.Success({
                                         status: dictionary['successful'][lang],
                                         message: dictionary['staff-deleted'][lang],
+                                        delay: 5000
+                                    });
+                                    location.reload();
+                                } else {
+                                    console.log(data);
+                                }
+                            });
+
+                    case "delete-product":
+                        spinner('products-main').show();
+                        return $.post("post/deleteProduct",
+                            {
+                                id: async.attr("data-id")
+                            },
+                            function (data, status) {
+                                console.log(data);
+                                data = JSON.parse(data);
+                                if (data.result == true) {
+                                    if (window.history.replaceState) {
+                                        window.history.replaceState(null, null, window.location.href);
+                                    }
+                                    webToast.Success({
+                                        status: dictionary['successful'][lang],
+                                        message: dictionary['product-deleted'][lang],
                                         delay: 5000
                                     });
                                     location.reload();

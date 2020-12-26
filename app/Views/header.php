@@ -7,24 +7,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="icon" href="assets/images/home/logo.svg" type="image/svg">
+    <!-- Save Logo  -->
+    <link rel="icon" href="<?php echo  $settings->getMetaContent(); ?>" type="image/*">
     <link rel="profile" href="http://gmpg.org/xfn/11">
     <link rel="pingback" href="https://www.demae-system.com/xmlrpc.php">
-    <meta name="description" content="tags" />
+    <meta name="description" content="<?php echo $settings->getDescription(); ?>" />
     <meta name="robots" content="index, follow" />
     <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
     <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-    <link rel="canonical" href="url" />
+    <link rel="canonical" href="<?php echo $settings->getWebsiteUrl(); ?>" />
     <meta property="og:locale" content="ja_JP" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="title" />
-    <meta property="og:description" content="tags" />
-    <meta property="og:url" content="url" />
-    <meta property="og:site_name" content="store name" />
+    <meta property="og:title" content="<?php echo $settings->getTitle(); ?>" />
+    <meta property="og:description" content="<?php echo $settings->getTags(); ?>" />
+    <meta property="og:url" content="<?php echo $settings->getWebsiteUrl(); ?>" />
+    <meta property="og:site_name" content="<?php echo $settings->getStoreName();; ?>" />
     <meta property="article:modified_time" content="2020-11-18T06:16:40+00:00" />
-    <meta property="og:image" content="assets/images/home/logo.svg" />
+    <meta property="og:image" content="<?php echo $settings->getMetaContent(); ?>" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="description" content="description" />
+    <meta name="description" content="<?php echo $settings->getDescription(); ?>" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel='dns-prefetch' href='//translate.google.com' />
     <link rel='dns-prefetch' href='//ajax.googleapis.com' />
@@ -41,7 +42,13 @@
     <link rel="stylesheet" href="assets/css/side_modal.css">
     <link rel="stylesheet" href="assets/css/shop.css">
     <link rel="stylesheet" href="assets/css/home.css">
+    <link rel="stylesheet" href="assets/css/jquery-spinner.min.css">
+    <link rel="stylesheet" href="assets/css/webToast.min.css">
+    <link rel="stylesheet" href="assets/css/dialog-mobile.css">
+    <script src="assets/vendors/jquery/jquery.min.js"></script>
     <script src="assets/js/first_load.js"></script>
+    <script src="assets/js/webToast.min.js"></script>
+
 </head>
 
 <body id="body" data-spy="scroll" data-target=".navbar" data-offset="100">
@@ -58,8 +65,11 @@
                         <li class="nav-item"><a class="nav-link" href="#menu" trn="menu">Menu</a></li>
                         <li class="nav-item">
                             <div class="dropdown"><a type="button" class="nav-link dropdown-toggle" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span trn="branches">Branches</span></a>
-                                <?php ?>
-                                <div class="dropdown-menu"><button class="dropdown-item" id="">Tokyo</button></div>
+                                <div class="dropdown-menu">
+                                    <?php foreach ($this->branches as $branch) { ?>
+                                        <button class="dropdown-item" data-id="<?php echo $branch->getId(); ?>"><?php echo $branch->getName(); ?></button>
+                                    <?php } ?>
+                                </div>
                             </div>
                         </li>
                         <li class="nav-item"><a class="nav-link" href="" style="width:120px;" trn="contact-us">Contact Us</a></li>

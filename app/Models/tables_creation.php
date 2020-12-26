@@ -100,11 +100,23 @@ $branchTb->addColumn(BranchColumn::SN, DataType::integer(10), Attribute::AUTO_IN
   ->addColumn(BranchColumn::ADMIN, DataType::TEXT)
   ->addColumn(BranchColumn::MINORDER, DataType::TEXT)
   ->addColumn(BranchColumn::AVERAGEDELIVERYTIME, DataType::TEXT)
-  ->addColumn(BranchColumn::OPENING, DataType::TEXT)
-  ->addColumn(BranchColumn::CLOSING, DataType::TEXT)
-  ->addColumn(BranchColumn::BREAK, DataType::TEXT)
+  ->addColumn(BranchColumn::OPERATIONTIME, DataType::TEXT)
+  ->addColumn(BranchColumn::SHIPPINGFEE, DataType::TEXT)
+  ->addColumn(BranchColumn::DELIVERYTIME, DataType::TEXT)
+  ->addColumn(BranchColumn::DELIVERYTIMERANGE, DataType::TEXT)
+  ->addColumn(BranchColumn::DELIVERYAREAS, DataType::TEXT)
+  ->addColumn(BranchColumn::DELIVERYDISTANCE, DataType::TEXT)
+  ->addColumn(BranchColumn::ADDRESS, DataType::TEXT)
   ->create();
 
+
+const OPERATIONTIME = "operationTime";
+const SHIPPINGFEE = "shippingFee";
+const DELIVERYTIME = "deliveryTime";
+const DELIVERYTIMERANGE = "deliveryTimeRange";
+const DELIVERYAREAS = "deliveryAreas";
+const DELIVERYDISTANCE = "deliveryDistance";
+const ADDRESS = "address";
 
 $cartTb = $db->Table(Credential::CARTS_TBL);
 $cartTb->addColumn(CartColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
@@ -116,10 +128,24 @@ $cartTb->addColumn(CartColumn::SN, DataType::integer(10), Attribute::AUTO_INCREM
   ->addColumn(CartColumn::PRODUCTOPTIONS, DataType::TEXT)
   ->addColumn(CartColumn::ADDITIONALNOTE, DataType::TEXT)
   ->addColumn(CartColumn::TIMECREATED, DataType::TEXT)
+  ->addColumn(CartColumn::PRODUCTDETAILS, DataType::TEXT)
   ->create();
 
 
-// $deliveryTb = $db->Table(Credential::DELIVERY_TBL);
+$orderTb = $db->Table(Credential::ORDERS_TBL);
+// $orderTb->addColumn(OrderColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
+//   ->addColumn(OrderColumn::ID, DataType::TEXT)
+//   // ->addColumn(OrderColumn:, DataType::TEXT)
+//   ->create();
+
+$notificationTb = $db->Table(Credential::NOTIFICATIONS_TBL);
+// $notificationTb->addColumn(NotificationColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
+//   ->addColumn(NotificationColumn::ID, DataType::TEXT)
+//   // ->addColumn(NotificationColumn:, DataType::TEXT)
+//   ->create();
+
+
+$deliveryTb = $db->Table(Credential::DELIVERY_TBL);
 // $deliveryTb->addColumn(DeliveryColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
 //   ->addColumn(DeliveryColumn:, DataType::TEXT)
 //   // ->addColumn(DeliveryColumn:, DataType::TEXT)
@@ -147,26 +173,6 @@ $categoryTb->addColumn(CategoryColumn::SN, DataType::integer(10), Attribute::AUT
   ->create();
 
 
-// $messagingTb = $db->Table(Credential::MESSAGING_TBL);
-// $messagingTb->addColumn(MessagingColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
-//   ->addColumn(MessagingColumn::ID, DataType::TEXT)
-//   // ->addColumn(MessagingColumn:, DataType::TEXT)
-//   ->create();
-
-
-// $notificationTb = $db->Table(Credential::NOTIFICATIONS_TBL);
-// $notificationTb->addColumn(NotificationColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
-//   ->addColumn(NotificationColumn::ID, DataType::TEXT)
-//   // ->addColumn(NotificationColumn:, DataType::TEXT)
-//   ->create();
-
-
-// $orderTb = $db->Table(Credential::ORDERS_TBL);
-// $orderTb->addColumn(OrderColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
-//   ->addColumn(OrderColumn::ID, DataType::TEXT)
-//   // ->addColumn(OrderColumn:, DataType::TEXT)
-//   ->create();
-
 $paymentDetailsTb = $db->Table(Credential::PAYMENT_METHODS_TBL);
 $paymentDetailsTb->addColumn(PaymentDetailsColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
   ->addColumn(PaymentDetailsColumn::ID, DataType::TEXT)
@@ -182,40 +188,46 @@ $paymentDetailsTb->addColumn(PaymentDetailsColumn::SN, DataType::integer(10), At
 //   // ->addColumn(PromotionColumn:, DataType::TEXT)
 //   ->create();
 
-$settingsTb = $db->Table(Credential::SETTINGS_TBL);
-$settingsTb->addColumn(SettingsColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
-  ->addColumn(SettingsColumn::PAYMENTMETHODS, DataType::TEXT)
-  ->addColumn(SettingsColumn::LOGO, DataType::TEXT)
-  ->addColumn(SettingsColumn::ADDRESS, DataType::TEXT)
-  ->addColumn(SettingsColumn::PHONENUMBER, DataType::TEXT)
-  ->addColumn(SettingsColumn::ADDRESSNAME, DataType::TEXT)
-  ->addColumn(SettingsColumn::SOCIALS, DataType::TEXT)
-  ->addColumn(SettingsColumn::BANNERTITLE, DataType::TEXT)
-  ->addColumn(SettingsColumn::BANNERTEXT, DataType::TEXT)
-  ->addColumn(SettingsColumn::DELIVERYTIME, DataType::TEXT)
-  ->addColumn(SettingsColumn::OPERATIONALTIME, DataType::TEXT)
-  ->addColumn(SettingsColumn::MINORDER, DataType::TEXT)
-  ->addColumn(SettingsColumn::DISPLAYRATING, DataType::TEXT)
-  ->addColumn(SettingsColumn::TITLE, DataType::TEXT)
-  ->addColumn(SettingsColumn::WEBSITEURL, DataType::TEXT)
-  ->addColumn(SettingsColumn::STORENAME, DataType::TEXT)
-  ->addColumn(SettingsColumn::METACONTENT, DataType::TEXT)
-  ->addColumn(SettingsColumn::MOBILELOGO, DataType::TEXT)
-  ->addColumn(SettingsColumn::BANNERIMAGE, DataType::TEXT)
-  ->addColumn(SettingsColumn::SLIDERTYPE, DataType::TEXT)
-  ->addColumn(SettingsColumn::MENU_DISPLAY_ORIENTATION, DataType::TEXT)
-  ->addColumn(SettingsColumn::INFO_DISPLAY_ORIENTATION, DataType::TEXT)
-  ->addColumn(SettingsColumn::PRODUCT_DISPLAY_ORIENTATION, DataType::TEXT)
-  ->addColumn(SettingsColumn::DISPLAY_ORDER_COUNT, DataType::TEXT)
-  ->addColumn(SettingsColumn::THEME, DataType::TEXT)
-  ->addColumn(SettingsColumn::DELIVERYDISTANCE, DataType::TEXT)
-  ->addColumn(SettingsColumn::FOOTERTYPE, DataType::TEXT)
-  ->addColumn(SettingsColumn::SCRIPTS, DataType::TEXT)
-  ->addColumn(SettingsColumn::BRANCHES, DataType::TEXT)
-  ->addColumn(SettingsColumn::COLORS, DataType::TEXT)
-  ->addColumn(SettingsColumn::CURRENCY, DataType::TEXT)
-  ->addColumn(SettingsColumn::SHOWTAX, DataType::TEXT)
-  ->addColumn(SettingsColumn::SHIPPINGFEE, DataType::TEXT)
-  ->addColumn(SettingsColumn::DELIVERYAREAS, DataType::TEXT)
-  ->addColumn(SettingsColumn::DELIVERYTIMERANGE, DataType::TEXT)
-  ->create();
+// $messagingTb = $db->Table(Credential::MESSAGING_TBL);
+// $messagingTb->addColumn(MessagingColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
+//   ->addColumn(MessagingColumn::ID, DataType::TEXT)
+//   // ->addColumn(MessagingColumn:, DataType::TEXT)
+//   ->create();
+
+// $settingsTb = $db->Table(Credential::SETTINGS_TBL);
+// $settingsTb->addColumn(SettingsColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
+//   ->addColumn(SettingsColumn::PAYMENTMETHODS, DataType::TEXT)
+//   ->addColumn(SettingsColumn::LOGO, DataType::TEXT)
+//   ->addColumn(SettingsColumn::ADDRESS, DataType::TEXT)
+//   ->addColumn(SettingsColumn::PHONENUMBER, DataType::TEXT)
+//   ->addColumn(SettingsColumn::ADDRESSNAME, DataType::TEXT)
+//   ->addColumn(SettingsColumn::SOCIALS, DataType::TEXT)
+//   ->addColumn(SettingsColumn::BANNERTITLE, DataType::TEXT)
+//   ->addColumn(SettingsColumn::BANNERTEXT, DataType::TEXT)
+//   ->addColumn(SettingsColumn::DELIVERYTIME, DataType::TEXT)
+//   ->addColumn(SettingsColumn::OPERATIONALTIME, DataType::TEXT)
+//   ->addColumn(SettingsColumn::MINORDER, DataType::TEXT)
+//   ->addColumn(SettingsColumn::DISPLAYRATING, DataType::TEXT)
+//   ->addColumn(SettingsColumn::TITLE, DataType::TEXT)
+//   ->addColumn(SettingsColumn::WEBSITEURL, DataType::TEXT)
+//   ->addColumn(SettingsColumn::STORENAME, DataType::TEXT)
+//   ->addColumn(SettingsColumn::METACONTENT, DataType::TEXT)
+//   ->addColumn(SettingsColumn::MOBILELOGO, DataType::TEXT)
+//   ->addColumn(SettingsColumn::BANNERIMAGE, DataType::TEXT)
+//   ->addColumn(SettingsColumn::SLIDERTYPE, DataType::TEXT)
+//   ->addColumn(SettingsColumn::MENU_DISPLAY_ORIENTATION, DataType::TEXT)
+//   ->addColumn(SettingsColumn::INFO_DISPLAY_ORIENTATION, DataType::TEXT)
+//   ->addColumn(SettingsColumn::PRODUCT_DISPLAY_ORIENTATION, DataType::TEXT)
+//   ->addColumn(SettingsColumn::DISPLAY_ORDER_COUNT, DataType::TEXT)
+//   ->addColumn(SettingsColumn::THEME, DataType::TEXT)
+//   ->addColumn(SettingsColumn::DELIVERYDISTANCE, DataType::TEXT)
+//   ->addColumn(SettingsColumn::FOOTERTYPE, DataType::TEXT)
+//   ->addColumn(SettingsColumn::SCRIPTS, DataType::TEXT)
+//   ->addColumn(SettingsColumn::BRANCHES, DataType::TEXT)
+//   ->addColumn(SettingsColumn::COLORS, DataType::TEXT)
+//   ->addColumn(SettingsColumn::CURRENCY, DataType::TEXT)
+//   ->addColumn(SettingsColumn::SHOWTAX, DataType::TEXT)
+//   ->addColumn(SettingsColumn::SHIPPINGFEE, DataType::TEXT)
+//   ->addColumn(SettingsColumn::DELIVERYAREAS, DataType::TEXT)
+//   ->addColumn(SettingsColumn::DELIVERYTIMERANGE, DataType::TEXT)
+//   ->create();

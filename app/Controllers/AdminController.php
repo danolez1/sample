@@ -13,6 +13,7 @@ use Demae\Auth\Models\Shop\Branch\Branch;
 use Demae\Auth\Models\Shop\Log\Log;
 use Demae\Auth\Models\Shop\Product\Category;
 use Demae\Auth\Models\Shop\Product\Product;
+use Demae\Auth\Models\Shop\Setting\Setting;
 use Demae\Auth\Models\Shop\User\User;
 use UserController;
 
@@ -28,11 +29,12 @@ class AdminController extends Controller
     private $staff;
     private $editProduct;
     private $branches;
-    private $ceoPages = ['dashboard', 'branches', 'settings', 'promotions', 'users', 'staffs', 'add-product', 'products'];
-    private $managerPages = ['users', 'add-product', 'products', 'branch-dashboard', 'branch-setting', 'staffs'];
+    private $ceoPages = ['settings', 'promotions'];
+    private $managerPages = ['users', 'dashboard', 'branches', 'branch-setting', 'add-product', 'edit-product', 'products', 'staffs',];
 
     const ADMIN_ID = '942826bb3efa2237a02ad2e56b08cffa43282a01f128d237c50abbf221eeeeeeee40ee40';
     const ADMIN_USERNAME = '6c2826bb3efa2237a02ad2e56b08cffa43282a01f128d2f9d2b37080fad8cf0a4b630a3f43f9eef2ee40ee40';
+    const EDIT_PRODUCT = '94282a1543fa26d6082afabcc543ef176b633f3517d8f22a9cf96bf221eeeeeeee40ee40';
     const KEY_ENCODE_ITERTATION = 1;
     const VALUE_ENCODE_ITERTATION = 2;
 
@@ -49,17 +51,20 @@ class AdminController extends Controller
             $this->admin->setUsername(Encoding::decode($this->session->get(self::ADMIN_USERNAME), self::VALUE_ENCODE_ITERTATION));
             $this->admin =  $this->admin->get();
         }
-        // $this->admin->setRole(2);
+        // $this->admin->setRole(3);
 
-        $ceo = (in_array($this->query, $this->ceoPages));
-        $manager = (in_array($this->query, $this->managerPages));
-        $both = ($ceo && $manager) && (intval($this->admin->getRole()) == 1 || intval($this->admin->getRole()) == 2);
+        $ceoPage = (in_array($this->query, $this->ceoPages));
+        $managerPage = (in_array($this->query, $this->managerPages));
+        if (($managerPage && intval($this->admin->getRole()) > 2) || ($ceoPage && intval($this->admin->getRole()) > 1)) {
+            header('location:' . 'orders');
+        }
+        if ($this->query == 'branches' && intval($this->admin->getRole()) == 2) {
+            header('location:' . 'branch-setting');
+        }
 
-        if ($both) {
-        } else  if ($ceo &&  intval($this->admin->getRole()) != 1) {
-            header('location:' . 'orders');
-        } else if ($manager && intval($this->admin->getRole()) != 2) {
-            header('location:' . 'orders');
+        if (!is_null($this->session->get(self::EDIT_PRODUCT)) && ($this->query != 'add-product' && $this->query != 'edit-product')) {
+            unset($_SESSION[self::EDIT_PRODUCT]);
+            unset($_SESSION['editProductId']);
         }
 
         switch ($this->query) {
@@ -74,28 +79,27 @@ class AdminController extends Controller
                 $this->page = "app/Views/admin/pages/orders.php";
                 break;
             case 'branches':
+            case 'branch-setting':
                 $this->page = "app/Views/admin/pages/branches.php";
                 break;
             case 'products':
                 $this->page = "app/Views/admin/pages/products.php";
                 break;
             case 'add-product':
-                if (isset($_COOKIE['editProductId'])) {
-                    $this->editProduct = $_COOKIE['editProductId'];
-                    // $_COOKIE['editProductId'];
+            case 'edit-product':
+                if ((isset($_COOKIE['editProductId']) && !isEmpty($_COOKIE['editProductId']))
+                    || !is_null($this->session->get(self::EDIT_PRODUCT))
+                ) {
+                    $this->editProduct = new Product();
+                    $this->editProduct = $this->editProduct->get($_COOKIE['editProductId'] ?? $_SESSION[self::EDIT_PRODUCT]);
+                    if ((isset($_COOKIE['editProductId']) && !isEmpty($_COOKIE['editProductId'])))
+                        $this->session->set(self::EDIT_PRODUCT, $_COOKIE['editProductId']);
+                    setcookie('editProductId', '', time() - 3600, '/');
                 }
-
-                // var_dump($_COOKIE);
                 $this->page = "app/Views/admin/pages/add_product.php";
                 break;
             case 'staffs':
                 $this->page = "app/Views/admin/pages/staff.php";
-                break;
-            case 'branch-setting':
-                // $this->page = ;
-                break;
-            case 'branch-dashboard':
-                // $this->page = ;
                 break;
             case 'users':
                 $this->page = "app/Views/admin/pages/customers.php";
@@ -147,21 +151,24 @@ class AdminController extends Controller
 
         $dashboardController = new DashboardController($_POST);
         $dashboardController->setAdmin($this->admin);
+        $dashboardController->setEditProduct($this->editProduct);
 
         if (!is_null($this->session->get(self::ADMIN_ID))) {
             if (intval($this->admin->getRole()) == 1 || intval($this->admin->getRole()) == 2) {
-                $dashboardController = $dashboardController->management();
-                if ($dashboardController != null) {
-                    $dashboardController_error = (json_decode($dashboardController)->{Model::ERROR});;
-                    $dashboardController_result = isset(json_decode($dashboardController)->{Model::RESULT});;
-                    $showDashboardController_result = true;
-                }
                 $this->branches = new Branch();
                 $this->branches = $this->branches->get($this->admin);
                 $this->staff = new Administrator();
                 $this->staff = $this->staff->getStaffs($this->admin);
                 $this->customers = new User();
                 $this->customers = $this->customers->getAllUser();
+                $dashboardController->setBranch($this->branches);
+                //branch Id to check which
+                $dashboardController = $dashboardController->management();
+                if ($dashboardController != null) {
+                    $dashboardController_error = (json_decode($dashboardController)->{Model::ERROR});;
+                    $dashboardController_result = isset(json_decode($dashboardController)->{Model::RESULT});;
+                    $showDashboardController_result = true;
+                }
             }
         }
         $this->products = new Product();
@@ -174,7 +181,9 @@ class AdminController extends Controller
         $optionsCategories->setType(Category::TYPE_OPTION);
         $optionsCategories = $optionsCategories->get();
 
-        // $ds = new Category();
+        $this->settings = new Setting();
+
+        // $ds = new Branch();
         // $keys = $ds->properties()[Model::KEYS];
         // foreach ($keys as $k) {
         //     echo 'const ' . strtoupper($k) . ' = "' . ($k) . '";<br>';

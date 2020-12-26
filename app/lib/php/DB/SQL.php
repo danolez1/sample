@@ -164,11 +164,15 @@ class SQL
         foreach ($params as $p) {
             if (!is_array($p)) {
                 $p = trim($p);
+                $p = str_replace("\\", "", $p);
+                $p = str_replace("'", " ", $p);
                 $p = stripslashes($p);
                 $p = stripcslashes($p);
                 $p = strip_tags($p);
                 $p = htmlentities($p);
                 $p = $this->getDB()->DB()->real_escape_string($p);
+            } else {
+                $this->purify($p);
             }
             $return[] = $p;
         }

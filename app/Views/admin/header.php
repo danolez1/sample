@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -52,6 +51,7 @@
   <link rel="stylesheet" href="assets/css/jquery-spinner.min.css">
   <link rel="stylesheet" href="assets/css/webToast.min.css">
   <link rel="stylesheet" href="assets/css/dialog-mobile.css">
+  <link rel="stylesheet" type="text/css" href="assets/css/color-spectrum.css">
   <!-- End layout styles -->
 </head>
 
@@ -60,14 +60,16 @@
   <script src="assets/js/tiny_color.js"></script>
   <script src="assets/js/preloader.js"></script>
   <script src="assets/js/webToast.min.js"></script>
-    <script src="assets/js/first_load.js"></script>
+  <script src="assets/js/first_load.js"></script>
   <script src="assets/js/admin_dictionary.js"></script>
   <div class="body-wrapper">
 
-    <?php if (!$this->includesOnly) { ?>
-      <button class="hover" id="delivery-time-fab" type="button" data-toggle="modal" data-target="#delivery-time">
-        <img src="assets/images/dashboard/timer.svg" alt="cart" width="46" height="46">
-      </button>
+    <?php if (!$this->includesOnly) {
+      if (intval($this->admin->getRole()) == 1 || intval($this->admin->getRole()) == 2) { ?>
+        <button class="hover" id="delivery-time-fab" type="button" data-toggle="modal" data-target="#delivery-time">
+          <img src="assets/images/dashboard/timer.svg" alt="cart" width="46" height="46">
+        </button>
+      <?php } ?>
       <!-- partial:partials/_sidebar.html -->
       <?php include 'app/Views/admin/sidebar.php'; ?>
       <!-- partial -->

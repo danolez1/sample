@@ -6,19 +6,26 @@ use Demae\Auth\Models\Shop\Branch\Branch;
 if (!is_null($dashboardController_error)) { ?>
     <script>
         webToast.Danger({
-            status: "<?php echo ($_COOKIE['lingo'] == 'jp') ?  'エラーが発生しました' :  'Error Occured'; ?>",
-            message: dictionary<?php echo "['" . $dashboardController_error->{"trn"} . "']." . $_COOKIE['lingo']; ?>,
+            status: dictionary['error-occured'][lang],
+            message: dictionary<?php echo "['" . $dashboardController_error->{"trn"} . "']['" . $_COOKIE['lingo']."']"; ?>,
             delay: 10000
         });
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
     </script>
     <?php } else {
     if ($showDashboardController_result) { ?>
         <script>
             webToast.Success({
-                status: "<?php echo ($_COOKIE['lingo'] == 'jp') ?  '成功' :  'Successful'; ?>",
-                message: "<?php echo ($_COOKIE['lingo'] == 'jp') ?  'スタッフを追加されました' :  'Staff Added'; ?>",
+                status: dictionary['successful'][lang],
+                message: dictionary['staff-added'][lang],
                 delay: 5000
             });
+            if (window.history.replaceState) {
+                window.history.replaceState(null, null, window.location.href);
+            }
+            location.reload();
         </script>
 <?php }
 } ?>

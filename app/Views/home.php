@@ -14,9 +14,9 @@ $verticalInfo = ($settings->getInfoDisplayOrientation() == Orientation::VERTICAL
 <section>
     <!-- HORIZONTAL MENU -->
     <?php if ($slider == 3) { ?>
-        <div class="row col-12" style="margin:-10px auto 2rem;">
+        <div class="row col-12 m-0 " style="margin:10px auto 2rem;">
         <?php } else { ?>
-            <div class="row col-12 mt-lg-5">
+            <div class="row col-12 mt-lg-5 m-0 ">
             <?php } ?>
             <?php if (!$verticalMenu) {
                 if ($slider == 0 || $slider == 1) { ?>
@@ -30,7 +30,7 @@ $verticalInfo = ($settings->getInfoDisplayOrientation() == Orientation::VERTICAL
             </div>
 
         <?php } else { ?>
-            <div class="col-lg-8 col-md-6 col-sm-4" style="margin-bottom: 2em;">
+            <div class="col-lg-8 col-md-6 col-sm-6" style="margin-bottom: 2em;margin-top: 2em;">
                 <ul class="nav nav-pills-h nav-slider-2">
                     <li class="nav-item"><a class="de-nav-link active" href="" data-toggle="tab">All</a></li>
                     <li class="nav-item"><a class="de-nav-link" href="" data-toggle="tab">Menu 1</a></li>
@@ -39,7 +39,7 @@ $verticalInfo = ($settings->getInfoDisplayOrientation() == Orientation::VERTICAL
                     <li class="nav-item"><a class="de-nav-link" href="" data-toggle="tab">Menu 4</a></li>
                 </ul>
             </div>
-            <div class="col-lg-4 col-sm-4 col-md-6" style="margin-bottom: 3em;margin-top:-2.7em;">
+            <div class="col-lg-4 col-sm-6 col-md-6" style="margin-bottom: 3em;margin-top:-.4em;">
                 <div class="row col-12 justify-content-center mt-5">
                     <div class="search-m-bar col-12" style="border:2px #eee solid">
                         <input class="search-s-_input" type="text" name="" placeholder="Search...">
@@ -52,15 +52,15 @@ $verticalInfo = ($settings->getInfoDisplayOrientation() == Orientation::VERTICAL
     <?php } ?>
     <div class="row col-12">
         <?php if ($verticalInfo) { ?>
-            <div class="col-lg-3 col-sm-4 col-md-4 justify-content-end" style="margin-top:<?php echo ($settings->getSliderType() == 2) ? "-10px" : "10px"; ?>">
+            <div class="col-lg-3 col-sm-4 col-md-4 justify-content-end" style="margin-top:10px;">
                 <div class="card" data-aos="zoom-in-up">
                     <div class="card-body">
                         <h5 class="card-title" trn="opening-hours">Opening Hours </h5>
                         <h6 class="card-subtitle mb-4 text-muted mt-2">Mon to Sat 10am - 8pm</h6>
                         <h5 class="card-title" trn="order-conditions">Order conditions</h5>
-                        <p class="card-text"><span trn="min-order"> Min. order</span> <b> <?php echo $settings->getCurrency() . $settings->getMinOrder(); ?></b></span><br><?php echo $settings->getShippingFee() > 0 ? $settings->getCurrency() . $settings->getShippingFee() : '<span trn="free-shipping">Free shipping</span>' ?> </p>
+                        <p class="card-text"><span trn="min-order"> Min. order</span> <b> <?php echo $settings->getCurrency() . number_format($settings->getMinOrder()); ?></b></span><br><?php echo intval($settings->getShippingFee()) > 0 ? $settings->getCurrency() . number_format($settings->getShippingFee()) : '<span trn="free-shipping">Free shipping</span>' ?> </p>
                         <h5 class="card-title" trn="delivery-areas">Delivery Areas</h5>
-                        <p class="card-text mb-4"><?php foreach ($settings->getDeliveryAreas() as $area) echo $area . ', '; ?></p>
+                        <p class="card-text mb-4"><?php echo $settings->getDeliveryAreas(); ?></p>
 
                     </div>
                 </div>
@@ -69,7 +69,7 @@ $verticalInfo = ($settings->getInfoDisplayOrientation() == Orientation::VERTICAL
         <?php }
             } else { ?>
         <div class="row col-12">
-            <div class="col-lg-3 col-sm-4 col-md-4 " style="margin-top:<?php echo ($settings->getSliderType() == 2) ? "-10px" : "10px"; ?>">
+            <div class="col-lg-3 col-sm-4 col-md-4 mt-3" style="margin-top:25px !important">
                 <?php if ($slider == 2 || $slider == 3) { ?>
                     <div class="search-m-bar col-12 mb-4" style="border:2px #eee solid">
                         <input class="search-s-_input" type="text" name="" placeholder="Search...">
@@ -77,7 +77,7 @@ $verticalInfo = ($settings->getInfoDisplayOrientation() == Orientation::VERTICAL
                     </div>
                 <?php }  ?>
                 <div data-aos="zoom-in-right">
-                    <div class="">
+                    <div class="mt-2">
                         <h5 class="vmenu-title">Branches</h5>
                         <div class="dropdown-divider"></div>
                         <div class="nav flex-column nav-pills-v" aria-orientation="vertical" style="text-transform: uppercase;">
@@ -98,14 +98,14 @@ $verticalInfo = ($settings->getInfoDisplayOrientation() == Orientation::VERTICAL
 
                 <?php
                 if ($verticalInfo) { ?>
-                    <div class="card" data-aos="zoom-in-up">
+                    <div class="card mt-5" data-aos="zoom-in-up">
                         <div class="card-body">
                             <h5 class="card-title" trn="opening-hours">Opening Hours </h5>
                             <h6 class="card-subtitle mb-4 text-muted mt-2">Mon to Sat 10am - 8pm</h6>
                             <h5 class="card-title" trn="order-conditions">Order conditions</h5>
-                            <p class="card-text"><span trn="min-order"> Min. order</span> <b> <?php echo $settings->getCurrency() . $settings->getMinOrder(); ?></b></span><br><?php echo $settings->getShippingFee() > 0 ? $settings->getCurrency() . $settings->getShippingFee() : '<span trn="free-shipping">Free shipping</span>' ?> </p>
+                            <p class="card-text"><span trn="min-order"> Min. order</span> <b> <?php echo $settings->getCurrency() . number_format($settings->getMinOrder()); ?></b></span><br><?php echo intval($settings->getShippingFee()) > 0 ? $settings->getCurrency() . number_format($settings->getShippingFee()) : '<span trn="free-shipping">Free shipping</span>' ?> </p>
                             <h5 class="card-title" trn="delivery-areas">Delivery Areas</h5>
-                            <p class="card-text mb-4"><?php foreach ($settings->getDeliveryAreas() as $area) echo $area . ', '; ?></p>
+                            <p class="card-text mb-4"><?php echo $settings->getDeliveryAreas(); ?></p>
 
                         </div>
                     </div>
@@ -113,20 +113,13 @@ $verticalInfo = ($settings->getInfoDisplayOrientation() == Orientation::VERTICAL
             </div>
         <?php } ?>
 
-        <div class="tab-content d-flex <?php echo ($verticalMenu || $verticalInfo) ? 'col-lg-9 col-sm-8 col-md-8' : 'col-12'; ?> ">
-            <div class="row" data-aos="fade-left">
+        <div class="tab-content d-flex <?php echo ($verticalMenu || $verticalInfo) ? 'col-lg-9 col-sm-8 col-md-8' : 'col-12'; ?> m-0 ">
+            <div class="row d-flex m-0" data-aos="fade-left">
                 <?php
                 if ($settings->getProductDisplayOrientation() == Orientation::LIST) {
                     echo '<div class="accordion" id="listAccordion">';
                 }
-                for ($i = 0; $i < count($products) + 3; $i++) { //foreach($products as $product)                        
-                    $product = new Product();
-                    $product->setDisplayImage('assets/images/shop/food.png');
-                    $product->setAvailability(0);
-                    $product->setName('Beef Rose Lemon Steak');
-                    $product->setDescription('The best steak garished with some lemon trust it to leave your mouth slightly sour.');
-                    $product->setPrice(200);
-                    $product->setRatings(3.0);
+                foreach ($this->products as $product) {
                     if ($settings->getProductDisplayOrientation() == Orientation::GRID) {
                         include 'app/Views/shop/product-grid.php';
                     } else {
@@ -168,17 +161,15 @@ $verticalInfo = ($settings->getInfoDisplayOrientation() == Orientation::VERTICAL
                         <h5 class="card-title font-weight-bold" trn="opening-hours">Opening Hours</h5>
                         <h6 class="card-subtitle mb-4 text-muted mt-2">Mon to Sat 10am - 8pm</h6>
                         <h5 class="card-title font-weight-bold" trn="order-conditions">Order conditions</h5>
-                        <p class="card-text"><span trn="min-order"> Min. order</span> <b> <?php echo $settings->getCurrency() . $settings->getMinOrder(); ?></b></span><br><?php echo $settings->getShippingFee() > 0 ? $settings->getCurrency() . $settings->getShippingFee() : '<span trn="free-shipping">Free shipping</span>' ?> </p>
+                        <p class="card-text"><span trn="min-order"> Min. order</span> <b> <?php echo $settings->getCurrency() . number_format($settings->getMinOrder()); ?></b></span><br><?php echo $settings->getShippingFee() > 0 ? $settings->getCurrency() . number_format($settings->getShippingFee()) : '<span trn="free-shipping">Free shipping</span>' ?> </p>
                     </div>
                     <div class="col-lg-6 col-sm-4">
                         <h5 class="card-title mt-3 mt-lg-0 mt-md-0 font-weight-bold" trn="delivery-areas">Delivery Areas</h5>
-                        <p class="card-text mb-4"><?php foreach ($settings->getDeliveryAreas() as $area) echo $area . ', '; ?> </p>
+                        <p class="card-text mb-4"><?php echo $settings->getDeliveryAreas(); ?> </p>
                     </div>
                     <div class="col-lg-3 col-sm-4">
                         <h5 class="card-title font-weight-bold" trn="we-accept">We Accept </h5>
                         <div style="font-size:48px;"><?php foreach ($settings->getPaymentMethods() as $payment) echo $payment . ' '; ?></div>
-                        <!-- <img class="img-fluid" src="assets/images/shop/mastercard.svg" height="48"><img class="img-fluid ml-4" src="assets/images/shop/amex.svg" height="48"><br>
-                        <img class="img-fluid mt-4" src="assets/images/shop/stripe.svg" height="32"><img class="img-fluid ml-4 mt-4" src="assets/images/shop/visa.svg" height="32"> -->
                     </div>
                 </div>
             </div>

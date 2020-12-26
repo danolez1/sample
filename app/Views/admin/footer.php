@@ -1,15 +1,17 @@
-<?php if (!$this->includesOnly) { ?>
-    <div id="timer" class="card p-2" style="display:none">
-        <div class="card-body p-2">
-            <h5 class="card-title text-light">Average Delivery Time</h5>
-            <div class="input-group">
-                <input type="number" class="form-control">
-                <div class="input-group-append">
-                    <span id="save-average-time" type="button" style="background-color: #17A2B8;color:#EFF3F3" class="input-group-text btn btn-success">Min</span>
+<?php if (!$this->includesOnly) {
+    if (intval($this->admin->getRole()) == 1 || intval($this->admin->getRole()) == 2) { ?>
+        <div id="timer" class="card p-2" style="display:none">
+            <div class="card-body p-2">
+                <h5 class="card-title text-light">Average Delivery Time</h5>
+                <div class="input-group">
+                    <input type="number" class="form-control">
+                    <div class="input-group-append">
+                        <span id="save-average-time" type="button" style="background-color: #17A2B8;color:#EFF3F3" class="input-group-text btn btn-success">Min</span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    <?php } ?>
     <!-- partial:partials/_footer.html -->
     <footer>
         <div class="mdc-layout-grid">
@@ -44,6 +46,7 @@
 <script src="assets/vendors/jvectormap/jquery-jvectormap.min.js"></script>
 <script src="assets/vendors/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
 <!-- End plugin js for this page-->
+<script src="assets/js/color-spectrum.js"></script>
 <script src="assets/js/material.js"></script>
 <script src="assets/js/misc.js"></script>
 <script src="assets/js/jquery-spinner.min.js"></script>

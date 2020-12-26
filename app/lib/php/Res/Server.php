@@ -77,6 +77,72 @@ class Server
         return gethostbyaddr(self::get(self::REMOTE_ADDR));
     }
 
+
+    public static function getOS()
+    {
+
+        $osPlatform    =   "Unknown OS Platform";
+
+        $os_array       =   array(
+            'windows nt 10.0'    => 'Windows 10',
+            'windows nt 6.2'     =>  'Windows 8',
+            'windows nt 6.1'     =>  'Windows 7',
+            'windows nt 6.0'     =>  'Windows Vista',
+            'windows nt 5.2'     =>  'Windows Server 2003/XP x64',
+            'windows nt 5.1'     =>  'Windows XP',
+            'windows xp'         =>  'Windows XP',
+            'windows nt 5.0'     =>  'Windows 2000',
+            'windows me'         =>  'Windows ME',
+            'win98'              =>  'Windows 98',
+            'win95'              =>  'Windows 95',
+            'win16'              =>  'Windows 3.11',
+            'macintosh|mac os x' =>  'Mac OS X',
+            'mac_powerpc'        =>  'Mac OS 9',
+            'linux'              =>  'Linux',
+            'ubuntu'             =>  'Ubuntu',
+            'phone'             =>  'iPhone',
+            'pod'               =>  'iPod',
+            'pad'               =>  'iPad',
+            'android'            =>  'Android',
+            'blackberry'         =>  'BlackBerry',
+            'webos'              =>  'Mobile'
+        );
+
+        foreach ($os_array as $label => $value) {
+            if (stripos(self::get(self::HTTP_USER_AGENT), $label)) {
+                return $value;
+            }
+        }
+
+        return $osPlatform;
+    }
+
+    public static function getBrowser()
+    {
+
+        $browser        =   "Unknown Browser";
+
+        $browser_array  =   array(
+            'msie'       =>  'Internet Explorer',
+            'firefox'    =>  'Firefox',
+            'safari'     =>  'Safari',
+            'chrome'     =>  'Chrome',
+            'opera'      =>  'Opera',
+            'netscape'   =>  'Netscape',
+            'maxthon'    =>  'Maxthon',
+            'konqueror'  =>  'Konqueror',
+            'mobile'     =>  'Handheld Browser'
+        );
+
+        foreach ($browser_array as $label => $value) {
+            if (stripos(self::get(self::HTTP_USER_AGENT), $label)) {
+                return $value;
+            }
+        }
+
+        return $browser;
+    }
+
     /**
      * geoIp
      *require_onces to be written in TAC
@@ -85,7 +151,7 @@ class Server
      */
     public static function geoIp($ip = "")
     {
-        $curl = new Curl(self::IP_CLIENT_1 . $ip);
+        $curl = new Curl(self::IP_CLIENT_1 . $ip); //get more client, put in array loop through if any fail, recursive function until success
         $f =  json_decode($curl->get());
         if ($f->{"status"} == "fail") {
             $curl->setUrl(self::IP_CLIENT_2 . $ip);
