@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\Res\Ini;
+namespace danolez\lib\Res;
 
 class Ini
 {

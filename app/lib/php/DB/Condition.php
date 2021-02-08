@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\DB\Condition;
+namespace danolez\lib\DB;
 
 abstract class Condition
 {

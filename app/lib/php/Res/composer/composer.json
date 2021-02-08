@@ -1,5 +1,10 @@
 {
     "require": {
-        "phpmailer/phpmailer": "^6.2"
+        "phpmailer/phpmailer": "^6.2",
+        "mike42/escpos-php": "^3.0",
+        "symfony/polyfill-mbstring": "^1.20",
+        "printnode/printnode-php": "dev-master",
+        "dompdf/dompdf": "^1.0",
+        "cboden/ratchet": "^0.4.3"
     }
 }

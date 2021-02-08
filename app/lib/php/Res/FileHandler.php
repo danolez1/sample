@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\Res\FileHandler;
+namespace danolez\lib\Res;
 
 class FileHandler{
 

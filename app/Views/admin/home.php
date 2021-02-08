@@ -1,3 +1,9 @@
+<?php
+
+use danolez\lib\Security\Encoding;
+use Demae\Auth\Models\Shop\Setting;
+
+?>
 <main class="content-wrapper">
     <h3>Dashboard</h3>
     <p class="mb-4">Welcome back, You can manage your entire online store operations here.</p>
@@ -7,7 +13,7 @@
                 <div class="mdc-card info-card info-card--purple">
                     <div class="card-inner">
                         <h5 class="card-title">Total Earnings</h5>
-                        <h5 class="font-weight-bold pb-2 mb-1 border-bottom card-value-purple">1,958,104.00</h5>
+                        <h5 class="font-weight-bold pb-2 mb-1 border-bottom card-value-purple"><?php echo number_format($totalEarnings); ?></h5>
                         <p class="tx-12 text-success">55% target reached</p>
                         <div class="card-icon-wrapper">
                             <i class="material-icons bx bx-yen font-weight-bold" style="font-size:21px;"></i>
@@ -19,7 +25,9 @@
                 <div class="mdc-card info-card info-card--pink">
                     <div class="card-inner">
                         <h5 class="card-title">Total Customers</h5>
-                        <h5 class="font-weight-bold pb-2 mb-1 border-bottom card-value-pink">3,769</h5>
+                        <h5 class="font-weight-bold pb-2 mb-1 border-bottom card-value-pink">
+                            <?php echo count($this->customers); ?>
+                        </h5>
                         <p class="tx-12 text-success">87% target reached</p>
                         <div class="card-icon-wrapper">
                             <i class="material-icons">people</i>
@@ -31,7 +39,8 @@
                 <div class="mdc-card info-card info-card--orange">
                     <div class="card-inner">
                         <h5 class="card-title">Total Order</h5>
-                        <h5 class="font-weight-bold pb-2 mb-1 border-bottom card-value-orange">1,200</h5>
+                        <h5 class="font-weight-bold pb-2 mb-1 border-bottom card-value-orange"> <?php echo count($this->orders); ?>
+                        </h5>
                         <p class="tx-12 text-success">87% target reached</p>
                         <div class="card-icon-wrapper">
                             <i class="material-icons mdc-drawer-item-icon bx bxs-dish"></i>
@@ -43,7 +52,7 @@
                 <div class="mdc-card info-card info-card--blue">
                     <div class="card-inner">
                         <h5 class="card-title">Weekly Visits</h5>
-                        <h5 class="font-weight-bold pb-2 mb-1 border-bottom card-value-blue">2,0076</h5>
+                        <h5 class="font-weight-bold pb-2 mb-1 border-bottom card-value-blue"><?php echo number_format($weeklyTraffic); ?></h5>
                         <p class="tx-12 text-danger">48% target reached</p>
                         <div class="card-icon-wrapper">
                             <i class="material-icons icofont-web"></i>
@@ -68,7 +77,7 @@
                                 <div class="mdc-tab-scroller">
                                     <div class="mdc-tab-scroller__scroll-area">
                                         <div class="mdc-tab-scroller__scroll-content">
-                                            <button class="mdc-tab mdc-tab--active" role="tab" aria-selected="true" tabindex="0">
+                                            <button class="mdc-tab mdc-tab--active revenew-tab" data-index="0" role="tab" aria-selected="true" tabindex="0">
                                                 <span class="mdc-tab__content">
                                                     <span class="mdc-tab__text-label">1W</span>
                                                 </span>
@@ -77,7 +86,7 @@
                                                 </span>
                                                 <span class="mdc-tab__ripple"></span>
                                             </button>
-                                            <button class="mdc-tab mdc-tab" role="tab" aria-selected="true" tabindex="0">
+                                            <button class="mdc-tab mdc-tab revenew-tab" data-index="1" role="tab" aria-selected="true" tabindex="1">
                                                 <span class="mdc-tab__content">
                                                     <span class="mdc-tab__text-label">1M</span>
                                                 </span>
@@ -86,7 +95,7 @@
                                                 </span>
                                                 <span class="mdc-tab__ripple"></span>
                                             </button>
-                                            <button class="mdc-tab mdc-tab" role="tab" aria-selected="true" tabindex="0">
+                                            <button class="mdc-tab mdc-tab revenew-tab" data-index="2" role="tab" aria-selected="true" tabindex="2">
                                                 <span class="mdc-tab__content">
                                                     <span class="mdc-tab__text-label">3M</span>
                                                 </span>
@@ -95,7 +104,7 @@
                                                 </span>
                                                 <span class="mdc-tab__ripple"></span>
                                             </button>
-                                            <button class="mdc-tab mdc-tab" role="tab" aria-selected="true" tabindex="0">
+                                            <button class="mdc-tab mdc-tab revenew-tab" data-index="3" role="tab" aria-selected="true" tabindex="3">
                                                 <span class="mdc-tab__content">
                                                     <span class="mdc-tab__text-label">1Y</span>
                                                 </span>
@@ -104,7 +113,7 @@
                                                 </span>
                                                 <span class="mdc-tab__ripple"></span>
                                             </button>
-                                            <button class="mdc-tab mdc-tab" role="tab" aria-selected="true" tabindex="0">
+                                            <button class="mdc-tab mdc-tab revenew-tab" data-index="4" role="tab" aria-selected="true" tabindex="4">
                                                 <span class="mdc-tab__content">
                                                     <span class="mdc-tab__text-label">ALL</span>
                                                 </span>
@@ -153,11 +162,11 @@
 
             <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12 justify-content-between pl-2 pr-2 mt-4 pb-1">
                 <div class="d-flex">
-                    <h4 class="card-title mb-0 tx-14">Pending Orders: <span class="tx-14">Sales performance revenue based by country</span>
+                    <h4 class="card-title mb-0 tx-14">Pending Orders: <span class="tx-14"> Attend to pending order</span>
                     </h4>
                 </div>
                 <div>
-                    <i class="material-icons refresh-icon">refresh</i>
+                    <i class="material-icons refresh-icon hover option-span rotate" onclick="location.reload();">refresh</i>
                     <i class="material-icons options-icon ml-2">more_vert</i>
                 </div>
             </div>
@@ -176,23 +185,40 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="mdc-layout-grid__cell--span-2">
-                                        Fatumbi Daniel<br>oluwa tumise
-                                    </td>
-                                    <td class="mdc-layout-grid__cell--span-3">4-9-15 Ebisu, Shibuya-ku,<br> Tokyo HAGIWA Building 5 3F</td>
-                                    <td class=" font-weight-medium mdc-layout-grid__cell--span-3"> 4-9-15 Ebisu, Shibuya-ku,<br> Tokyo HAGIWA Building 5 3F </td>
-                                    <td class=" font-weight-medium mdc-layout-grid__cell--span-2"> 39% </td>
-                                    <td class=" font-weight-medium mdc-layout-grid__cell--span-2">
-                                        <button class="btn btn-sm btn-success dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Order Received</button>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="#">Order Ready</a>
-                                            <a class="dropdown-item" href="#">Order Shipped</a>
-                                            <a class="dropdown-item" href="#">On the Way</a>
-                                            <a class="dropdown-item" href="#">Delivered</a>
-                                        </div>
-                                    </td>
-                                </tr>
+                                <?php
+                                foreach ($this->orders as $order) {
+                                    if ($this->admin->getBranchId() == $order->getBranch() || $this->admin->getRole() == 1) {
+
+                                        $address = fromDbJson($order->getAddress());
+                                        $cart = fromDbJson($order->getCart());
+                                        if (intval($order->getStatus()) != OrderColumn::ORDER_DELIVERED) { ?>
+                                            <tr>
+                                                <td class="mdc-layout-grid__cell--span-2">
+                                                    <?php echo unicode2html($address->firstName . " " . $address->lastName); ?>
+                                                </td>
+                                                <td class=" font-weight-medium mdc-layout-grid__cell--span-3">
+                                                    <?php foreach ($cart as $item) {
+                                                        $content = "";
+                                                        foreach ($item->productOptions as $option) {
+                                                            $content .= ($option->name . ' <strong>x ' . $option->amount . '</strong>・');
+                                                        }
+                                                        echo unicode2html($item->productDetails . "<br>" . $content);
+                                                    } ?></td>
+                                                <td class="mdc-layout-grid__cell--span-3"><?php echo smartWordWrap(unicode2html(str_replace('u', '\u', $address->address)) . " " . $address->street . " " . $address->building); ?></td>
+                                                <td class=" font-weight-medium mdc-layout-grid__cell--span-2"> 39% </td>
+                                                <td class=" font-weight-medium mdc-layout-grid__cell--span-2">
+                                                    <button class="btn btn-sm btn-light dropdown-toggle tx-12" data-id="<?php echo Encoding::encode(json_encode(array($this->admin->getId(), $this->admin->getUserName(), $order->getId()))); ?>" data-async="order-status" trn="<?php echo $order->getStatusInfo()[0]['trn']; ?>" data="<?php echo $order->getStatusInfo()[0]['data']; ?>" color="<?php echo $order->getStatusInfo()[0]['color']; ?>" style="background-color: <?php echo $order->getStatusInfo()[0]['color']; ?>;color:white;" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $order->getStatusInfo()[0][0]; ?></button>
+                                                    <div class="dropdown-menu p-0">
+                                                        <?php for ($i = 1; $i < 5; $i++) { ?>
+                                                            <a class="dropdown-item" trn="<?php echo $order->getStatusInfo()[$i]['trn']; ?>" data="<?php echo $order->getStatusInfo()[$i]['data']; ?>" color="<?php echo $order->getStatusInfo()[$i]['color']; ?>"><?php echo $order->getStatusInfo()[$i][0]; ?></a>
+                                                        <?php } ?>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                <?php  }
+                                    }
+                                }
+                                ?>
                             </tbody>
                         </table>
                     </div>

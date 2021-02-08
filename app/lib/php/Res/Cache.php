@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\DB\Cache;
+namespace danolez\lib\DB;
 
 abstract class Cache
 {

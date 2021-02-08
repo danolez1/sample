@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\Security\Handler;
+namespace danolez\lib\Security;
 
 class Handler{
     private $data;

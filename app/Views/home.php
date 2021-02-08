@@ -1,7 +1,8 @@
 <?php
 
-use danolez\lib\Res\Orientation\Orientation;
-use Demae\Auth\Models\Shop\Product\Product;
+use danolez\lib\Res\Orientation;
+use Demae\Auth\Models\Shop\Branch;
+use Demae\Auth\Models\Shop\Product;
 
 include 'app/Views/shop/slider.php';
 $verticalMenu = ($settings->getMenuDisplayOrientation() == Orientation::VERTICAL);
@@ -20,23 +21,21 @@ $verticalInfo = ($settings->getInfoDisplayOrientation() == Orientation::VERTICAL
             <?php } ?>
             <?php if (!$verticalMenu) {
                 if ($slider == 0 || $slider == 1) { ?>
-                    <ul class="nav nav-pills-h mb-2">
-                        <li class="nav-item"><a class="de-nav-link active" href="" data-toggle="tab">All</a></li>
-                        <li class="nav-item"><a class="de-nav-link" href="" data-toggle="tab">Menu 1</a></li>
-                        <li class="nav-item"><a class="de-nav-link" href="" data-toggle="tab">Menu 2</a></li>
-                        <li class="nav-item"><a class="de-nav-link" href="" data-toggle="tab">Menu 1</a></li>
-                        <li class="nav-item"><a class="de-nav-link" href="" data-toggle="tab">Menu 2</a></li>
+                    <ul class="nav nav-pills-h mb-2" id="menu">
+                        <li class="nav-item category-pill"><a class="de-nav-link active" data-toggle="tab">All</a></li>
+                        <?php foreach ($productCategories as $category) { ?>
+                            <li class="nav-item category-pill" data-id="<?php echo $category->getId(); ?>"><a href="#<?php echo  $category->getName(); ?>" class="de-nav-link" data-toggle="tab"> <?php echo  $category->getName(); ?></a></li>
+                        <?php } ?>
                     </ul>
             </div>
 
         <?php } else { ?>
-            <div class="col-lg-8 col-md-6 col-sm-6" style="margin-bottom: 2em;margin-top: 2em;">
+            <div class="col-lg-8 col-md-6 col-sm-6" style="margin-bottom: 2em;margin-top: 2em;" id="menu">
                 <ul class="nav nav-pills-h nav-slider-2">
-                    <li class="nav-item"><a class="de-nav-link active" href="" data-toggle="tab">All</a></li>
-                    <li class="nav-item"><a class="de-nav-link" href="" data-toggle="tab">Menu 1</a></li>
-                    <li class="nav-item"><a class="de-nav-link" href="" data-toggle="tab">Menu 2</a></li>
-                    <li class="nav-item"><a class="de-nav-link" href="" data-toggle="tab">Menu 3</a></li>
-                    <li class="nav-item"><a class="de-nav-link" href="" data-toggle="tab">Menu 4</a></li>
+                    <li class="nav-item category-pill"><a class="de-nav-link active" href="#all" data-toggle="tab">All</a></li>
+                    <?php foreach ($productCategories as $category) { ?>
+                        <li class="nav-item category-pill" data-id="<?php echo $category->getId(); ?>"><a href="#<?php echo  $category->getName(); ?>" onclick="javascript:;" class="de-nav-link" data-toggle="tab"> <?php echo  $category->getName(); ?></a></li>
+                    <?php } ?>
                 </ul>
             </div>
             <div class="col-lg-4 col-sm-6 col-md-6" style="margin-bottom: 3em;margin-top:-.4em;">
@@ -50,7 +49,7 @@ $verticalInfo = ($settings->getInfoDisplayOrientation() == Orientation::VERTICAL
         </div>
         <!-- END HORIZONTAL MENU -->
     <?php } ?>
-    <div class="row col-12">
+    <div class="row col-12 p-0 m-0">
         <?php if ($verticalInfo) { ?>
             <div class="col-lg-3 col-sm-4 col-md-4 justify-content-end" style="margin-top:10px;">
                 <div class="card" data-aos="zoom-in-up">
@@ -58,7 +57,10 @@ $verticalInfo = ($settings->getInfoDisplayOrientation() == Orientation::VERTICAL
                         <h5 class="card-title" trn="opening-hours">Opening Hours </h5>
                         <h6 class="card-subtitle mb-4 text-muted mt-2">Mon to Sat 10am - 8pm</h6>
                         <h5 class="card-title" trn="order-conditions">Order conditions</h5>
-                        <p class="card-text"><span trn="min-order"> Min. order</span> <b> <?php echo $settings->getCurrency() . number_format($settings->getMinOrder()); ?></b></span><br><?php echo intval($settings->getShippingFee()) > 0 ? $settings->getCurrency() . number_format($settings->getShippingFee()) : '<span trn="free-shipping">Free shipping</span>' ?> </p>
+                        <p class="card-text"><span trn="min-order"> Min. order</span> <b> <?php echo $settings->getCurrency() . number_format($settings->getMinOrder()); ?></b></span>
+                            <br> <span trn="shipping-fee">Shipping Fee : </span><?php echo $settings->getCurrency() . number_format(intval($settings->getShippingFee())) . ' (' . $settings->getCurrency() . number_format(intval($settings->getFreeDeliveryPrice())) . ' <span trn="free-shipping">above free shipping</span>)' ?> </p>
+                        <h5 class="card-title mt-3 mt-lg-0 mt-md-0 font-weight-bold" trn="branch-selected">Branch selected</h5>
+                        <p class="card-text mb-4"><?php echo ($this->branch instanceof Branch) ? $this->branch->getName() : ''; ?> </p>
                         <h5 class="card-title" trn="delivery-areas">Delivery Areas</h5>
                         <p class="card-text mb-4"><?php echo $settings->getDeliveryAreas(); ?></p>
 
@@ -78,20 +80,14 @@ $verticalInfo = ($settings->getInfoDisplayOrientation() == Orientation::VERTICAL
                 <?php }  ?>
                 <div data-aos="zoom-in-right">
                     <div class="mt-2">
-                        <h5 class="vmenu-title">Branches</h5>
-                        <div class="dropdown-divider"></div>
-                        <div class="nav flex-column nav-pills-v" aria-orientation="vertical" style="text-transform: uppercase;">
-                            <a class="de-nav-link active" data-toggle="pill" href="#v-pills-home" aria-selected="true">Home</a>
-                            <a class="de-nav-link" data-toggle="pill" href="#v-pills-profile" role="tab">Profile</a>
-                            <a class="de-nav-link" data-toggle="pill" href="#v-pills-messages" role="tab">Messages</a>
-                            <a class="de-nav-link" data-toggle="pill" href="#v-pills-settings" role="tab">Settings</a>
-                        </div>
+                        <h5 class="vmenu-title">Menu</h5>
                         <div class="dropdown-divider"></div>
                         <div class="nav flex-column nav-pills-v" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                            <a class="de-nav-link active" data-toggle="pill" href="#v-pills-home" aria-selected="true">Home</a>
-                            <a class="de-nav-link" data-toggle="pill" href="#v-pills-profile" role="tab">Profile</a>
-                            <a class="de-nav-link" data-toggle="pill" href="#v-pills-messages" role="tab">Messages</a>
-                            <a class="de-nav-link" data-toggle="pill" href="#v-pills-settings" role="tab">Settings</a>
+                            <a class="de-nav-link active category-pill" href="#all" data-toggle="pill" aria-selected="true">All</a>
+                            <?php foreach ($productCategories as $category) { ?>
+                                <a href="#<?php echo  $category->getName(); ?>" class="de-nav-link category-pill" data-id="<?php echo $category->getId(); ?>" data-toggle="pill" aria-selected="true"><?php echo  $category->getName(); ?></a>
+                            <?php } ?>
+
                         </div>
                     </div>
                 </div>
@@ -103,7 +99,10 @@ $verticalInfo = ($settings->getInfoDisplayOrientation() == Orientation::VERTICAL
                             <h5 class="card-title" trn="opening-hours">Opening Hours </h5>
                             <h6 class="card-subtitle mb-4 text-muted mt-2">Mon to Sat 10am - 8pm</h6>
                             <h5 class="card-title" trn="order-conditions">Order conditions</h5>
-                            <p class="card-text"><span trn="min-order"> Min. order</span> <b> <?php echo $settings->getCurrency() . number_format($settings->getMinOrder()); ?></b></span><br><?php echo intval($settings->getShippingFee()) > 0 ? $settings->getCurrency() . number_format($settings->getShippingFee()) : '<span trn="free-shipping">Free shipping</span>' ?> </p>
+                            <p class="card-text"><span trn="min-order"> Min. order</span><b><?php echo $settings->getCurrency() . number_format($settings->getMinOrder()); ?>～</b></span>
+                                <br> <span trn="shipping-fee">Shipping Fee : </span><?php echo $settings->getCurrency() . number_format(intval($settings->getShippingFee())) . ' (' . $settings->getCurrency() . number_format(intval($settings->getFreeDeliveryPrice())) . ' <span trn="free-shipping">above free shipping</span>)' ?> </p>
+                            <h5 class="card-title mt-3 mt-lg-0 mt-md-0 font-weight-bold" trn="branch-selected">Branch selected</h5>
+                            <p class="card-text mb-4"><?php echo ($this->branch instanceof Branch) ? $this->branch->getName() : ''; ?> </p>
                             <h5 class="card-title" trn="delivery-areas">Delivery Areas</h5>
                             <p class="card-text mb-4"><?php echo $settings->getDeliveryAreas(); ?></p>
 
@@ -113,25 +112,32 @@ $verticalInfo = ($settings->getInfoDisplayOrientation() == Orientation::VERTICAL
             </div>
         <?php } ?>
 
-        <div class="tab-content d-flex <?php echo ($verticalMenu || $verticalInfo) ? 'col-lg-9 col-sm-8 col-md-8' : 'col-12'; ?> m-0 ">
-            <div class="row d-flex m-0" data-aos="fade-left">
+
+        <div class="tab-content d-flex justify-content-center <?php echo ($verticalMenu || $verticalInfo) ? 'col-lg-9 col-sm-8 col-md-8' : 'col-12'; ?> m-0 p-0">
+            <div class="row d-flex m-0 p-0 justify-content-start " data-aos="fade-left" style="width: 96%;">
                 <?php
                 if ($settings->getProductDisplayOrientation() == Orientation::LIST) {
                     echo '<div class="accordion" id="listAccordion">';
                 }
                 foreach ($this->products as $product) {
-                    if ($settings->getProductDisplayOrientation() == Orientation::GRID) {
-                        include 'app/Views/shop/product-grid.php';
-                    } else {
-                        include 'app/Views/shop/product-list.php';
+                    $branches = (fromDbJson($product->getBranchId()));
+                    if ($this->branch != null) {
+                        if (in_array($this->branch->getId(), $branches)) {
+                            if ($settings->getProductDisplayOrientation() == Orientation::GRID) {
+                                include 'app/Views/shop/product-grid.php';
+                            } else {
+                                include 'app/Views/shop/product-list.php';
+                            }
+                        }
+                        if ($settings->getProductDisplayOrientation() == Orientation::LIST) {
+                            echo '</div>';
+                        }
                     }
-                }
-                if ($settings->getProductDisplayOrientation() == Orientation::LIST) {
-                    echo '</div>';
                 } ?>
             </div>
         </div>
         </div>
+    </div>
     </div>
 
 
@@ -153,17 +159,21 @@ $verticalInfo = ($settings->getInfoDisplayOrientation() == Orientation::VERTICAL
 <!-- END PAGINATION SECTION -->
 <!-- HORIZONTAL DETAILS -->
 <?php if (!$verticalInfo) { ?>
-    <section>
-        <div class="card ml-5 mr-5" data-aos="zoom-in-up">
+    <section >
+        <div class="card ml-4 mr-4" data-aos="zoom-in-up">
             <div class="card-body">
                 <div class="row">
                     <div class="col-lg-3 col-sm-4">
                         <h5 class="card-title font-weight-bold" trn="opening-hours">Opening Hours</h5>
                         <h6 class="card-subtitle mb-4 text-muted mt-2">Mon to Sat 10am - 8pm</h6>
                         <h5 class="card-title font-weight-bold" trn="order-conditions">Order conditions</h5>
-                        <p class="card-text"><span trn="min-order"> Min. order</span> <b> <?php echo $settings->getCurrency() . number_format($settings->getMinOrder()); ?></b></span><br><?php echo $settings->getShippingFee() > 0 ? $settings->getCurrency() . number_format($settings->getShippingFee()) : '<span trn="free-shipping">Free shipping</span>' ?> </p>
+                        <p class="card-text"><span trn="min-order"> Min. order</span> <b> <?php echo $settings->getCurrency() . number_format($settings->getMinOrder()); ?></b></span>
+                            <br> <span trn="shipping-fee">Shipping Fee : </span><?php echo ' <strong>' . $settings->getCurrency() . number_format(intval($settings->getShippingFee())) . '</strong> (<strong>' . $settings->getCurrency() . number_format(intval($settings->getFreeDeliveryPrice())) . '</strong> <span trn="free-shipping">above free shipping</span>)' ?> </p>
                     </div>
                     <div class="col-lg-6 col-sm-4">
+                        <h5 class="card-title mt-3 mt-lg-0 mt-md-0 font-weight-bold" trn="branch-selected">Branch selected</h5>
+                        <p class="card-text mb-4"><?php echo ($this->branch instanceof Branch) ? $this->branch->getName() : ''; ?> </p>
+
                         <h5 class="card-title mt-3 mt-lg-0 mt-md-0 font-weight-bold" trn="delivery-areas">Delivery Areas</h5>
                         <p class="card-text mb-4"><?php echo $settings->getDeliveryAreas(); ?> </p>
                     </div>

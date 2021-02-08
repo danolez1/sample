@@ -1,13 +1,14 @@
 <?php
 
-namespace Demae\Auth\Models\Shop\Address;
+namespace Demae\Auth\Models\Shop;
 
 use AddressColumn;
-use danolez\lib\DB\Condition\Condition;
-use danolez\lib\DB\Credential\Credential;
-use danolez\lib\DB\Model\Model;
-use danolez\lib\Security\Encoding\Encoding;
-use Demae\Auth\Models\Error\Error;
+use danolez\lib\DB\Condition;
+use danolez\lib\DB\Credential;
+use danolez\lib\DB\Model;
+use danolez\lib\Res\Email;
+use danolez\lib\Security\Encoding;
+use Demae\Auth\Models\Error;
 use ReflectionClass;
 use ReflectionProperty;
 
@@ -53,47 +54,75 @@ class Address extends Model
         $this->dbName = Credential::SHOP_DB;
     }
 
-    public function validate()
+    public function validate($info = false)
     {
         $error = null;
-        if (is_null($this->getFirstName() || $this->getFirstName() == "")) {
+        if (isEmpty($this->getFirstName())) {
             $error = Error::NullFirstName;
-        } else if (is_null($this->getLastName() || $this->getLastName() == "")) {
-            $error = Error::NullLastName;
-        } else if (!validatePhone($this->getPhoneNumber())) {
+        } 
+        else if (!validatePhone($this->getPhoneNumber())) {
             $error = Error::NullPhone;
         } else if (!validateEmail($this->getEmail())) {
             $error = Error::InvalidEmail;
-        } else if (is_null($this->getZip()) || $this->getZip() == "" || is_null($this->getState()) || $this->getState() == "" || is_null($this->getCity()) || $this->getCity() == "" ||  is_null($this->getAddress()) || $this->getAddress() == "") {
-            $error = Error::NullAddress;
-        } else if (is_null($this->getStreet() || $this->getStreet() == "")) {
-            $error = Error::NullStreet;
-        } else if (is_null($this->getBuilding() || $this->getBuilding() == "")) {
-            $error = Error::NullBuilding;
+        } else if ($info == false) {
+            if (isEmpty($this->getZip()) || strlen($this->getZip()) < 7) {
+                $error = Error::NullZip;
+            } else if (isEmpty($this->getCity()) ||  isEmpty($this->getAddress())) {
+                $error = Error::NullAddress;
+            } else if (isEmpty($this->getStreet())) {
+                $error = Error::NullStreet;
+            }
         }
+        // else if (is_null($this->getBuilding() || $this->getBuilding() == "")) {
+        //     $error = Error::NullBuilding;
+        // }
         return json_encode(array(parent::ERROR => $error));
     }
 
 
-
     public function sendNotificationMail()
     {
-        # code...
+        $mail = new Email();
+        // // $mail->setTo($this->getEmail(), $this->getName());
+        // //Generate Subject for customer and leave for admin
+        // $mail->setSubject("Demae System - お問い合わせ");
+        // $message['en'] = "Thank you for your contacting us. We will get back to you shortly. This is an autoreply to indicate we got your message, so you don't have to reply.";
+        // $message['jp'] = "お問い合わせいただきありがとうございます。間もなくご連絡いたします。これは、メッセージを受け取ったことを示す自動返信なので、返信する必要はありません。";
+        // $body = file_get_contents('app/Views/email/contact.php');
+        // // $body = str_replace("{name}",  $this->getName() . '様', $body);
+        // $body = str_replace("{message['en']}", $message["en"], $body);
+        // $body = str_replace("{message['jp']}", $message["jp"], $body);
+        // $mail->setBody($message['en'] . "\r\n \r\n" . $message['jp']);
+        // $mail->setHtml($body);
+        // // $mail->sendWithGoogleSTMP(); //sendWithHostSTMP();
+        // $mail->sendWithHostSTMP();
     }
 
 
 
-    public function get()
+    public function get($id = null)
     {
         $cards = [];
         $obj = $this->object(false);
-        $query = (array) $this->table->get(
-            null,
-            Condition::WHERE,
-            array(
-                AddressColumn::USERID => $obj[AddressColumn::USERID],
-            )
-        );
+        if ($id == null) {
+            $query = (array) $this->table->get(
+                null,
+                Condition::WHERE,
+                array(
+                    AddressColumn::USERID => $obj[AddressColumn::USERID],
+                )
+            );
+        } else {
+            $query = (array) $this->table->get(
+                null,
+                Condition::WHERE,
+                array(
+                    AddressColumn::USERID => $obj[AddressColumn::USERID],
+                    AddressColumn::ID => $id,
+                ),
+                array("AND")
+            );
+        }
         if (count($query) > 0) {
             foreach ($query as $card) {
                 $cards[] =  $this->setData($card);

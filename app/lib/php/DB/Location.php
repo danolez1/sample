@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\DB\Location;
+namespace danolez\lib\DB;
 
 abstract class Location
 {

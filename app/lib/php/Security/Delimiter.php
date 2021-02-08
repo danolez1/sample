@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\Security\Delimiter;
+namespace danolez\lib\Security;
 abstract class Delimiter{
 public static $list = array("��R�h�4Ǝ�)B�2��W�S�c��.be6x;��b��EjT�*x�����A_1�?��",
 "yV����ѝS�Ճ���� (���r��&��������ǅ!��=���Qɞą�3� ��y",

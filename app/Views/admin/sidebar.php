@@ -22,7 +22,7 @@
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon bx bxs-dish" aria-hidden="true"></i>
                         Orders
                         <i class="mdc-drawer-arrow material-icons" style="visibility: hidden;">chevron_right</i>
-                        <span class="badge badge-info">9</span>
+                        <span class="badge badge-info"><?php echo $pendingOrder; ?></span>
                     </a>
                     <!-- <div class="mdc-expansion-panel" id="ui-sub-menu">
                         <nav class="mdc-list mdc-drawer-submenu">
@@ -95,15 +95,19 @@
                 </div>
                 <div>
                     <p class="mt-0 mb-1 ml-2 font-weight-bold tx-12"><?php echo $this->admin->getName(); ?></p>
-                    <p class="mt-0 mb-0 ml-2 tx-10" trn="<?php echo $this->admin->getRoleName()["trn"]; ?>"><?php echo $this->admin->getRoleName()[0]; ?></p>
+                    <p class="mt-0 mb-0 ml-2 tx-10" trn="<?php echo $this->admin->getRoleName()[0]["trn"]; ?>"><?php echo $this->admin->getRoleName()[0][0]; ?></p>
                 </div>
             </div>
-            <p class="tx-10 mt-3 mb-1">Branch: <br>Info: Daniel...................</p>
+            <p class="tx-10 mt-3 mb-1">Branch: <br>Info: </p>
             <div class="text-center mt-2">
                 <a href="admin-logout">
                     <span class="mdc-button mdc-button--raised mdc-button--white p-1 col-6">Logout</span>
                 </a>
             </div>
+        </div>
+
+        <div class="profile-actions p-0 m-0 text-center mb-5" style="width: 100%;">
+            <a style="width: 100%;" href="https://demae-system.com">©CLB Solutions</a>
         </div>
     </div>
 </aside>

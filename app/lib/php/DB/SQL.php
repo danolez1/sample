@@ -1,12 +1,12 @@
 <?php
 
-namespace danolez\lib\DB\SQL;
+namespace danolez\lib\DB;
 
-use danolez\lib\DB\Action\Action;
-use danolez\lib\DB\Attribute\Attribute;
-use danolez\lib\DB\Credential\Credential;
-use danolez\lib\DB\Database as DB;
-use danolez\lib\DB\Table\Table;
+use danolez\lib\DB\Action;
+use danolez\lib\DB\Attribute;
+use danolez\lib\DB\Credential;
+use danolez\lib\DB\Database ;
+use danolez\lib\DB\Table;
 use Exception;
 
 class SQL
@@ -25,10 +25,10 @@ class SQL
      * @param  mixed $DB
      * @return void
      */
-    public function __construct(DB\Database $DB = null)
+    public function __construct(Database $DB = null)
     {
         if ($DB == null) {
-            $this->DB = new DB\Database(Credential::SHOP_DB);
+            $this->DB = new Database(Credential::SHOP_DB);
         } else {
             $this->DB = $DB;
         }
@@ -111,14 +111,19 @@ class SQL
         if ($delTable || $delDatabase) {
             throw new Exception("Unauthorized Action");
         } else {
-            $stmt = $this->DB->DB()->prepare($sql);
-            if (count($params) > 0)
-                $stmt->bind_param($this->getParamsDataType($params), ...$params); //call_user_func_array(array($stmt,"bind_param"),$this->param);
-            $stmt->execute();
-            if (!$fectch)
-                $stmt->store_result();
-            return $stmt;
-            //return $this->DB->DB()->query($sql);
+            try {
+                $stmt = $this->DB->DB()->prepare($sql);
+                if (count($params) > 0)
+                    $stmt->bind_param($this->getParamsDataType($params), ...$params); //call_user_func_array(array($stmt,"bind_param"),$this->param);
+                $stmt->execute();
+                if (!$fectch)
+                    $stmt->store_result();
+                return $stmt;
+                //return $this->DB->DB()->query($sql);
+            } catch (Exception $e) {
+                throw new Exception($this->DB->DB()->error);
+                // var_dump($this->DB->DB()->error);
+            }
         }
     }
 
@@ -164,13 +169,13 @@ class SQL
         foreach ($params as $p) {
             if (!is_array($p)) {
                 $p = trim($p);
-                $p = str_replace("\\", "", $p);
-                $p = str_replace("'", " ", $p);
-                $p = stripslashes($p);
-                $p = stripcslashes($p);
+                // $p = str_replace("\\", "", $p);
+                // $p = str_replace("'", " ", $p);
+                // $p = stripslashes($p);
+                // $p = stripcslashes($p);
                 $p = strip_tags($p);
                 $p = htmlentities($p);
-                $p = $this->getDB()->DB()->real_escape_string($p);
+                $p = $this->DB->DB()->real_escape_string($p);
             } else {
                 $this->purify($p);
             }
@@ -231,5 +236,13 @@ class SQL
     public function params($params)
     {
         $this->params = $params;
+    }
+
+    /**
+     * Close Database connection
+     */
+    public function __destruct()
+    {
+        // $this->DB->DB()->close();
     }
 }

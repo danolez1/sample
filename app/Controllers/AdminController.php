@@ -2,19 +2,23 @@
 
 namespace Demae\Controller\ShopController;
 
-use danolez\lib\DB\Controller\Controller;
-use danolez\lib\DB\Model\Model;
-use danolez\lib\Res\Session\Session;
-use danolez\lib\Security\Encoding\Encoding;
+use danolez\lib\DB\Controller;
+use danolez\lib\DB\Model;
+use danolez\lib\Res\Session;
+use danolez\lib\Security\Encoding;
 use DashboardController;
-use Demae\Auth\Models\Error\Error;
-use Demae\Auth\Models\Shop\Administrator\Administrator;
-use Demae\Auth\Models\Shop\Branch\Branch;
-use Demae\Auth\Models\Shop\Log\Log;
+use Demae\Auth\Models\Error;
+use Demae\Auth\Models\Shop\Administrator;
+use Demae\Auth\Models\Shop\Branch;
+use Demae\Auth\Models\Shop\Log;
+use Demae\Auth\Models\Shop\Order;
+use Demae\Auth\Models\Shop\PaymentDetails;
 use Demae\Auth\Models\Shop\Product\Category;
-use Demae\Auth\Models\Shop\Product\Product;
-use Demae\Auth\Models\Shop\Setting\Setting;
-use Demae\Auth\Models\Shop\User\User;
+use Demae\Auth\Models\Shop\Product;
+use Demae\Auth\Models\Shop\Setting;
+use Demae\Auth\Models\Shop\User;
+use OrderColumn;
+use TrafficLogger;
 use UserController;
 
 class AdminController extends Controller
@@ -28,7 +32,10 @@ class AdminController extends Controller
     private $customers;
     private $staff;
     private $editProduct;
+    private $branchOrder = 0;
     private $branches;
+    private $paymentDetails;
+    private $traffic;
     private $ceoPages = ['settings', 'promotions'];
     private $managerPages = ['users', 'dashboard', 'branches', 'branch-setting', 'add-product', 'edit-product', 'products', 'staffs',];
 
@@ -67,62 +74,7 @@ class AdminController extends Controller
             unset($_SESSION['editProductId']);
         }
 
-        switch ($this->query) {
-            case 'admin-auth':
-                $this->includesOnly = true;
-                $this->page = "app/Views/admin/auth.php";
-                break;
-            case 'dashboard':
-                $this->page = "app/Views/admin/home.php";
-                break;
-            case 'orders':
-                $this->page = "app/Views/admin/pages/orders.php";
-                break;
-            case 'branches':
-            case 'branch-setting':
-                $this->page = "app/Views/admin/pages/branches.php";
-                break;
-            case 'products':
-                $this->page = "app/Views/admin/pages/products.php";
-                break;
-            case 'add-product':
-            case 'edit-product':
-                if ((isset($_COOKIE['editProductId']) && !isEmpty($_COOKIE['editProductId']))
-                    || !is_null($this->session->get(self::EDIT_PRODUCT))
-                ) {
-                    $this->editProduct = new Product();
-                    $this->editProduct = $this->editProduct->get($_COOKIE['editProductId'] ?? $_SESSION[self::EDIT_PRODUCT]);
-                    if ((isset($_COOKIE['editProductId']) && !isEmpty($_COOKIE['editProductId'])))
-                        $this->session->set(self::EDIT_PRODUCT, $_COOKIE['editProductId']);
-                    setcookie('editProductId', '', time() - 3600, '/');
-                }
-                $this->page = "app/Views/admin/pages/add_product.php";
-                break;
-            case 'staffs':
-                $this->page = "app/Views/admin/pages/staff.php";
-                break;
-            case 'users':
-                $this->page = "app/Views/admin/pages/customers.php";
-                break;
-            case 'promotions':
-                $this->page = "app/Views/admin/pages/chartjs.php";
-                break;
-            case 'documentation':
-                $this->page = "app/Views/admin/pages/documentation.php";
-                break;
-            case 'admin-faqs':
-                $this->page = "app/Views/admin/pages/documentation.php";
-                break;
-            case 'settings':
-                $this->page = "app/Views/admin/pages/settings.php";
-                break;
-            case 'admin-logout':
-                $this->session->destroy();
-                header('location:' . 'admin-auth');
-                break;
-            default:
-                $this->page = "app/Views/admin/home.php";
-        }
+        $this->pageSwitch();
         $this->renderPage();
     }
 
@@ -171,6 +123,20 @@ class AdminController extends Controller
                 }
             }
         }
+        $this->orders = new Order();
+        $this->orders = $this->orders->get();
+        $this->traffic = new TrafficLogger();
+        $this->traffic = $this->traffic->get();
+        $weeklyTraffic = 0;
+        foreach ($this->traffic as $traffic) {
+            if (date('W', intval($traffic->getTime())) == date('W')) {
+                $weeklyTraffic = $weeklyTraffic + intval($traffic->getCount());
+            }
+        }
+        $totalEarnings = 0;
+        foreach ($this->orders as $order) {
+            $totalEarnings = $totalEarnings + intval($order->getAmount());
+        }
         $this->products = new Product();
         $this->products = $this->products->get();
         $productCategories = new Category();
@@ -182,61 +148,208 @@ class AdminController extends Controller
         $optionsCategories = $optionsCategories->get();
 
         $this->settings = new Setting();
+        $pendingOrder = 0;
+        $completedOrder = 0;
 
-        // $ds = new Branch();
-        // $keys = $ds->properties()[Model::KEYS];
-        // foreach ($keys as $k) {
-        //     echo 'const ' . strtoupper($k) . ' = "' . ($k) . '";<br>';
-        // }
+        $data = [];
+        $monthlyData = [];
+        $yearlyData = [];
+        if ($this->admin != null) {
+            foreach ($this->orders as $order) {
+                if ($this->admin->getBranchId() == $order->getBranch() || $this->admin->getRole() == 1) {
+                    $dataTime = date("j F Y", (intval($order->getTimeCreated())));
+                    $dataDay = date("F Y", (intval($order->getTimeCreated())));
+                    $dataMonth = date("Y", (intval($order->getTimeCreated())));
+                    $this->branchOrder++;
+                    $data[$dataTime] = isset($data[$dataTime]) ? $data[$dataTime] + intval($order->getAmount()) : 0 + intval($order->getAmount());
+                    $monthlyData[$dataDay] = isset($monthlyData[$dataDay]) ? $monthlyData[$dataDay] + intval($order->getAmount()) :  0 + intval($order->getAmount());
+                    $yearlyData[$dataMonth] = isset($yearlyData[$dataMonth]) ? $yearlyData[$dataMonth] + intval($order->getAmount()) :  0 + intval($order->getAmount());
+                    // $orderData[] = $data;
+                    if (intval($order->getStatus()) == OrderColumn::ORDER_DELIVERED) {
+                        $completedOrder++;
+                    } else {
+                        $pendingOrder++;
+                    }
+                }
+            }
+            $script = "<script>";
+            if ($this->page == "app/Views/admin/home.php") {
+                $dates = array_keys($data);
+                $label = "var weekLabels = [";
+                $datas = "var weekData = [";
+                for ($i = 6; $i > -1; $i--) {
+                    if ($_COOKIE['lingo'] == 'en') {
+                        $label .=  "'" . date('j M', strtotime("-" . $i . "days")) . "',";
+                    } else if ($_COOKIE['lingo'] == 'jp') {
+                        $label .=  "'" . date('j日n月', strtotime("-" . $i . "days")) . "',";
+                    }
+
+                    if (in_array(date('j F Y', strtotime("-" . $i . "days")), $dates)) {
+                        $datas .= "'" . $data[date('j F Y', strtotime("-" . $i . "days"))] . "',";
+                    } else {
+                        $datas .= "'0',";
+                    }
+                }
+                $datas .= "];";
+                $label .= "];";
+
+                $label .= "var monthLabels = [";
+                $datas .= "var monthData = [";
+                for ($i = 30; $i > -1; $i--) {
+                    if ($_COOKIE['lingo'] == 'en') {
+                        $label .=  "'" . date('j M', strtotime("-" . $i . "days")) . "',";
+                    } else if ($_COOKIE['lingo'] == 'jp') {
+                        $label .=  "'" . date('j日n月', strtotime("-" . $i . "days")) . "',";
+                    }
+
+                    if (in_array(date('j F Y', strtotime("-" . $i . "days")), $dates)) {
+                        $datas .= "'" . $data[date('j F Y', strtotime("-" . $i . "days"))] . "',";
+                    } else {
+                        $datas .= "'0',";
+                    }
+                }
+                $datas .= "];";
+                $label .= "];";
+
+                $label .= "var threeMonthLabels = [";
+                $datas .= "var threeMonthData = [";
+
+                for ($i = 93; $i > -1; $i--) {
+                    if ($_COOKIE['lingo'] == 'en') {
+                        $label .=  "'" . date('j M', strtotime("-" . $i . "days")) . "',";
+                    } else if ($_COOKIE['lingo'] == 'jp') {
+                        $label .=  "'" . date('j日n月', strtotime("-" . $i . "days")) . "',";
+                    }
+
+                    if (in_array(date('j F Y', strtotime("-" . $i . "days")), $dates)) {
+                        $datas .= "'" . $data[date('j F Y', strtotime("-" . $i . "days"))] . "',";
+                    } else {
+                        $datas .= "'0',";
+                    }
+                }
+                $datas .= "];";
+                $label .= "];";
+
+                $label .= "var yearLabels = [";
+                $datas .= "var yearData = [";
+
+                $months = array_keys($monthlyData);
+                for ($i = 12; $i > -1; $i--) {
+                    if ($_COOKIE['lingo'] == 'en') {
+                        $label .=  "'" . date('M y', strtotime("-" . $i . "months")) . "',";
+                    } else if ($_COOKIE['lingo'] == 'jp') {
+                        $label .=  "'" . date('n月y年', strtotime("-" . $i . "months")) . "',";
+                    }
+
+                    if (in_array(date('F Y', strtotime("-" . $i . "months")), $months)) {
+                        $datas .= "'" . $monthlyData[date('F Y', strtotime("-" . $i . "months"))] . "',";
+                    } else {
+                        $datas .= "'0',";
+                    }
+                }
+                $datas .= "];";
+                $label .= "];";
+
+
+                $years = (array_keys($yearlyData));
+                asort($years);
+                $d = intval(date("Y")) - intval($years[0]);
+                $label .= "var allLabels = [";
+                $datas .= "var allData = [";
+                for ($i = $d; $i > -1; $i--) {
+                    if ($_COOKIE['lingo'] == 'en') {
+                        $label .=  "'" . date('Y', strtotime("-" . $i . "years")) . "',";
+                    } else if ($_COOKIE['lingo'] == 'jp') {
+                        $label .=  "'" . date('y年', strtotime("-" . $i . "years")) . "',";
+                    }
+
+                    if (in_array(date('Y', strtotime("-" . $i . "years")), $years)) {
+                        $datas .= "'" . $yearlyData[date('Y', strtotime("-" . $i . "years"))] . "',";
+                    } else {
+                        $datas .= "'0',";
+                    }
+                }
+                $datas .= "];";
+                $label .= "];";
+
+                $script .= $label . $datas;
+            }
+            $script .= "</script>";
+        }
+
 
         include 'app/Views/admin/header.php';
         if (@include($this->page));
         include 'app/Views/admin/footer.php';
     }
 
+    public function pageSwitch()
+    {
+        switch ($this->query) {
+            case 'admin-auth':
+                $this->includesOnly = true;
+                $this->page = "app/Views/admin/auth.php";
+                break;
+            case 'dashboard':
+                $this->page = "app/Views/admin/home.php";
+                break;
+            case 'orders':
+                $this->page = "app/Views/admin/pages/orders.php";
+                break;
+            case 'branches':
+            case 'branch-setting':
+                $this->page = "app/Views/admin/pages/branches.php";
+                break;
+            case 'products':
+                $this->page = "app/Views/admin/pages/products.php";
+                break;
+            case 'add-product':
+            case 'edit-product':
+                if ((isset($_COOKIE['editProductId']) && !isEmpty($_COOKIE['editProductId']))
+                    || !is_null($this->session->get(self::EDIT_PRODUCT))
+                ) {
+                    $this->editProduct = new Product();
+                    $this->editProduct = $this->editProduct->get($_COOKIE['editProductId'] ?? $_SESSION[self::EDIT_PRODUCT]);
+                    if ((isset($_COOKIE['editProductId']) && !isEmpty($_COOKIE['editProductId'])))
+                        $this->session->set(self::EDIT_PRODUCT, $_COOKIE['editProductId']);
+                    setcookie('editProductId', '', time() - 3600, '/');
+                }
+                $this->page = "app/Views/admin/pages/add_product.php";
+                break;
+            case 'staffs':
+                $this->page = "app/Views/admin/pages/staff.php";
+                break;
+            case 'users':
+                $this->page = "app/Views/admin/pages/customers.php";
+                break;
+            case 'promotions':
+                $this->page = "app/Views/admin/pages/promotions.php";
+                break;
+            case 'documentation':
+                $this->page = "app/Views/admin/pages/documentation.php";
+                break;
+            case 'admin-faqs':
+                $this->page = "app/Views/admin/pages/documentation.php";
+                break;
+            case 'settings':
+                $paymentDetails = new PaymentDetails();
+                $paymentDetails->setUserId(Setting::getInstance()->getSubscriptions());
+                $this->paymentDetails = $paymentDetails->get();
+                $this->page = "app/Views/admin/pages/settings.php";
+                break;
+            case 'admin-logout':
+                $this->session->destroy();
+                header('location:' . 'admin-auth');
+                break;
+            default:
+                $this->page = "app/Views/admin/home.php";
+                break;
+        }
+    }
+
     public function getAnalytics()
     {
         # code...
-    }
-
-    public function settingsPost()
-    {
-        // if (isset($_POST['add-settings'])) {
-        //     $addSettings = $this->addSettings();
-        //     $addSettings_error = (json_decode($addStaff)->{Model::ERROR});
-        //     $addSettings_result = isset(json_decode($addStaff)->{Model::RESULT});
-        //     $settingsInfo = true;
-        // }
-
-        if (isset($_POST['settings-upload-banner'])) {
-            $banner = $_POST['banner'];
-        }
-        if (isset($_POST['settings-store-info'])) {
-            $banner = $_POST['banner'];
-        }
-        if (isset($_POST['settings-order-condition'])) {
-            $banner = $_POST['banner'];
-        }
-        if (isset($_POST['settings-payment'])) {
-            $banner = $_POST['banner'];
-        }
-        if (isset($_POST['settings-upload-logo'])) {
-            $banner = $_POST['banner'];
-        }
-        if (isset($_POST['settings-upload-banner'])) {
-            $banner = $_POST['banner'];
-        }
-        if (isset($_POST['settings-upload-banner'])) {
-            $banner = $_POST['banner'];
-        }
-        if (isset($_POST['settings-upload-banner'])) {
-            $banner = $_POST['banner'];
-        }
-    }
-
-    public function addSettings()
-    {
-        # 7-14
     }
 
     protected function decode()
@@ -248,7 +361,6 @@ class AdminController extends Controller
     protected function setProperties()
     {
     }
-
 
     public function __destruct()
     {

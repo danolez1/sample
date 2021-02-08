@@ -27,6 +27,12 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
+                        <script>
+                            if (window.history.replaceState) {
+                                window.history.replaceState(null, null, window.location.href);
+                            }
+                            location.reload();
+                        </script>
                     <?php } ?>
                     <h3 class="col-form-label mt-3 mb-2" trn="personal-info">Personal information</h3>
                     <div class="form-row">
@@ -57,7 +63,7 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-6">
-                            <input type="text" name="state" id="adminDistrict" required class="form-control" trn="state" placeholder="State">
+                            <input type="text" name="state" id="adminDistrict" class="form-control" trn="state" placeholder="State">
                         </div>
                         <div class="form-group col-md-6">
                             <input type="text" name="address" id="formattedAddress" required class="form-control" trn="address" placeholder="Address">
@@ -68,7 +74,7 @@
                             <input type="text" name="street" class="form-control" required trn="street" placeholder="Street ○-○○">
                         </div>
                         <div class="form-group col-md-6">
-                            <input type="text" name="building" id="formattedAddress" required class="form-control" trn="building" placeholder="Building Name, Room Number">
+                            <input type="text" name="building" id="formattedAddress" class="form-control" trn="building" placeholder="Building Name, Room Number">
                         </div>
                     </div>
                 </div>

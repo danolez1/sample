@@ -1,7 +1,7 @@
 var dictionary = {
     "ceo": {
         en: "CEO",
-        jp: "創設者"//最高経営責任者
+        jp: "オーナー"//最高経営責任者
     }, "manager": {
         en: "Manager",
         jp: "店長"
@@ -125,6 +125,60 @@ var dictionary = {
     }, "invalid-email": {
         en: "Enter a valid email",
         jp: "有効なメールアドレスを入力してください"
+    }, "item-non-existence": {
+        en: "Item not in cart",
+        jp: "カートに商品が入っていません"
+    }, "order-placed": {
+        en: "Order placed",
+        jp: "注文済み"
+    }, "order-delivered": {
+        en: "Delivered",
+        jp: "お届けした"
+    }, "order-received": {
+        en: "Received",
+        jp: "受信された"
+    }, "order-shipped": {
+        en: "Shipped",
+        jp: "発送された"
+    }, "order-onway": {
+        en: "On the way",
+        jp: "途中"
+    }, "order-ready": {
+        en: "Order is ready",
+        jp: "準備ができた"
+    }, "product-available": {
+        en: "",
+        jp: ""
+    }, "product-unavailable": {
+        en: "",
+        jp: ""
+    }, "order-updated": {
+        en: "",
+        jp: ""
+    }, "error-occured": {
+        en: "Error Occured",
+        jp: "エラーが発生しました"
+    }, "staff-updated": {
+        en: "Staff Updated",
+        jp: "スタッフ更新しました。"
+    }, "error-zip": {
+        en: "Invalid zip code",
+        jp: "無効な郵便番号"
+    }, "delivery-time-edited": {
+        en: "Delivery time updated",
+        jp: "配達時間更新"
+    }, "min": {
+        en: "Min",
+        jp: "分"
+    }, "admin-exist": {
+        en: "Email already exist",
+        jp: "メールはすでに存在します"
+    }, "new-order": {
+        en: "You have new order",
+        jp: "新しい注文があります"
+    }, "notification": {
+        en: "Notification",
+        jp: "お知らせ"
     }, "": {
         en: "",
         jp: ""

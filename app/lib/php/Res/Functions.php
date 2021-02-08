@@ -1,6 +1,6 @@
 <?php
 
-use danolez\lib\Res\Server\Server;
+use danolez\lib\Res\Server;
 
 function isAssoc(array $arr)
 {
@@ -13,6 +13,24 @@ function validateEmail(string $email = null)
     if (!filter_var($email, FILTER_VALIDATE_EMAIL))
         return false;
     else return true;
+}
+
+function encodeImage($path)
+{
+    if (isEmpty($path)) return "";
+    $type = pathinfo($path, PATHINFO_EXTENSION);
+    $data = file_get_contents($path);
+    $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+    return $base64;
+}
+
+function dbToJp($word)
+{
+    $words = explode('u', $word);
+    $word = "";
+    foreach ($words as $w)
+        $word .= "\u" . $w;
+    return $word;
 }
 
 function validatePhone(string $phone = null)
@@ -39,21 +57,37 @@ function removeSpace($string)
     return str_replace(" ", "", $string);
 }
 
-
-function fJson($json)
-{
-    $json = str_replace('&quot;', '"', $json);
-    return json_decode($json);
-}
-
 function purify(string $p)
 {
     $p = trim($p);
-    $p = stripslashes($p);
-    $p = stripcslashes($p);
+    // $p = stripslashes($p);
+    // $p = stripcslashes($p);
     $p = strip_tags($p);
     $p = htmlentities($p);
     return $p;
+}
+
+
+function fromDbJson($object)
+{
+    $object = stripslashes($object);
+    // $object = stripcslashes($object);
+    return json_decode(str_replace(']"', "]", str_replace('"[', "[", str_replace("&quot;", '"', (html_entity_decode(htmlspecialchars_decode($object)))))));
+}
+
+function unicode2html($str)
+{
+    // if (strlen($str) != strlen(utf8_decode($str))) {
+    $i = 65535;
+    while ($i > 0) {
+        $hex = dechex($i);
+        $str = str_replace("\u$hex", "&#$i;", $str);
+        $i--;
+    }
+    // }
+    $str = stripslashes($str);
+    $str = stripcslashes($str);
+    return $str;
 }
 
 function keepFormValues($input)
@@ -76,10 +110,6 @@ function returnJsFunc($input)
     echo $script;
 }
 
-function fromDbJson($object)
-{
-    return json_decode(str_replace('&quot;', '"', $object));
-}
 
 function daysOfWeek()
 {

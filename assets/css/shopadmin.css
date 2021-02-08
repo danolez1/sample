@@ -14,6 +14,32 @@ body {
   background-color: darkgrey;
   border-radius: 32px;
 }
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+.rotate {
+  -moz-transition: all 1s linear;
+  -webkit-transition: all 1s linear;
+  transition: all 1s linear;
+  -ms-transform: rotate(-360deg);
+  -moz-transform: rotate(-360deg);
+  -webkit-transform: rotate(-360deg);
+  transform: rotate(-360deg);
+}
+
+.rotate.down {
+  -ms-transform: rotate(360deg);
+  -moz-transform: rotate(360deg);
+  -webkit-transform: rotate(360deg);
+  transform: rotate(360deg);
+}
 #delivery-time-fab {
   position: fixed;
   bottom: 30px;
@@ -29,7 +55,9 @@ body {
   padding: 0.1rem;
   opacity: 1;
 }
-
+.option-span {
+  cursor: pointer;
+}
 #timer {
   position: fixed;
   bottom: 80px;
@@ -47,10 +75,10 @@ body {
   color: #141414;
 }
 .span-circle {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  padding: 6px 8px;
+  padding: 8px 8px;
   background: #000;
   color: #fff;
   font-size: 16px;
@@ -336,7 +364,8 @@ body {
   display: inline-block;
   overflow: hidden;
   font-size: 16px;
-  margin: 0 0.89em;
+  margin: 0 0.5em;
+  margin-top: 0.45em;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   padding-top: 30%;

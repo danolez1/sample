@@ -1,13 +1,17 @@
 <?php
 
-namespace Demae\Auth\Models\Shop\User;
+namespace Demae\Auth\Models\Shop;
 
-use danolez\lib\DB\Condition\Condition;
-use danolez\lib\DB\Credential\Credential;
-use danolez\lib\DB\Model\Model;
-use danolez\lib\Security\Encoding\Encoding;
-use danolez\lib\Security\Encryption\Encryption;
-use Demae\Auth\Models\Error\Error;
+use danolez\lib\DB\Condition;
+use danolez\lib\DB\Credential;
+use danolez\lib\DB\Model;
+use danolez\lib\Res\Email;
+use danolez\lib\Res\Server;
+use danolez\lib\Security\Encoding;
+use danolez\lib\Security\Encryption;
+use Demae\Auth\Models\Error;
+use Demae\Auth\Models\Shop\Setting;
+use Demae\Controller\ShopController\HomeController;
 use ReflectionClass;
 use ReflectionProperty;
 use UserColumn;
@@ -71,6 +75,33 @@ class User extends Model
 
     public function sendRegistrationMail()
     {
+        $mail = new Email();
+        $mail->setTo($this->email, $this->name);
+        $EN = $_COOKIE['lingo'] == 'en';
+        $name = Setting::getInstance()->getStoreName();
+        $mail->setSubject($EN ? "【 $name 】- Registration" : "【 $name 】- 会員登録の手続きについて");
+        $link = "";
+        $message['en'] = 'Thank you very much for using ' . $name . '!<br>We have received your membership registration application!<br>▼Please confirm your email address by clicking the link below<br><a href="' . $link . '" >"' . $link . '"</a>';
+        $message['jp'] = $name . ' をご利用頂きましてありがとうございます。会員登録の申込みを受付けました。<br>下記よりお手続きをお願い致します。<br>▼以下のURLよりご登録を完了してください。<br><a href="' . $link . '" >"' . $link . '"</a>※URL有効期限：メール受信から24時間。有効期限を過ぎると無効となります。<br>※本メールは自動送信です。このメールに返信頂いてもお答えできません。ご了承ください。<br>';
+        $body = file_get_contents('app/Views/email/contact.php');
+        $body = str_replace("{name}", $EN ? "Dear  $this->name ," : $this->name . '様,', $body);
+        $body = str_replace("{message['en']}", $message["en"], $body);
+        $body = str_replace("{message['jp']}", $message["jp"], $body);
+        $body = str_replace("{{SOCIALS}}", "", $body);
+        // // <td style="word-break: break-word; vertical-align: top; padding-bottom: 0; padding-right: 5px; padding-left: 5px;" valign="top"><a href="https://www.facebook.com/" target="_blank"><img alt="Facebook" height="32" src="images/facebook2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; display: block;" title="Facebook" width="32" /></a></td>
+        // // <td style="word-break: break-word; vertical-align: top; padding-bottom: 0; padding-right: 5px; padding-left: 5px;" valign="top"><a href="https://twitter.com/" target="_blank"><img alt="Twitter" height="32" src="images/twitter2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; display: block;" title="Twitter" width="32" /></a></td>
+        // // <td style="word-break: break-word; vertical-align: top; padding-bottom: 0; padding-right: 5px; padding-left: 5px;" valign="top"><a href="https://instagram.com/" target="_blank"><img alt="Instagram" height="32" src="images/instagram2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; display: block;" title="Instagram" width="32" /></a></td>
+        // // <td style="word-break: break-word; vertical-align: top; padding-bottom: 0; padding-right: 5px; padding-left: 5px;" valign="top"><a href="https://www.linkedin.com/" target="_blank"><img alt="LinkedIn" height="32" src="images/linkedin2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; display: block;" title="LinkedIn" width="32" /></a></td>
+        $settings = HomeController::getSettings();
+        if (!$settings->getUseTitleAsLogo()) {
+            $mail->setAttachment($settings->getMetaContent());
+            $mail->setAttachmentName("logo-img");
+        }
+        $logo = '<img align="center" border="0" class="center autowidth" src="cid:logo-img" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; width: 100%; max-width: 140px; display: block;"  width="140" />';
+        $body = str_replace("{{LOGO}}", $settings->getUseTitleAsLogo() ? $settings->getLogo() : $logo, $body);
+        $mail->setBody($message['en'] . "\r\n \r\n" . $message['jp']);
+        $mail->setHtml($body);
+        $mail->sendWithHostSTMP();
     }
 
     public function update()
@@ -84,16 +115,16 @@ class User extends Model
         $validate = json_decode($this->validate(self::AUTHENTICATION))->{parent::ERROR};
         if (is_null($validate)) {
             $obj = $this->object(false);
-            $query = $this->table->get(
+            $query = (array) $this->table->get(
                 null,
                 Condition::WHERE,
                 array(
                     UserColumn::EMAIL => $obj[UserColumn::EMAIL],
                 )
-            )[0];
-            $req = (array) $query;
-            $auth = isset($req[UserColumn::PASSWORD]) ?
-                Encryption::verify($req[UserColumn::PASSWORD], $this->getPassword()) : false;
+            );
+            $req = count($query) > 0 ? $query[0] : [];
+            $auth = isset($req->{UserColumn::PASSWORD}) ?
+                Encryption::verify($req->{UserColumn::PASSWORD}, $this->getPassword()) : false;
             if (!$auth) {
                 $validate = Error::WrongDetails;
             } else {
@@ -157,7 +188,7 @@ class User extends Model
     public function getAllUser()
     {
         $users = [];
-        $query = $this->table->get();
+        $query = $this->table->get() ?? array();
         if (count($query) > 0) {
             foreach ($query as $user) {
                 $users[] = $this->setData($user);

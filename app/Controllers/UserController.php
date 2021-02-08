@@ -1,12 +1,13 @@
 <?php
 
-use danolez\lib\DB\Controller\Controller;
-use Demae\Auth\Models\Shop\Address\Address;
-use Demae\Auth\Models\Shop\Administrator\Administrator;
-use Demae\Auth\Models\Shop\Log\Log;
-use Demae\Auth\Models\Shop\PaymentDetails\CreditCard;
-use Demae\Auth\Models\Shop\PaymentDetails\PaymentDetails;
-use Demae\Auth\Models\Shop\User\User;
+use danolez\lib\DB\Controller;
+use danolez\lib\DB\Model;
+use Demae\Auth\Models\Shop\Address;
+use Demae\Auth\Models\Shop\Administrator;
+use Demae\Auth\Models\Shop\Log;
+use Demae\Auth\Models\Shop\CreditCard;
+use Demae\Auth\Models\Shop\PaymentDetails;
+use Demae\Auth\Models\Shop\User;
 
 class UserController extends Controller
 {
@@ -49,7 +50,15 @@ class UserController extends Controller
         $log = new Log();
         $user->setLog(json_encode($log->properties()));
         $user->setTimeCreated(time());
-        return $user->register();
+        $register = $user->register();
+        $validate = json_decode($register)->{Model::ERROR};
+        if (is_null($validate)) {
+            $user = new User();
+            $user->setEmail($this->data['remail']);
+            $user->setPassword($this->data['rpassword']);
+            return ($user->authenticate());
+        } else
+            return $register;
     }
 
     public function adminAuth()
@@ -72,6 +81,8 @@ class UserController extends Controller
         $creditCard->cvv = $this->data['cvc'];
         $paymentDetails = new PaymentDetails();
         $paymentDetails->setTimeCreated(time());
+        $paymentDetails->email = $this->user->getEmail();
+        $paymentDetails->name = $this->user->getName();
         $paymentDetails->setUserId($this->user->getId());
         $log = new Log();
         $paymentDetails->setLog(json_encode($log->properties()));

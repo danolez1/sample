@@ -13,7 +13,7 @@
                     <a href="shop">
                         <p trn="home">Home</p>
                     </a>
-                    <a type="button" data-toggle="modal" data-target="#cart">
+                    <a data-toggle="modal" data-target="#cart">
                         <p trn="cart">Cart</p>
                     </a>
                     <?php if (!is_null($this->session->get(self::USER_ID))) { ?>
@@ -34,7 +34,7 @@
             </div>
             <footer class="border-top">
                 <div class="row">
-                    <p class="col-10  text-start pt-4">© 2020 <a href="<?php echo $settings->getWebsiteUrl(); ?>"><?php echo $settings->getStoreName(); ?>.</a> All rights reserved.</p>
+                    <p class="col-lg-10 col-sm-6  text-start pt-4">© 2020 <a href="<?php echo $settings->getWebsiteUrl(); ?>"><?php echo $settings->getStoreName(); ?></a> by <a href="https://demae-system.com">CLB Solutions.</a> All rights reserved.</p>
                     <div class="col-2  pt-4 sd-fnm" id="contact-details-section">
                         <?php if (isset($settings->getSocials()->facebook)) { ?>
                             <a href="<?php echo $settings->getSocials()->facebook; ?>"><span class="mdi mdi-facebook"></span></a>
@@ -64,7 +64,7 @@
                         <a href="shop">
                             <p><span trn="home">Home</span></p>
                         </a>
-                        <a type="button" data-toggle="modal" data-target="#cart">
+                        <a data-toggle="modal" data-target="#cart">
                             <p><span trn="cart">Cart</span></p>
                         </a>
                         <?php if (!is_null($this->session->get(self::USER_ID))) { ?>
@@ -93,7 +93,7 @@
             </section>
             <footer class="border-top">
                 <div class="row col-12">
-                    <p class="col-lg-10 col-sm-6  text-start pt-4">© 2020 <a href="<?php echo $settings->getWebsiteUrl(); ?>"><?php echo $settings->getStoreName(); ?>.</a> All rights reserved.</p>
+                    <p class="col-lg-10 col-sm-6  text-start pt-4">© 2020 <a href="<?php echo $settings->getWebsiteUrl(); ?>"><?php echo $settings->getStoreName(); ?></a> by <a href="https://demae-system.com">CLB Solutions.</a> All rights reserved.</p>
                     <div class="col-lg-2 col-sm-6 text-end contact-details d-flex justify-content-center justify-content-md-end  pt-4" id="contact-details-section">
                         <?php if (isset($settings->getSocials()->facebook)) { ?>
                             <a href="<?php echo $settings->getSocials()->facebook; ?>"><span class="mdi mdi-facebook"></span></a>
@@ -115,10 +115,11 @@
 <script src="assets/vendors/aos/js/aos.js"></script>
 <script src="assets/js/jquery-spinner.min.js"></script>
 <script src="assets/js/mcx-dialog.min.js"></script>
+<script src="assets/js/date-picker.js"></script>
+<script src="assets/js/jquery.timepicker.min.js"></script>
 <script src="assets/js/jquery.card.js"></script>
-<script src="assets/js/shop.js"></script>
+<script src="assets/js/shop.js?<?php echo time(); ?>"></script>
 <script src="assets/js/404.js"></script>
-<script src="assets/js/dictionary.js"></script>
 <script src="assets/js/translator.js"></script>
 <?php echo $settings->getScripts(); ?>
 </body>

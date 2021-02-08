@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\Res\SMS;
+namespace danolez\lib\Res;
 
 class SMS{
     private $to; //array

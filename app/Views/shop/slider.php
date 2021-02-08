@@ -64,11 +64,11 @@ if ($slider == 0) { ?>
                     <span class="text-white ml-1" style="font-size: 15px;"><span trn="delivery-time">Delivery time</span> <b class="ml-1 span-circle"><?php echo $settings->getDeliveryTime(); ?></b> <span trn="minutes">min</span></span>
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-6 text-center  mt-2">
-                    <h6 class="text-white font-weight-bold"><?php echo $available ? '<span trn="opened">Opened</span>' : '<span trn="closed">Closed</span>'; ?></h6>
+                    <h6 class="text-white font-weight-bold"><?php echo $this->available ? '<span trn="opened">Opened</span>' : '<span trn="closed">Closed</span>'; ?></h6>
                 </div>
                 <div class="col-lg-4  col-md-4 col-sm-6 text-center">
                     <span class="text-white" style="font-size: 15px;"><span trn="min-order"> Min. order</span> <b class="ml-3 mr-3"> <?php echo $settings->getCurrency() . number_format($settings->getMinOrder()); ?></b></span>
-                    <a type="button" data-toggle="modal" data-target="#cart"> <img src="assets/images/shop/cart.svg" alt="cart" width="40"></a>
+                    <a data-toggle="modal" data-target="#cart"> <img src="assets/images/shop/cart.svg" alt="cart" width="40"></a>
                 </div>
             </div>
             <div class="container" data-aos="zoom-in-up">
@@ -116,11 +116,11 @@ if ($slider == 0) { ?>
                     <span class="text-white ml-3" style="font-size: 15px;"> <span trn="delivery-time">Delivery time</span> <b class="ml-2 span-circle"><?php echo $settings->getDeliveryTime(); ?></b><span trn="minutes">min</span></span>
                 </div>
                 <div class="col-lg-4 text-center  mt-2">
-                    <h5 class="text-white font-weight-bold"><?php echo $available ? '<span trn="opened">Opened</span>' : '<span trn="closed">Closed</span>'; ?></h5>
+                    <h5 class="text-white font-weight-bold"><?php echo $this->available ? '<span trn="opened">Opened</span>' : '<span trn="closed">Closed</span>'; ?></h5>
                 </div>
                 <div class="col-lg-4 text-center">
                     <span class="text-white" style="font-size: 15px;"> <span trn="min-order"> Min. order</span> <b class="ml-3 mr-3"> <?php echo $settings->getCurrency() . number_format($settings->getMinOrder()); ?></b></span>
-                    <a type="button" data-toggle="modal" data-target="#cart"> <img src="assets/images/shop/cart.svg" alt="cart" width="40"></a>
+                    <a data-toggle="modal" data-target="#cart"> <img src="assets/images/shop/cart.svg" alt="cart" width="40"></a>
                 </div>
             </div>
         </div>

@@ -1,10 +1,11 @@
 <?php
 
-namespace Demae\Auth\Models\Shop\Favourite;
+namespace Demae\Auth\Models\Shop;
 
-use danolez\lib\DB\Credential\Credential;
-use danolez\lib\DB\Model\Model;
-use danolez\lib\Security\Encoding\Encoding;
+use danolez\lib\DB\Condition;
+use danolez\lib\DB\Credential;
+use danolez\lib\DB\Model;
+use danolez\lib\Security\Encoding;
 use FavoriteColumn;
 use ReflectionClass;
 use ReflectionProperty;
@@ -15,7 +16,6 @@ class Favourite extends Model
     private $userId;
     private $productId;
     private $timeCreated;
-    private $log;
 
     const KEY_ENCODE_ITERTATION = -1;
     const VALUE_ENCODE_ITERTATION = 2;
@@ -24,7 +24,6 @@ class Favourite extends Model
     {
         parent::__construct();
     }
-
 
     protected function setTableName()
     {
@@ -37,32 +36,46 @@ class Favourite extends Model
 
     public function get()
     {
-        // $query = (array) $this->table->get(
-        //     null,
-        //     Condition::WHERE,
-        //     array(
-        //         ProductColumn::ID => $id,
-        //     )
-        // );
-        // return $this->setData($query);
+        $favorites = [];
+        $obj = $this->object(false);
+        $query = (array) $this->table->get(
+            null,
+            Condition::WHERE,
+            array(
+                FavoriteColumn::USERID => $obj[FavoriteColumn::USERID],
+            )
+        );
+        if (count($query) > 0) {
+            foreach ($query as $favorite) {
+                $favorites[] =  $this->setData($favorite);
+            }
+        }
+        return $favorites;
     }
 
     public function add()
     {
-        // $this->setId(Encoding::encode(($this->table->getLastSN() + 1), self::VALUE_ENCODE_ITERTATION));
-        //         $obj = $this->object();
-        //         $stmt = $this->table->insert($obj[parent::PROPERTIES], $obj[parent::VALUES]);
-        //         $return[parent::RESULT] = (bool) $stmt->affected_rows;
-
+        $return = array();
+        $this->setId(Encoding::encode(($this->table->getLastSN() + 1), self::VALUE_ENCODE_ITERTATION));
+        $obj = $this->object();
+        $stmt = $this->table->insert($obj[parent::PROPERTIES], $obj[parent::VALUES]);
+        $return[parent::RESULT] = (bool) $stmt->affected_rows;
+        return json_encode($return);
     }
 
     public function delete()
     {
-        // $stmt = $this->table->remove(
-        //     array(
-        //         ProductColumn::ID => $obj[ProductColumn::ID],
-        //     )
-        // );
+        $return = array();
+        $obj = $this->object(false);
+        $stmt = $this->table->remove(
+            array(
+                FavoriteColumn::USERID => $obj[FavoriteColumn::USERID],
+                FavoriteColumn::PRODUCTID => $obj[FavoriteColumn::PRODUCTID]
+            ),
+            array("AND")
+        );
+        $return[parent::RESULT] = (bool) $stmt->affected_rows;
+        return json_encode($return);
     }
 
 
@@ -127,11 +140,7 @@ class Favourite extends Model
         if (is_array($data)) {
             $temp  = array();
             foreach ($data as $key => $value) {
-                // if ($key == FavoriteColumn::PASSWORD) { 
-                //     // $assoc ? $temp[$key] = Encoding::encode($value, self::VALUE_ENCODE_ITERTATION): $temp[] = Encoding::encode($value, self::VALUE_ENCODE_ITERTATION);
-                // } else {
                 $assoc ? $temp[$key] = ($value) : $temp[] = ($value);
-                //  }
             }
             return $temp;
         } else {
@@ -215,26 +224,6 @@ class Favourite extends Model
     public function setTimeCreated($timeCreated)
     {
         $this->timeCreated = $timeCreated;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of log
-     */
-    public function getLog()
-    {
-        return $this->log;
-    }
-
-    /**
-     * Set the value of log
-     *
-     * @return  self
-     */
-    public function setLog($log)
-    {
-        $this->log = $log;
 
         return $this;
     }

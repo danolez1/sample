@@ -1,10 +1,10 @@
 <?php
 
-namespace Demae\Auth\Models\Shop\Messaging;
+namespace Demae\Auth\Models\Shop;
 
-use danolez\lib\DB\Credential\Credential;
-use danolez\lib\DB\Model\Model;
-use danolez\lib\Security\Encoding\Encoding;
+use danolez\lib\DB\Credential;
+use danolez\lib\DB\Model;
+use danolez\lib\Security\Encoding;
 use MessagingColumn;
 use ReflectionClass;
 use ReflectionProperty;

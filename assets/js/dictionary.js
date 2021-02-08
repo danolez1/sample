@@ -22,10 +22,10 @@ var dictionary = {
         jp: "最小注文額"
     }, "opened": {
         en: "Opened",
-        jp: "開いた"
+        jp: "開店"
     }, "closed": {
         en: "Closed",
-        jp: "閉じている"
+        jp: "閉店"
     }, "address": {
         en: "Address",
         jp: "住所"
@@ -51,8 +51,14 @@ var dictionary = {
         en: "Order conditions",
         jp: ""
     }, "free-shipping": {
-        en: "Free shipping",
-        jp: "送料無料"
+        en: " above free shipping",
+        jp: "以上無料"
+    }, "free-shipping1": {
+        en: " above free shipping",
+        jp: "以上送料無料"
+    }, "shipping-fee": {
+        en: "Shipping :",
+        jp: "送料 :"
     }, "we-accept": {
         en: "We Accept",
         jp: "受け入れる"
@@ -61,7 +67,7 @@ var dictionary = {
         jp: "完売"
     }, "add-to-cart": {
         en: "Add",
-        jp: "カートに追加"
+        jp: "注文を追加"
     }, "email": {
         en: "Email Address",
         jp: "メール"
@@ -236,12 +242,87 @@ var dictionary = {
     }, "error-occured": {
         en: "Error Occured",
         jp: "エラーが発生しました"
-    }, "": {
-        en: "",
-        jp: ""
-    }, "": {
-        en: "",
-        jp: ""
+    }, "invalid-delivery-method": {
+        en: "Invalid delivery method",
+        jp: "無効な配信方法"
+    }, "invalid-time-or-date": {
+        en: "Invalid time or date",
+        jp: "無効な時間または日付"
+    }, "invalid-payment-details": {
+        en: "Invalid payment details",
+        jp: "無効な支払い"
+    }, "invalid-takeout-time": {
+        en: "Invalid takeout time",
+        jp: "テイクアウト時間が無効"
+    }, "invalid-takeout-date": {
+        en: "Invalid takeout date",
+        jp: "持ち帰り日が無効"
+    }, "invalid-delivery-date": {
+        en: "Invalid delivery date",
+        jp: "配達日が無効"
+    }, "invalid-delivery-time": {
+        en: "Invalid delivery time",
+        jp: "配達時間が無効"
+    }, "invalid-credit-card-name": {
+        en: "Input card name",
+        jp: " カード名を入力してください"
+    }, "unsucessful-payment": {
+        en: "Payment was unsuccessful",
+        jp: "支払いに失敗しました"
+    }, "order-placed": {
+        en: "Order placed",
+        jp: "注文済み"
+    }, "error-zip": {
+        en: "Invalid zip code",
+        jp: "無効な郵便番号"
+    }, "loading": {
+        en: "Loading...",
+        jp: "処理中…"
+    }, "please-wait": {
+        en: "Placing your order",
+        jp: "ご注文の送信"
+    }, "already-rated": {
+        en: "Already rated",
+        jp: "すでに評価済み"
+    }, "order-rated": {
+        en: "Order rated",
+        jp: "注文の評価済み"
+    }, "failed": {
+        en: "Failed",
+        jp: "失敗しました"
+    }, "tax-included": {
+        en: "Tax included",
+        jp: "税込み"
+    }, "min": {
+        en: "Min",
+        jp: "分"
+    }, "below-minimum": {
+        en: "Add products to reach min. order ",
+        jp: "最低注文額に足してない"
+    }, "invalid-order": {
+        en: "Order not found",
+        jp: "注文が見つかりません"
+    }, "invalid-details": {
+        en: "Invalid delivery details",
+        jp: "配信の詳細が無効です"
+    }, "order-delivered": {
+        en: "Your order has been delivered",
+        jp: "ご注文はお届けしました"
+    }, "order-received": {
+        en: "Your order has been received",
+        jp: "ご注文は受信されました"
+    }, "order-shipped": {
+        en: "Order has been shipped",
+        jp: "注文が発送されました"
+    }, "order-onway": {
+        en: "Your order is on the way",
+        jp: "ご注文は途中です"
+    }, "order-ready": {
+        en: "Order is ready",
+        jp: "注文の準備ができました"
+    }, "order-sent": {
+        en: "Your order has been sent",
+        jp: "ご注文は送信されました"
     }, "": {
         en: "",
         jp: ""

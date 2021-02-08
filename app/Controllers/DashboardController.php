@@ -1,15 +1,19 @@
 <?php
 
-use danolez\lib\DB\Controller\Controller;
-use danolez\lib\DB\Model\Model;
-use danolez\lib\Security\Encoding\Encoding;
-use Demae\Auth\Models\Error\Error;
-use Demae\Auth\Models\Shop\Administrator\Administrator;
-use Demae\Auth\Models\Shop\Branch\Branch;
-use Demae\Auth\Models\Shop\Log\Log;
-use Demae\Auth\Models\Shop\Product\Product;
-use Demae\Auth\Models\Shop\Setting\Setting;
-use Demae\Auth\Models\Shop\User\User;
+use danolez\lib\DB\Controller;
+use danolez\lib\DB\Model;
+use danolez\lib\Res\Payment\StripeApi;
+use danolez\lib\Security\Encoding;
+use danolez\lib\Security\KeyFactory;
+use Demae\Auth\Models\Error;
+use Demae\Auth\Models\Shop\Administrator;
+use Demae\Auth\Models\Shop\Branch;
+use Demae\Auth\Models\Shop\Log;
+use Demae\Auth\Models\Shop\CreditCard;
+use Demae\Auth\Models\Shop\PaymentDetails;
+use Demae\Auth\Models\Shop\Product;
+use Demae\Auth\Models\Shop\Setting;
+use Demae\Auth\Models\Shop\User;
 
 class DashboardController extends Controller
 {
@@ -68,7 +72,8 @@ class DashboardController extends Controller
             $settings->setBannerText($this->data['banner-content']);
             $settings->setMenuDisplayOrientation($this->data['menu-display']);
             $settings->setInfoDisplayOrientation($this->data['info-display']);
-            $settings->setProductDisplayOrientation($this->data['product-display']);
+            $settings->setProductDisplayOrientation(1/*$this->data['product-display']*/);
+            // $settings->setProductDisplayOrientation($this->data['product-display']);
             $settings->setSliderType($this->data['slider-type']);
             $settings->setFooterType($this->data['footer-type']);
             $settings->setColors($this->data['theme-color']);
@@ -82,9 +87,11 @@ class DashboardController extends Controller
         } else if (isset($this->data['delivery-options'])) {
             $settings  =  new Setting();
             $settings->setShippingFee($this->data['shipping-fee']);
+            $settings->setFreeDeliveryPrice($this->data['free-shipping-price']);
             $settings->setDeliveryTimeRange($this->data['time-range']);
             $settings->setDeliveryTime($this->data['delivery-time']);
             $settings->setAddress($this->data['address']);
+            $settings->setAddressName($this->data['address-name']);
             $settings->setDeliveryAreas($this->data['delivery-area']);
             $settings->setDeliveryDistance($this->data['delivery-distance']);
             return $settings->update();
@@ -135,7 +142,7 @@ class DashboardController extends Controller
                 $operationTime->setClose(array_values($this->data['shop-close'])[$i]);
                 $times[] = $operationTime->properties(true);
             }
-            $settings->setOperationalTime($times);
+            $settings->setOperationalTime(json_encode($times));
             return $settings->update();
         } else if (isset($this->data['save-branch-optime'])) {
             $return = array();
@@ -189,37 +196,90 @@ class DashboardController extends Controller
             }
             $return[Model::ERROR] = $error;
             return json_encode($return);
+        } else if (isset($this->data['branch-printer-info'])) {
+            $return = array();
+            $error = null;
+            $branch = null;
+            foreach ($this->branch as $key => $value) {
+                if ($value->getId() == $this->data['branch-id']) {
+                    $branch = $value;
+                    break;
+                }
+            }
+            if ($branch instanceof Branch) {
+                $branch->setDefaultPrinter($this->data['default-printer']);
+                $branch->setPrintLanguage($this->data["print-lang"]);
+                $branch->setPrintNodeApi($this->data['pnapi']);
+                $return[Model::RESULT] = $branch->update();
+            } else {
+                $error = Error::Unauthorised;
+            }
+            $return[Model::ERROR] = $error;
+            return json_encode($return);
+        } else if (isset($this->data['delivery-method'])) {
+            $settings  =  new Setting();
+            $settings->setHomeDelivery($this->data['home-delivery'] ?? null);
+            $settings->setTakeOut($this->data['takeout'] ?? null);
+            return $settings->update();
+        } else if (isset($this->data['printer-info'])) {
+            $settings  =  new Setting();
+            $settings->setDefaultPrinter($this->data['default-printer']);
+            $settings->setPrintLanguage($this->data["print-lang"]);
+            $settings->setPrintNodeApi($this->data['pnapi']);
+            return $settings->update();
+        } else if (isset($this->data['add-card'])) {
+            $settings  =  new Setting();
+            $creditCard = new CreditCard();
+            $creditCard->cardName = $this->data['name'];
+            $creditCard->cardNumber = removeSpace($this->data['number']);
+            $creditCard->expiryDate = removeSpace($this->data['expiry']);
+            $creditCard->cardType = get_card_brand($creditCard->cardNumber);
+            $creditCard->cvv = $this->data['cvc'];
+            $paymentDetails = new PaymentDetails();
+            $paymentDetails->setTimeCreated(time());
+            $paymentDetails->email = $this->admin->getEmail();
+            $paymentDetails->name = $this->admin->getName();
+            $settings->setSubscriptions(KeyFactory::genCoke());
+            $paymentDetails->setUserId($settings->getSubscriptions());
+            $log = new Log();
+            $paymentDetails->setLog(json_encode($log->properties()));
+            $paymentDetails->setCreditCard($creditCard);
+            $save = $paymentDetails->saveCard();
+            if ((json_decode($save)->{Model::RESULT})) {
+                return $settings->update();
+            } else return $save;
         } else return null;
     }
 
 
 
-    private function setProduct(): Product
+    private function setProduct($edit = false): Product
     {
         $product = new Product();
         $product->setAvailability($this->data['product-availability']);
         $product->setPrice($this->data['product-price']);
         $product->setName($this->data['product-name']);
-        $product->setDescription($this->data['product-description']);
-        $upload = uploadFile('browse-product',  "images/products/", Encoding::encode($product->getName() . time()));
+        $product->setDescription(str_replace("\\", "", $this->data['product-description']));
+        $upload = uploadFile('product-image',  "images/products/", Encoding::encode($product->getName() . time()));
         if ($upload == null) {
-            //
+            $product->setDisplayImage($this->data['product-image']);
         } else {
             $product->setDisplayImage($upload);
         }
+
         if (isset($this->data['product-category']))
             $product->setCategory(json_encode($this->data['product-category']));
-        $product->setProductOptions($this->data['options']);
+        $product->setProductOptions(base64_decode($this->data['options']));
         $product->setTimeCreated(time());
         $product->tempAuthor = array($this->admin->getUsername(), $this->admin->getId());
         if (!is_null($this->getEditProduct())) {
             $product->setId($this->editProduct->getId());
         }
         $product->setAuthor(is_null($this->getEditProduct()) ? $this->admin->getId() : $this->editProduct->getAuthor());
-        if ($this->admin->getRole() == '1' && isset($this->data['product-branch'])) {
-            $product->setBranchId(json_encode($this->data['product-branch']));
+        if ($this->admin->getRole() == '1') {
+            $product->setBranchId(json_encode($this->data['product-branch'] ?? null));
         } else {
-            $product->setBranchId($this->admin->getBranchId());
+            $product->setBranchId(!isEmpty($this->data['product-branch']) ? $this->data['product-branch'] : json_encode([$this->admin->getBranchId()]));
         }
         return $product;
     }

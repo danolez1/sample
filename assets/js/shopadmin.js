@@ -20,6 +20,7 @@ function setColor(selector) {
             selector.css("color", "#212121")
         }
     }
+    // console.log(sel)
 }
 
 function show(btn, div, display, hide = false) {
@@ -40,23 +41,109 @@ function hide(selector) {
     $(selector).css('display', 'none');
 }
 //  spinner.show(); hide()
-function spinner(id) {
-    return new jQuerySpinner({
-        parentId: id
-    });
-}
-function async(api) {
+
+function async(api, btn) {
+    var lang = getCookie('lingo');
     switch (api) {
         case 'staff-level':
+            $.post("post/updateStaffLevel",
+                {
+                    id: btn.attr("data-id"),
+                    status: btn.attr('data')
+                },
+                function (data, status) {
+                    console.log(data);
+                    data = JSON.parse(data);
+                    if (data.result == true) {
+                        webToast.Success({
+                            status: dictionary['successful'][lang],
+                            message: dictionary['staff-updated'][lang],
+                            delay: 5000
+                        });
+                        // location.reload();
+                    } else {
+                        console.log(data);
+                    }
+                });
             break;
         case 'branch-status':
+            $.post("post/updateBranchStatus",
+                {
+                    id: btn.attr("data-id"),
+                    status: btn.attr('data')
+                },
+                function (data, status) {
+                    console.log(data);
+                    data = JSON.parse(data);
+                    if (data.result == true) {
+                        webToast.Success({
+                            status: dictionary['successful'][lang],
+                            message: dictionary['branch-updated'][lang],
+                            delay: 5000
+                        });
+                        // location.reload();
+                    } else {
+                        console.log(data);
+                    }
+                });
+            break;
+        case 'product-status':
+            $.post("post/updateProductStatus",
+                {
+                    id: btn.attr("data-id"),
+                    status: btn.attr('data')
+                },
+                function (data, status) {
+                    console.log(data);
+                    data = JSON.parse(data);
+                    if (data.result == true) {
+                        webToast.Success({
+                            status: dictionary['successful'][lang],
+                            message: dictionary['product-updated'][lang],
+                            delay: 5000
+                        });
+                        // location.reload();
+                    } else {
+                        console.log(data);
+                    }
+                });
             break;
         case 'order-status':
+            $.post("post/updateOrderStatus",
+                {
+                    id: btn.attr("data-id"),
+                    status: btn.attr('data')
+                },
+                function (data, status) {
+                    console.log(data);
+                    data = JSON.parse(data);
+                    if (data.result == true) {
+                        webToast.Success({
+                            status: dictionary['successful'][lang],
+                            message: dictionary['order-updated'][lang],
+                            delay: 5000
+                        });
+                        // location.reload();
+                    } else {
+                        console.log(data);
+                    }
+                });
             break;
         default:
             break;
     }
     console.log(api);
+}
+
+function playSound(url) {
+    var audio = document.createElement('audio');
+    audio.style.display = "none";
+    audio.src = url;
+    audio.autoplay = true;
+    audio.onended = function () {
+        audio.remove() //Remove when played.
+    };
+    document.body.appendChild(audio);
 }
 
 function getUpload(inputId, imgId, inputName, otherPreview) {
@@ -71,7 +158,11 @@ function getUpload(inputId, imgId, inputName, otherPreview) {
                     // console.log($(otherPreview));
                     // console.log($(otherPreview).attr('src'));
                 }
-                $('input[name="' + inputName + '"]').val(e.target.result);
+                try {
+                    $('input[name="' + inputName + '"]').val(e.target.result);
+                } catch (r) {
+
+                }
             }
             reader.readAsDataURL(file);
         }
@@ -107,15 +198,88 @@ function delOption(nodeList, element) {
 
     var display = $('#options-input-div');
     var storage = $('input[name="options"]');
-    var former = JSON.parse(storage.val());
+    var former = JSON.parse(base64de(storage.val()));
     former.splice(index, 1);
     nodes.splice(index, 1);
-    storage.val(JSON.stringify(former));
+    storage.val(base64en(JSON.stringify(former)));
     var temp = "";
     nodes.forEach(function (elem) {
         temp += elem.outerHTML;
     });
     display.html(temp);
+}
+
+function updateRevenueGraph(label, data) {
+    $(function () {
+
+        //Revenue Chart
+        if ($("#revenue-chart").length) {
+            var revenueChartCanvas = $("#revenue-chart").get(0).getContext("2d");
+
+            var revenueChart = new Chart(revenueChartCanvas, {
+                type: 'bar',
+                data: {
+                    labels: label,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: "rgba(255, 86, 48, 0.3)",
+                    }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAxes: [{
+                            gridLines: {
+                                drawBorder: false,
+                                zeroLineColor: "rgba(0, 0, 0, 0.09)",
+                                color: "rgba(0, 0, 0, 0.09)"
+                            },
+                            ticks: {
+                                fontColor: '#bababa',
+                                min: 0,
+                                stepSize: 5000,
+                            }
+                        }],
+                        xAxes: [{
+                            ticks: {
+                                fontColor: '#bababa',
+                                beginAtZero: true
+                            },
+                            gridLines: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            barPercentage: 0.4
+                        }]
+                    },
+                    legend: {
+                        display: false
+                    }
+                }
+            });
+        }
+    });
+}
+
+window.onresize = function () {
+    var w = window.innerWidth;
+    if (w >= 992) {
+        $('body').removeClass('sidebar-open');
+        $('#navbarSupportedContent').removeClass('show');
+    }
+
+    listToArray($(".grid-product-card-img-top")).forEach(function (elem) {
+        if (elem.nextElementSibling.className == 'grid-product-img-info') {
+            elem.nextElementSibling.style.height = $(elem).css("height");
+            elem.nextElementSibling.style.width = $(elem).css("width");
+
+        }
+    });
+    // $(".list-product-img-info").css("width", $(".list-product-card-img-top").width() + 30 + "px");
+    $(".modal-header").css("height", $(".product-img").css("height"));
+
 }
 
 
@@ -128,10 +292,52 @@ $(document).ready(function () {
     getUpload("#browse", "#browse-preview", "banner");
     getUpload("#browse1", "#browse-preview1", "logo");
     getUpload("#browse2", "#browse-preview2", "image-placeholder");
-    getUpload("#browse-product", "#browse-preview", "product-img", "#preview-small");
+    getUpload("#product-image", "#browse-preview", "product-img", "#preview-small");
     //preview-small
     $('#save-average-time').click(function () {
         // spinner('timer').show();
+    });
+
+    listToArray($(".grid-product-card-img-top")).forEach(function (elem) {
+        if (elem.nextElementSibling.className == 'grid-product-img-info') {
+            elem.nextElementSibling.style.height = $(elem).css("height");
+            elem.nextElementSibling.style.width = $(elem).css("width");
+
+        }
+    });
+
+    try {
+        updateRevenueGraph(weekLabels, weekData);
+    } catch (e) {
+
+    }
+
+    $('.revenew-tab').click(function () {
+        switch (parseInt($(this).attr('data-index'))) {
+            case 0: //weekly
+                updateRevenueGraph(weekLabels, weekData);
+                break;
+            case 1: //month
+                updateRevenueGraph(monthLabels, monthData);
+                break;
+            case 2: //3month
+                updateRevenueGraph(threeMonthLabels, threeMonthData);
+                break;
+            case 3: //year
+                updateRevenueGraph(yearLabels, yearData);
+
+                break;
+            case 4: //all
+                updateRevenueGraph(allLabels, allData);
+                break;
+            default:
+                console.log("wahala");
+        }
+
+    });
+
+    $(".rotate").click(function () {
+        $(this).toggleClass("down");
     });
 
     $('#addCategoryModal').on('show.bs.modal', function (e) {
@@ -151,9 +357,13 @@ $(document).ready(function () {
         if ($(this).attr('lang') == 'en') {
             setCookie("lingo", 'en', 365);
             $('a[lang="jp"]').removeClass('text-light')
+            translator('en');
         } else {
             setCookie("lingo", 'jp', 365);
             $('a[lang="en"]').removeClass('text-light')
+            translator('jp');
+
+
         }
         $(this).addClass('text-white');
     });
@@ -167,9 +377,9 @@ $(document).ready(function () {
     });
     try {
         if ($('data#branchData') != undefined) {
-            loadFormData(JSON.parse($('data#branchData').attr('data-details')));
+            loadFormData(JSON.parse(base64de($('data#branchData').attr('data-details'))));
             if ($('data#branchData').attr('data-times') != "null") {
-                var times = ($('data#branchData').attr('data-times').replace(/(&quot\;)/g, "\""));
+                var times = base64de($('data#branchData').attr('data-times')).replace('"[', '[').replace(']"', ']');///.replace(/(&quot\;)/g, "\""));
                 times = JSON.parse(times);
                 times.forEach(function (time) {
                     var open = $('input[data-day="open[' + time.day + ']"]');
@@ -184,7 +394,7 @@ $(document).ready(function () {
             }
         }
     } catch (e) {
-
+        // console.log(e)
     }
 
     $('.branch').click(function () {
@@ -196,15 +406,14 @@ $(document).ready(function () {
                 $('#branchInfo').css('display', "none");
 
             }
-            if ($('#operationalTimes').css('display') == 'block') {
-                $('#operationalTimes').css('display', "none");
+            // if ($('#operationalTimes').css('display') == 'block') {
+            //     $('#operationalTimes').css('display', "none");
 
-            }
+            // }
         } else {
-            loadFormData(JSON.parse($(this).attr('data-details')));
+            loadFormData(JSON.parse(base64de($(this).attr('data-details'))));
             if ($(this).attr('data-times') != "null") {
-
-                var times = JSON.parse($(this).attr('data-times'));
+                var times = JSON.parse(base64de($(this).attr('data-times')));
                 //replace(/(&quot\;)/g, "\"")
                 times.forEach(function (time) {
                     var open = $('input[data-day="open[' + time.day + ']"]');
@@ -216,34 +425,130 @@ $(document).ready(function () {
                     var breakEnd = $('input[data-day="breakEnd[' + time.day + ']"]');
                     breakEnd.val(time.breakEnd);
                 });
+            } else {
+                ['Sunday', "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].forEach(function (day) {
+                    var open = $('input[data-day="open[' + day + ']"]');
+                    open.val("");
+                    var close = $('input[data-day="close[' + day + ']"]');
+                    close.val("");
+                    var breakStart = $('input[data-day="breakStart[' + day + ']"]');
+                    breakStart.val("");
+                    var breakEnd = $('input[data-day="breakEnd[' + day + ']"]');
+                    breakEnd.val("");
+                });
+
             }
             $('.branch').css('background-color', '#FFF');
-            $(this).css('background-color', '#00AB55');
+            $(this).css('background-color', '#C4C4F4');
             $('#selectedBranch').val($(this).attr('data-id'));
             $('input[name="branch-id"]').val($(this).attr('data-id'));
             if ($('#branchInfo').css('display') == 'none') {
                 $('#branchInfo').css('display', "block");
 
             }
-            if ($('#operationalTimes').css('display') == 'none') {
-                $('#operationalTimes').css('display', "block");
+            // if ($('#operationalTimes').css('display') == 'none') {
+            //     $('#operationalTimes').css('display', "block");
 
-            }
+            // }
         }
 
     });
-    setInterval(function () {
-        listToArray($(".grid-product-card-img-top")).forEach(function (elem) {
-            if (elem.nextElementSibling.className == 'grid-product-img-info') {
-                elem.nextElementSibling.style.height = $(elem).css("height");
 
+    try {
+        setInterval(function () {
+            var orders = $('input[name="order-count"]').val();
+            var norder = $('input[name="noc"]');
+            $.post('get/orderNotification', {
+                id: orders
+            }, function (data, status) {
+                data = data.stripSlashes().stripSlashes().split('"[').join('[').split('["').join('[');
+                data = (data.split(']"').join(']').split('"{').join('{').split('}"').join('}'))
+                data = (JSON.parse(data));
+
+                // console.log(norder.val(), data.count);
+
+                if (data.result.length > 0) {
+                    playSound('assets/audio/notification.mp3');
+                    webToast.Info({
+                        status: dictionary['notification'][lang] + "(" + data.result.length + ")",
+                        message: "<a href='orders'>" + dictionary['new-order'][lang] + "</a>",
+                        delay: 5000
+                    });
+                }
+
+            });
+        }, 15000)
+    } catch (e) {
+
+    }
+
+
+    try {
+        $('.creditcardform').card({
+            debug: true,
+            container: '.card-wrapper',
+            formatting: true,
+            formSelectors: {
+                numberInput: 'input[name="number"]',
+                expiryInput: 'input[name="expiry"]',
+                cvcInput: 'input[name="cvc"]',
+                nameInput: 'input[name="name"]'
+            }, cardSelectors: {
+                cardContainer: '.jp-card-container',
+                card: '.jp-card',
+                numberDisplay: '.jp-card-number',
+                expiryDisplay: '.jp-card-expiry',
+                cvcDisplay: '.jp-card-cvc',
+                nameDisplay: '.jp-card-name'
+            }, classes: {
+                valid: 'jp-card-valid',
+                invalid: 'jp-card-invalid'
+            }, masks: {
+                cardNumber: false,
+            }
+        })
+    } catch (e) {
+
+    }
+
+    $('#delete-card').click(function () {
+        mcxDialog.confirm(dictionary['are-you-sure'][lang], {
+            // titleText: "",
+            cancelBtnText: dictionary['cancel'][lang],
+            sureBtnText: dictionary['proceed'][lang],
+            sureBtnClick: function () {
+                var id = ($(this).attr('data-id'));
+                $.post("post/deleteSubscription", {
+                    id: id
+                }, function (data, status) {
+                    console.log(data);
+                    data = JSON.parse(data);
+                    if (data.result == true) {
+                        webToast.Success({
+                            status: dictionary['successful'][lang],
+                            message: dictionary['settings-updated'][lang],
+                            delay: 5000
+                        });
+                        location.reload();
+                    } else {
+                        // //console.log(data);
+                    }
+                });
             }
         });
-    }, 100);
+
+    });
 
     $('#add-btn').click(function () {
         lang = getCookie('lingo');
         switch ($(this).attr("page")) {
+            // case "card":
+            //     var nos = $('input[name="number"]').val();
+            //     var name = $('input[name="name"]').val();
+            //     var exp = $('input[name="expiry"]').val();
+            //     var cvv = $('input[name="cvc"]').val();
+
+            //     break;
             case 'add-product-category':
             case 'add-option-category':
                 var name = $('#category-name');
@@ -254,6 +559,7 @@ $(document).ready(function () {
                     errorDiv.css("display", "block");
                 } else {
                     $.post("post/addCategory", {
+                        id: "",
                         name: name.val(),
                         description: description.val(),
                         type: type,
@@ -293,6 +599,31 @@ $(document).ready(function () {
         }
     });
 
+    $('#save-average-time').click(function () {
+        var btn = $(this);
+        $.post("post/updateDeliveryTime",
+            {
+                id: btn.attr("data-id"),
+                time: $('#avdetime').val()
+            },
+            function (data, status) {
+                // console.log(data);
+                data = JSON.parse(data);
+                if (data.result == true || data.error == null) {
+                    if (window.history.replaceState) {
+                        window.history.replaceState(null, null, window.location.href);
+                    }
+                    webToast.Success({
+                        status: dictionary['successful'][lang],
+                        message: dictionary['delivery-time-edited'][lang],
+                        delay: 5000
+                    });
+                    // location.reload();
+                } else {
+                    console.log(data);
+                }
+            });
+    });
 
     $('#add-option-btn').click(function (e) {
         e.preventDefault();
@@ -306,9 +637,9 @@ $(document).ready(function () {
         errText(name, name.val());
         if (name.val() != undefined && name.val() != "") {
             var value = { category: { name: $('#option-category-name').html(), id: category.val() }, name: name.val(), available: availability.val(), price: price.val(), type: type.val() };
-            if (storage.val() != "" && storage.val() != undefined) {
-                var former = JSON.parse(storage.val());
-                var exist = false;
+            var former = JSON.parse(base64de(storage.val()));
+            var exist = false;
+            if (Array.isArray(former)) {
                 former.forEach(function (elem) {
                     elem = encode(JSON.stringify(elem));
                     if (encode(JSON.stringify(value)) == elem) {
@@ -317,11 +648,11 @@ $(document).ready(function () {
                 });
                 if (!exist) {
                     former.push(value);
-                    storage.val(JSON.stringify(former));
+                    storage.val(base64en(JSON.stringify(former)));
                     display.html(display.html() + '<span class="badge rounded-pill bg-primary text-light option-span ml-1 mr-1">' + value.name + '<i class="icofont-close-line" onclick="delOption(this.parentNode.parentNode.childNodes,this.parentNode)"></i></span>');
                 }
             } else {
-                storage.val(JSON.stringify([value]));
+                storage.val(base64en(JSON.stringify([value])));
                 display.html('<span class="badge rounded-pill bg-primary text-light option-span ml-1 mr-1">' + value.name + '<i class="icofont-close-line" onclick="delOption(this.parentNode.parentNode.childNodes,this.parentNode)"></i></span>');
             }
         }
@@ -373,6 +704,12 @@ $(document).ready(function () {
         }
     });
 
+    var toogleBtns = $('.dropdown-toggle');
+    for (var n = 0; n < toogleBtns.length; n++) {
+        setColor($(toogleBtns[n]));
+    }
+
+
     $('.dropdown-item').click(function () {
         var btn = ($(this).parent().prev());
         var input = (btn.prev());
@@ -394,7 +731,7 @@ $(document).ready(function () {
         $(this).attr("data", tempData);
         setColor($(this));
         setColor(btn);
-        async(btn.attr("data-async"));
+        async(btn.attr("data-async"), btn);
     });
 
     $('.async').click(function () {

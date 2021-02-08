@@ -1,10 +1,10 @@
 <?php
 
-namespace danolez\lib\Res\Session;
+namespace danolez\lib\Res;
 
 use danolez\lib\Res\Ini\Ini;
-use danolez\lib\Res\Server\Server;
-use danolez\lib\Security\Encoding\Encoding;
+use danolez\lib\Res\Server;
+use danolez\lib\Security\Encoding;
 
 
 class Session
@@ -41,9 +41,6 @@ class Session
 
     function start($name)
     {
-        ini_set("session.use_strict_mode", true);
-        ini_set("session.use_cookies", 1);
-        ini_set("session.use_trans_sid", 1);
         $domain =  Server::get(Server::SERVER_NAME) . '/' . $name . '/';
         $path = '/' . (Encoding::encode($name));
         $limit = 60 * 60 * 24;

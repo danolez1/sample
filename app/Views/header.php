@@ -3,8 +3,11 @@
 
 <head>
     <title><?php echo $settings->getTitle(); ?></title>
-    <meta name="description" content="<?php echo $settings->getMetaContent(); ?>" />
+    <meta name="description" content="<?php echo $settings->getDescription(); ?>" />
     <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <!-- Save Logo  -->
@@ -13,6 +16,7 @@
     <link rel="pingback" href="https://www.demae-system.com/xmlrpc.php">
     <meta name="description" content="<?php echo $settings->getDescription(); ?>" />
     <meta name="robots" content="index, follow" />
+    <meta name="author" content="Fatunmbi Daniel Tunmise">
     <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
     <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
     <link rel="canonical" href="<?php echo $settings->getWebsiteUrl(); ?>" />
@@ -45,9 +49,15 @@
     <link rel="stylesheet" href="assets/css/jquery-spinner.min.css">
     <link rel="stylesheet" href="assets/css/webToast.min.css">
     <link rel="stylesheet" href="assets/css/dialog-mobile.css">
+    <link rel="stylesheet" href="assets/css/date-picker.css">
+    <link rel="stylesheet" href="assets/css/jquery.timepicker.min.css">
+    <link rel="stylesheet" href="assets/css/toasted.min.css">
+    <!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
     <script src="assets/vendors/jquery/jquery.min.js"></script>
     <script src="assets/js/first_load.js"></script>
+    <script src="assets/js/dictionary.js"></script>
     <script src="assets/js/webToast.min.js"></script>
+    <script src="assets/js/toasted.min.js"></script>
 
 </head>
 
@@ -62,19 +72,27 @@
                             <div class="navbar-collapse-logo"><?php echo $settings->getMobileLogo(); ?></div>
                             <button class="navbar-toggler close-button" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="mdi mdi-close navbar-toggler-icon pl-5"></span></button>
                         </li>
-                        <li class="nav-item"><a class="nav-link" href="#menu" trn="menu">Menu</a></li>
                         <li class="nav-item">
-                            <div class="dropdown"><a type="button" class="nav-link dropdown-toggle" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span trn="branches">Branches</span></a>
+                            <div class="dropdown"><a type="button" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span trn="menu">Menu</span></a>
                                 <div class="dropdown-menu">
-                                    <?php foreach ($this->branches as $branch) { ?>
-                                        <button class="dropdown-item" data-id="<?php echo $branch->getId(); ?>"><?php echo $branch->getName(); ?></button>
+                                    <?php foreach ($productCategories as $category) { ?>
+                                        <button href="#menu" class="dropdown-item category-pill" data-id="<?php echo $category->getId(); ?>" data-toggle="tab" data-id="<?php echo ""; ?>"><?php echo $category->getName(); ?></button>
                                     <?php } ?>
                                 </div>
                             </div>
                         </li>
+                        <li class="nav-item"><a class="nav-link"></a></li>
+                        <li class="nav-item">
+                            <div class="dropdown"><a type="button" class="nav-link dropdown-toggle" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span trn="branches">Branches</span></a>
+                                <div class="dropdown-menu">
+                                    <?php foreach ($this->branches as $branch) { ?>
+                                        <button class="dropdown-item select-shop" data-id="<?php echo $branch->getId(); ?>"><?php echo $branch->getName(); ?></button>
+                                    <?php } ?>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="nav-item"><a class="nav-link"></a></li>
                         <li class="nav-item"><a class="nav-link" href="" style="width:120px;" trn="contact-us">Contact Us</a></li>
-                        <li class="nav-item"><a class="nav-link"></a></li>
-                        <li class="nav-item"><a class="nav-link"></a></li>
                         <li class="nav-item"><a class="nav-link"></a></li>
                         <li class="nav-item"><a class="nav-link"></a></li>
                         <li class="nav-item btn-contact-us pl-4 pl-lg-0">
@@ -104,7 +122,8 @@
             </div>
         </nav>
     </header>
-    <?php include 'app/Views/shop/cart.php'; ?>
+    <?php include 'app/Views/shop/cart.php';
+    include 'app/Views/shop/select-branch.php'; ?>
     <style>
         .search-s-_icon {
             background-color: #024f51;

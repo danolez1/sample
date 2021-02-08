@@ -1,5 +1,9 @@
+<?php
+
+use danolez\lib\Security\Encoding; ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +11,7 @@
   <title>Demae System</title>
   <link rel="icon" href="assets/images/home/logo.svg" type="image/svg">
   <link rel="shortcut icon" href="assets/images/home/logo.svg" type="image/svg" />
+  <meta name="author" content="Fatunmbi Daniel Tunmise">
   <link rel="profile" href="http://gmpg.org/xfn/11">
   <link rel="pingback" href="https://www.demae-system.com/xmlrpc.php">
   <title>店舗様のデリバリー受注サイトを作成します。 - ネットオーダー出前システム</title>
@@ -64,7 +69,9 @@
   <script src="assets/js/admin_dictionary.js"></script>
   <div class="body-wrapper">
 
-    <?php if (!$this->includesOnly) {
+    <?php
+
+    if (!$this->includesOnly) {
       if (intval($this->admin->getRole()) == 1 || intval($this->admin->getRole()) == 2) { ?>
         <button class="hover" id="delivery-time-fab" type="button" data-toggle="modal" data-target="#delivery-time">
           <img src="assets/images/dashboard/timer.svg" alt="cart" width="46" height="46">
@@ -79,3 +86,9 @@
         <!-- partial -->
       <?php   } ?>
       <div class="page-wrapper mdc-toolbar-fixed-adjust">
+        <?php if (!is_null($this->session->get(self::ADMIN_ID))) { ?>
+          <input type="hidden" value="<?php echo Encoding::encode(json_encode(array($this->branchOrder, $this->admin->getBranchId(), $this->admin->getRole()))); ?>" name="order-count" />
+          <input type="hidden" value="<?php echo $this->branchOrder ?>" name="noc" />
+          <audio id="notification" src="assets/audio/notification.mp3">
+          </audio>
+        <?php } ?>

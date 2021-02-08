@@ -1,8 +1,8 @@
 <?php
 
-use danolez\lib\Security\Encoding\Encoding; ?>
+use danolez\lib\Security\Encoding; ?>
 <div class="card ml-1 mr-1 mb-2 p-0 card-hover col-lg-3 col-md-4 col-sm-6" style="z-index: 1;">
-    <i class="mdi mdi-delete delete-order delete-card" data-toggle="modal" data-target="#confirmationModal" data-page="payment" data-id="<?php echo Encoding::encode(json_encode(array($this->user->getId(), $creditCard->getId()))); ?>">
+    <i class="mdi mdi-delete delete-card delete-btn" data-toggle="modal" data-target="#confirmationModal" data-page="payment" data-id="<?php echo Encoding::encode(json_encode(array($this->user->getId(), $creditCard->getId()))); ?>">
     </i>
     <div class="card-body m-0 ">
         <h5 class="card-title">

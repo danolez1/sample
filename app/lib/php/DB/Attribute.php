@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\DB\Attribute;
+namespace danolez\lib\DB;
 
 abstract class Attribute
 {

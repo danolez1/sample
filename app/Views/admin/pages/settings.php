@@ -1,4 +1,8 @@
 <?php
+
+use danolez\lib\Res\PrintNodeApi;
+use danolez\lib\Security\Encoding;
+
 if (!is_null($dashboardController_error)) { ?>
     <script>
         webToast.Danger({
@@ -23,13 +27,14 @@ if (!is_null($dashboardController_error)) { ?>
             }
         </script>
 <?php }
-} ?>
+}
+include 'app/Views/admin/pages/add_card.php'; ?>
 <main class="content-wrapper">
     <h3>Settings</h3>
     <div class="row col-12 mt-3">
         <div class="col-lg-8 col-md-12 col-sm-12 col-12">
 
-            <form  enctype="multipart/form-data" method="POST" action="">
+            <form enctype="multipart/form-data" method="POST" action="">
                 <h4 class="mt-5">Banner Image</h4>
                 <div class="card mt-2 col-12 p-0 m-0 upload-image text-center" style="background-color:#E0E0E0;border:#E0E0E0;" type="button">
                     <label for="browse">
@@ -42,7 +47,7 @@ if (!is_null($dashboardController_error)) { ?>
                     <button type="submit" name="upload-banner" class="btn btn-sm tx-14 btn-danger col-4 ">Upload</button>
                 </div>
             </form>
-            <form  method="POST" action="">
+            <form method="POST" action="">
                 <div class="mdc-layout-grid m-0 mt-4 p-0">
                     <div class="mdc-layout-grid__inner">
                         <div class="mdc-layout-grid__cell--span-12">
@@ -249,24 +254,25 @@ if (!is_null($dashboardController_error)) { ?>
                                                 <div class="mdc-line-ripple"></div>
                                             </div>
                                         </div>
-                                        <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
+                                        <!-- <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
                                             <div class="mdc-select demo-width-class mt-2 p-1" style="width: 25em;" data-mdc-auto-init="MDCSelect">
-                                                <input required type="hidden" value="<?php echo !isEmpty($this->settings->getProductDisplayOrientation()) ? $this->settings->getProductDisplayOrientation() : '1'; ?>" name="product-display">
+                                                <input required type="hidden" value="<?php //echo !isEmpty($this->settings->getProductDisplayOrientation()) ? $this->settings->getProductDisplayOrientation() : '1'; 
+                                                                                        ?>" name="product-display">
                                                 <i class="mdc-select__dropdown-icon"></i>
                                                 <div class="mdc-select__selected-text"></div>
                                                 <div class="mdc-select__menu mdc-menu-surface demo-width-class">
                                                     <ul class="mdc-list" style="width: 15em;">
                                                         <li class="mdc-list-item mdc-list-item--selected" data-value="1" aria-selected="true">
                                                             Grid</li>
-                                                        <!-- <li class="mdc-list-item" data-value="2">
+                                                        <li class="mdc-list-item" data-value="2">
                                                             List
-                                                        </li> -->
+                                                        </li>
                                                     </ul>
                                                 </div>
                                                 <span class="mdc-floating-label">Product Display</span>
                                                 <div class="mdc-line-ripple"></div>
                                             </div>
-                                        </div>
+                                        </div> -->
                                         <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
                                             <div class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
                                                 <i class="material-icons mdc-text-field__icon">color_lens</i>
@@ -372,6 +378,91 @@ if (!is_null($dashboardController_error)) { ?>
                     <button type="submit" name="website-info" class="btn btn-danger btn-sm tx-14">Save changes</button>
                 </div>
             </form>
+
+            <?php $printers = new PrintNodeApi($this->settings->getPrintNodeApi());
+            try {
+                $printers = $printers->getPrinters();
+            } catch (Exception $e) {
+                $printer = array();
+            }
+            // var_dump((array_values($printers))) 
+            ?>
+            <form method="POST" action="">
+                <div class="mdc-layout-grid m-0 mt-4 p-0">
+                    <div class="mdc-layout-grid__inner">
+                        <div class="mdc-layout-grid__cell--span-12">
+                            <div class="mdc-card">
+                                <h6 class="card-title">Printer Information</h6>
+                                <div class="template-demo">
+                                    <div class="mdc-layout-grid__inner">
+                                        <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
+                                            <div class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
+                                                <i class="material-icons mdc-text-field__icon icofont-key"></i>
+                                                <input class="mdc-text-field__input" value="<?php echo !isEmpty($this->settings->getPrintNodeApi()) ? $this->settings->getPrintNodeApi() : ''; ?>" name="pnapi" id="text-field-hero-input">
+                                                <div class="mdc-notched-outline">
+                                                    <div class="mdc-notched-outline__leading"></div>
+                                                    <div class="mdc-notched-outline__notch">
+                                                        <label for="text-field-hero-input" class="mdc-floating-label">Print Node API</label>
+                                                    </div>
+                                                    <div class="mdc-notched-outline__trailing"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
+                                            <div class="mdc-select demo-width-class mt-2 p-1" style="width: 25em;" data-mdc-auto-init="MDCSelect">
+                                                <input required type="hidden" value="<?php echo !isEmpty($this->settings->getDefaultPrinter()) ? $this->settings->getDefaultPrinter()  : ''; ?>" name="default-printer">
+                                                <i class="mdc-select__dropdown-icon"></i>
+                                                <div class="mdc-select__selected-text"></div>
+                                                <div class="mdc-select__menu mdc-menu-surface demo-width-class">
+                                                    <ul class="mdc-list" style="width: 15em;">
+                                                        <?php foreach ($printers as $printer) {
+                                                            if ($printer->getId() == $this->settings->getDefaultPrinter()) { ?>
+                                                                <li class="mdc-list-item mdc-list-item--selected" data-value="<?php echo $printer->getId(); ?>" aria-selected="true">
+                                                                    <?php echo $printer->getName(); ?> </li>
+                                                            <?php   } ?>
+                                                            <li class="mdc-list-item" data-value="<?php echo $printer->getId(); ?>">
+                                                                <?php echo $printer->getName(); ?>
+                                                            </li>
+                                                        <?php
+                                                        } ?>
+                                                    </ul>
+                                                </div>
+                                                <span class="mdc-floating-label">Printers</span>
+                                                <div class="mdc-line-ripple"></div>
+                                            </div>
+                                        </div>
+                                        <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
+                                            <div class="mdc-select demo-width-class mt-2 p-1" style="width: 25em;" data-mdc-auto-init="MDCSelect">
+                                                <input required type="hidden" value="<?php echo !isEmpty($this->settings->getprintLanguage()) ? $this->settings->getprintLanguage() : ''; ?>" name="print-lang">
+                                                <i class="mdc-select__dropdown-icon"></i>
+                                                <div class="mdc-select__selected-text"></div>
+                                                <div class="mdc-select__menu mdc-menu-surface demo-width-class">
+                                                    <ul class="mdc-list" style="width: 15em;">
+                                                        <li class="mdc-list-item mdc-list-item--selected" data-value="<?php echo !isEmpty($this->settings->getprintLanguage()) ? ($this->settings->getprintLanguage() == "jp") ? 'jp' : 'en' : 'en'; ?>" aria-selected="true">
+                                                            <?php echo !isEmpty($this->settings->getprintLanguage()) ? ($this->settings->getprintLanguage() == "jp") ? '日本語' : "English" : 'English'; ?></li>
+                                                        <li class="mdc-list-item" data-value="<?php echo !isEmpty($this->settings->getprintLanguage()) ? $this->settings->getprintLanguage() == "en" ? 'jp' : 'en' : 'jp'; ?>">
+                                                            <?php echo !isEmpty($this->settings->getprintLanguage()) ? ($this->settings->getprintLanguage() == "en") ? '日本語' : "English" : '日本語'; ?>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <span class="mdc-floating-label">Print Language</span>
+                                                <div class="mdc-line-ripple"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer p-2 save-changes">
+                    <button type="submit" name="printer-info" class="btn btn-danger btn-sm tx-14">Save changes</button>
+                    <!-- <button class="btn btn-danger btn-sm tx-14 float-right">Test Print</button> -->
+                </div>
+            </form>
+
+
+
         </div>
 
         <div class="col-lg-4 col-md-12 col-sm-12 col-12  mt-4">
@@ -388,6 +479,20 @@ if (!is_null($dashboardController_error)) { ?>
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
                                         <label for="text-field-hero-input" class="mdc-floating-label">Shipping Fee</label>
+                                    </div>
+                                    <div class="mdc-notched-outline__trailing"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop mt-3">
+                            <div class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
+                                <i class="material-icons mdc-text-field__icon icofont-yen yen"></i>
+                                <input type="number" class="mdc-text-field__input" value="<?php echo !isEmpty($this->settings->getFreeDeliveryPrice()) ? $this->settings->getFreeDeliveryPrice() : ''; ?>" name="free-shipping-price" id="text-field-hero-input">
+                                <div class="mdc-notched-outline">
+                                    <div class="mdc-notched-outline__leading"></div>
+                                    <div class="mdc-notched-outline__notch">
+                                        <label for="text-field-hero-input" class="mdc-floating-label tx-14">Free Shipping Price</label>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -414,6 +519,19 @@ if (!is_null($dashboardController_error)) { ?>
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
                                         <label for="text-field-hero-input" class="mdc-floating-label">Time Range</label>
+                                    </div>
+                                    <div class="mdc-notched-outline__trailing"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop mt-3">
+                            <div class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
+                                <i class="material-icons mdc-text-field__icon">location_city</i>
+                                <input placeholder="" class="mdc-text-field__input" value="<?php echo !isEmpty($this->settings->getAddressName()) ? $this->settings->getAddressName() : ''; ?>" name="address-name" id="text-field-hero-input">
+                                <div class="mdc-notched-outline">
+                                    <div class="mdc-notched-outline__leading"></div>
+                                    <div class="mdc-notched-outline__notch">
+                                        <label for="text-field-hero-input" class="mdc-floating-label">Address Name</label>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -602,6 +720,60 @@ if (!is_null($dashboardController_error)) { ?>
                     <button type="submit" name="payment-method" class="btn btn-danger btn-sm tx-14">Save changes</button>
                 </div>
             </form>
+
+            <form method="POST" action="">
+                <div class="mdc-layout-grid m-0 mt-5 p-0">
+                    <div class="mdc-layout-grid__inner">
+                        <div class="mdc-layout-grid__cell--span-12">
+                            <div class="mdc-card">
+                                <h6 class="card-title">Delivery Service</h6>
+                                <div class="template-demo">
+                                    <div class="mdc-form-field">
+                                        <div class="mdc-checkbox">
+                                            <input type="checkbox" <?php echo !isEmpty($this->settings->getHomeDelivery()) ? 'checked' : ''; ?> name="home-delivery" class="mdc-checkbox__native-control" id="checkbox-1" />
+                                            <div class="mdc-checkbox__background">
+                                                <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                                                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                </svg>
+                                                <div class="mdc-checkbox__mixedmark"></div>
+                                            </div>
+                                        </div>
+                                        <label for="checkbox-1">Delivery</label>
+                                    </div>
+                                    <div class="mdc-form-field">
+                                        <div class="mdc-checkbox">
+                                            <input type="checkbox" <?php echo !isEmpty($this->settings->getTakeOut()) ? 'checked' : ''; ?> name="takeout" class="mdc-checkbox__native-control" id="checkbox-1" />
+                                            <div class="mdc-checkbox__background">
+                                                <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                                                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                </svg>
+                                                <div class="mdc-checkbox__mixedmark"></div>
+                                            </div>
+                                        </div>
+                                        <label for="checkbox-1">Takeout</label>
+                                    </div>
+                                    <div class="mdc-form-field">
+                                        <div class="mdc-checkbox mdc-checkbox--disabled">
+                                            <input type="checkbox" name="pm-line-pay" id="basic-disabled-checkbox" class="mdc-checkbox__native-control" disabled />
+                                            <div class="mdc-checkbox__background">
+                                                <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                                                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                </svg>
+                                                <div class="mdc-checkbox__mixedmark"></div>
+                                            </div>
+                                        </div>
+                                        <label for="basic-disabled-checkbox" id="basic-disabled-checkbox-label">Reservation</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer p-2 save-changes">
+                    <button type="submit" name="delivery-method" class="btn btn-danger btn-sm tx-14">Save changes</button>
+                </div>
+            </form>
+
             <form method="POST" action="">
                 <div class="mdc-layout-grid m-0 mt-5 p-0">
                     <div class="mdc-layout-grid__inner">
@@ -681,32 +853,36 @@ if (!is_null($dashboardController_error)) { ?>
                                 <div class="template-demo">
                                     <div class="row col-12 p-0 m-0 mb-1">
                                         <h6 class="col-6 p-0 m-0">Plan :</h6>
-                                        <div class="col-6 p-0 m-0"> sd<?php ?></h6>
+                                        <div class="col-6 p-0 m-0">Monthly<?php ?></h6>
                                         </div>
                                     </div>
                                     <div class="row col-12 p-0 m-0 mb-1">
                                         <h6 class="col-6 p-0 m-0">Branches :</h6>
-                                        <div class="col-6 p-0 m-0"> sd<?php ?></h6>
+                                        <div class="col-6 p-0 m-0"><?php echo count($this->branches); ?></h6>
                                         </div>
                                     </div>
                                     <div class="row col-12 p-0 m-0 mb-1">
                                         <h6 class="col-6 p-0 m-0">Due Date :</h6>
-                                        <div class="col-6 p-0 m-0"> sd<?php ?></h6>
+                                        <div class="col-6 p-0 m-0"><?php echo date('j M,Y', intval($this->settings->getTImeCreated()) + (30 * 24 * 3600)) ?></h6>
                                         </div>
                                     </div>
                                     <div class="row col-12 p-0 m-0 mb-1">
                                         <h6 class="col-6 p-0 m-0">Amount :</h6>
-                                        <div class="col-6 p-0 m-0"> sd<?php ?></h6>
+                                        <div class="col-6 p-0 m-0"> <?php echo $this->settings->getCurrency() . number_format($this->settings->calculateSubscription(count($this->branches))); ?></h6>
                                         </div>
-                                    </div>
+                                    </div><br>
                                     <h6>Credit Card <i class="icofont-credit-card"></i></h6>
-                                    <div class="alert alert-info p-1 pl-2" role="alert">
-                                        <i class="icofont-ui-edit float-right option-right hover click"></i>
-                                        <span class="tx-13"> <i class="icofont-jcb pr-2 pt-1" style="font-size:20px;"></i>Fatunmbi Daniel</span>
-                                        <div class="tx-13">3454 **** **** 3453</div>
-                                        <div class="tx-13">30/23</div>
-                                    </div>
-                                    <span class="tx-13 btn-sm btn btn-success"><i class="icofont-ui-add txt-10 mr-2"></i>Add Card</span>
+                                    <?php foreach ($this->paymentDetails as $creditCard) { ?>
+                                        <div class="alert alert-info p-1 pl-2" role="alert">
+                                            <i class="icofont-ui-delete float-right option-right hover click" id="delete-card" data-id="<?php echo Encoding::encode(json_encode(array($this->settings->getSubscriptions(), $creditCard->getId()))); ?>"></i>
+                                            <span class="tx-13"> <i class="icofont-<?php echo $creditCard->cardType ?> pr-2 pt-1" style="font-size:20px;"></i><?php echo $creditCard->cardName; ?></span>
+                                            <div class="tx-13"><?php echo $creditCard->cardNumber; ?></div>
+                                            <div class="tx-13"><?php echo $creditCard->expiryDate; ?></div>
+                                        </div>
+                                    <?php }
+                                    if (empty($this->paymentDetails)) { ?>
+                                        <span class="tx-13 btn-sm btn btn-success" data-toggle="modal" data-target="#addCardModal"><i class="icofont-ui-add txt-10 mr-2"></i>Add Card</span>
+                                    <?php } ?>
                                 </div>
                             </div>
                         </div>

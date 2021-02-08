@@ -1,13 +1,13 @@
 <?php
 
-namespace danolez\lib\DB\Table;
+namespace danolez\lib\DB;
 
-use danolez\lib\DB\Action\Action;
-use danolez\lib\DB\Attribute\Attribute;
-use danolez\lib\DB\Condition\Condition;
-use danolez\lib\DB\Database\Database;
-use danolez\lib\DB\Location\Location;
-use danolez\lib\DB\SQL\SQL;
+use danolez\lib\DBAction;
+use danolez\lib\DB\Attribute;
+use danolez\lib\DB\Condition;
+use danolez\lib\DB\Database;
+use danolez\lib\DB\Location;
+use danolez\lib\DB\SQL;
 use Exception;
 
 class Table
@@ -189,16 +189,20 @@ class Table
         $lim = (is_null($offset) && !is_null($limit)) ? $limit : $lim;
         $lim = ($lim !== "") ? Condition::LIMIT . " " . $lim : "";
 
+        $oparenthesis = count($adhesive) > 1 ? "(" : "";
+        $cparenthesis = count($adhesive) > 1 ? ")" : "";
+
         $sql = $this->sql::compile(
             Action::SELECT,
             $coln,
             Condition::FROM,
             $this->name,
             $statement,
-            $keys,
+            $oparenthesis . $keys . $cparenthesis,
             $order,
             $lim
         );
+
         if ($param == null) {
             return json_decode($this->sql->fetch($sql))->response;
         } else {
@@ -227,7 +231,7 @@ class Table
 
     public function delete()
     {
-        $sql = $this->sql::compile(Action::DELETE,  Location::TABLE,  $this->name);
+        $sql = $this->sql::compile(Action::DROP,  Location::TABLE,  $this->name);
         return $this->sql->query($sql);
     }
 
@@ -268,5 +272,15 @@ class Table
     {
         $sql = $this->sql::compile(Action::SELECT, Action::count("*"), Condition::AS, Attribute::TOTAL, Condition::FROM, $this->name);
         return json_decode($this->sql->fetch($sql))->response[0]->TOTAL;
+    }
+
+    /**
+     * Close Database connection
+     */
+    public function __destruct()
+    {
+        if (!is_null($this->db))
+            if (!is_null($this->db->DB()->connect_error))
+                $this->db->DB()->close();
     }
 }

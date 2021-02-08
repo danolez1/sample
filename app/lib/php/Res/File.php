@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\Res\File;
+namespace danolez\lib\Res;
 
 class File
 {

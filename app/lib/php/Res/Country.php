@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\Res\Country;
+namespace danolez\lib\Res;
 
 abstract class Country
 {

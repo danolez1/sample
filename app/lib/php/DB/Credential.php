@@ -1,9 +1,9 @@
 <?php
 
-namespace danolez\lib\DB\Credential;
+namespace danolez\lib\DB;
 
-use danolez\lib\DB\DataType\DataType;
-use danolez\lib\Security\Encryption\Encryption;
+use danolez\lib\DB\DataType;
+use danolez\lib\Security\Encryption;
 
 abstract class Credential
 {
@@ -30,6 +30,8 @@ abstract class Credential
     const CONTACTS_TBL = "contacts_tb";
     const MESSAGING_TBL = "messaging_tb";
     const NOTIFICATIONS_TBL = "notifications_tb";
+    const TRAFFIC_TBL = "traffic_tb";
+    const RATINGS_TBL = "ratings_tb";
 
     const SERVER_NAME3 = "T0daak9ERTFOekZsTkRBME56Y3dOVGRsT1daaFlqSmhOR0ZqTVRBNE9XUTRaRFU0T0RNM1ptRTFPRFU1TnpZejQ4ZWZiZmJkZWZiZmJkZWZiZmJkMzU0Y2VmYmZiZGVmYmZiZGVmYmZiZGVmYmZiZGVmYmZiZGVmYmZiZDA1MDZlZmJmYmQyMDQ2Mzk3NGVmYmZiZGVmYmZiZGVmYmZiZDEzMmFlZmJmYmRlZmJmYmQyZWVmYmZiZDNmM2UyMDFkZDY4MGVmYmZiZDU2MTRlZmJmYmRkOGIwZWZiZmJkYzk4OTJjNWQzNmVmYmZiZDZiZWZiZmJkM2UyMGVmYmZiZGVmYmZiZDUyM2I0MTdjZWZiZmJkNTQxZDU1ZWZiZmJkMjhaR0ZpTWpobVpqQmxNMlZoWWpFek16Um1ZekprWldFNU1ETmxZVFU0WTJSbU0yWmtPV1pqWkdZelltUXhZemt4TkRVMllURXdNRFppTnpReU9HWmpNUT09";
     const SERVER_USERNAME3 = "WTJJMk1ESTFPRGt6TjJNNE4yUXdPV1ZqTm1JMFpXUTNZbU5oTnpSa1ltSTVPRGczWWpjM05qa3hNelJtWXpFejBiNjM3OGVmYmZiZDBlNTJlZmJmYmRlZmJmYmQ0ZGVmYmZiZDU5NTRlZmJmYmRlZmJmYmRjYWIzZWZiZmJkMTZlZmJmYmRlZmJmYmQzMTJiNTkzN2VmYmZiZDVmMDYyNGVmYmZiZGVmYmZiZGVmYmZiZDA0NmVlZmJmYmQ3M2VmYmZiZDY0NDZlZmJmYmQzNTRhZWZiZmJkZWZiZmJkMzJjZDkyZWZiZmJkNTBlZmJmYmRlZmJmYmQwNzNmM2RlZmJmYmRlZmJmYmRlZmJmYmRjM2FhNTRlZmJmYmRlZmJmYmQ3OWVmYmZiZE1qUXhOV014T0RRNE56SXhPRFU1Tmpjd01qUXlNMlF6WlRjMFlUY3paRGRtT1dKa1kyRmxZbU16TW1OaE56VTJNR1JoTldFd1pUSTVNRFppWlRJNFlnPT0=";

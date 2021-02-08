@@ -1,18 +1,15 @@
 <?php
 
-use danolez\lib\Security\Encoding\Encoding;
-use Demae\Auth\Models\Shop\Branch\Branch;
+use danolez\lib\Security\Encoding;
+use Demae\Auth\Models\Shop\Branch;
 
 if (!is_null($dashboardController_error)) { ?>
     <script>
         webToast.Danger({
             status: dictionary['error-occured'][lang],
-            message: dictionary<?php echo "['" . $dashboardController_error->{"trn"} . "']['" . $_COOKIE['lingo']."']"; ?>,
+            message: dictionary<?php echo "['" . $dashboardController_error->{"trn"} . "']['" . $_COOKIE['lingo'] . "']"; ?>,
             delay: 10000
         });
-        if (window.history.replaceState) {
-            window.history.replaceState(null, null, window.location.href);
-        }
     </script>
     <?php } else {
     if ($showDashboardController_result) { ?>
@@ -36,9 +33,11 @@ if (!is_null($dashboardController_error)) { ?>
         <div class="mdc-card p-0">
             <div class="table-responsive">
                 <table class="table  table-hoverable  dashboard-table theme-form">
-                    <tr>
-                        <div class="pt-3 pl-3 pb-3 font-weight-bold text-danger">TOKYO BRANCH</div>
-                    </tr>
+                    <?php if ($this->admin->getRole() == 1) { ?>
+                        <!-- <tr>
+                            <div class="pt-3 pl-3 pb-3 font-weight-bold text-danger">TOKYO BRANCH</div>
+                        </tr> -->
+                    <?php } ?>
                     <thead>
                         <tr style="background: #EFF3F3;">
                             <th>Name</th>
@@ -65,18 +64,19 @@ if (!is_null($dashboardController_error)) { ?>
                                 <?php } ?>
                                 <td>
                                     <input type="hidden" name="role" value="5" />
-                                    <button class="btn btn-success dropdown-toggle" data-async="staff-level" trn="staff" data="5" color="#28A745" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Staff</button>
-                                    <div class="dropdown-menu p-0">
-                                        <?php if ($this->admin->getRole() == 1) { ?>
-                                            <a type="button" class="dropdown-item" trn="ceo" data="1" color="#BEC5FF">CEO</a>
-                                            <a type="button" class="dropdown-item" trn="manager" data="2" color="#AEFFAC">Manager</a>
-                                        <?php } ?>
-                                        <a type="button" class="dropdown-item" trn="cashier" data="3" color="#FFCEA0">Cashier</a>
-                                        <a type="button" class="dropdown-item" trn="driver" data="4" color="#FEB9B9">Driver</a>
-                                    </div>
+                                    <button class="btn btn-success dropdown-toggle" data-id="<?php echo Encoding::encode(json_encode(array($this->admin->getId(), $this->admin->getUserName(), $staff->getId()))); ?>" data-async="staff-level" trn="<?php echo $staff->getRoleName()[0]['trn'] ?>" data="<?php echo $staff->getRoleName()[0]['data'] ?>" color="<?php echo $staff->getRoleName()[0]['color'] ?>" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $staff->getRoleName()[0][0] ?></button>
+                                    <?php if ($this->admin->getRole() == 1) { ?>
+                                        <div class="dropdown-menu p-0">
+                                            <a type="button" class="dropdown-item" trn="<?php echo $staff->getRoleName()[1]['trn'] ?>" data="<?php echo $staff->getRoleName()[1]['data'] ?>" color="<?php echo $staff->getRoleName()[1]['color'] ?>"><?php echo $staff->getRoleName()[0][0] ?></a>
+                                            <a type="button" class="dropdown-item" trn="<?php echo $staff->getRoleName()[2]['trn'] ?>" data="<?php echo $staff->getRoleName()[2]['data'] ?>" color="<?php echo $staff->getRoleName()[2]['color'] ?>"><?php echo $staff->getRoleName()[0][0] ?></a>
+                                            <a type="button" class="dropdown-item" trn="<?php echo $staff->getRoleName()[3]['trn'] ?>" data="<?php echo $staff->getRoleName()[3]['data'] ?>" color="<?php echo $staff->getRoleName()[3]['color'] ?>"><?php echo $staff->getRoleName()[0][0] ?></a>
+                                            <a type="button" class="dropdown-item" trn="<?php echo $staff->getRoleName()[4]['trn'] ?>" data="<?php echo $staff->getRoleName()[4]['data'] ?>" color="<?php echo $staff->getRoleName()[4]['color'] ?>"><?php echo $staff->getRoleName()[0][0] ?></a>
+                                        </div>
+                                    <?php } ?>
                                 </td>
                                 <td class="pr-3"> <i type="button" class="icofont-ui-edit hover click"></i>
-                                    <i class="icofont-ui-delete hover click ml-3 async" data-page="delete-staff" data-id="<?php echo Encoding::encode(json_encode(array($this->admin->getId(), $staff->getId()))); ?>"></i> </td>
+                                    <i class="icofont-ui-delete hover click ml-3 async" data-page="delete-staff" data-id="<?php echo Encoding::encode(json_encode(array($this->admin->getId(), $staff->getId()))); ?>"></i>
+                                </td>
                             </tr>
                         <?php } ?>
                         <form method="post" class="php-form" action="">

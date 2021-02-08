@@ -1,6 +1,6 @@
 <?php
 
-namespace Demae\Auth\Models\Error;
+namespace Demae\Auth\Models;
 
 class Error
 {
@@ -31,6 +31,25 @@ class Error
     const NullProductName = array("Enter product name", "trn" => "error-product-name");
     const NullPrice = array("Enter product price", "trn" => "error-product-price");
     const CouldNotAddToCart  = array("Could not add product to cart", "trn" => "could-not-add-to-cart");
+    const ItemDoesNotExist = array("Item not in cart", "trn" => "item-non-existence");
+    const InvalidDeliveryMethod = array("Invalid delivery method", "trn" => "invalid-delivery-method");
+    const InvalidTime = array("Invalid time or date", "trn" => "invalid-time-or-date");
+    const InvalidDeliveryTime = array("Invalid delivery time", "trn" => "invalid-delivery-time");
+    const InvalidDeliveryDate = array("Invalid delivery date", "trn" => "invalid-delivery-date");
+    const InvalidTakeoutDate = array("Invalid takeout date", "trn" => "invalid-takeout-date");
+    const InvalidTakeoutTime = array("Invalid takeout time", "trn" => "invalid-takeout-time");
+    const NullCard = array("Invalid payment details", "trn" => "invalid-payment-details");
+    const NullCreditCardName = array("Fill name on your card", "trn" => "invalid-credit-card-name");
+    const PaymentUnsuccessful = array("Payment was unsuccessful", "trn" => "unsucessful-payment");
+    const NullZip = array("Invalid zip code", "trn" => "error-zip");
+    const AlreadyRated = array("Already rated", "trn" => "already-rated");
+    const Closed = array("Closed", "trn" => "closed");
+    const BelowMinOrder = array("Order Below Min. Order", "trn" => "below-minimum");
+    const InvalidOrder = array("Order not found", "trn" => "invalid-order");
+    const InvalidDetails = array("Invalid delivery details", "trn" => "invalid-details");
+    const ErrorOccured  = array("Error occured","trn"=>"error-occured");
+    // const  = array("","trn"=>"");
+    // const  = array("","trn"=>"");
     // const  = array("","trn"=>"");
     // const  = array("","trn"=>"");
     // const  = array("","trn"=>"");

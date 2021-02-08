@@ -1,11 +1,11 @@
 <?php
 
-namespace danolez\lib\Security\Encryption;
+namespace danolez\lib\Security;
 
-use danolez\lib\DB\DataType\DataType;
-use danolez\lib\Security\Credential\Credential;
-use danolez\lib\Security\Encoding\Encoding;
-use danolez\lib\Security\Delimiter\Delimiter;
+use danolez\lib\DB\DataType;
+use danolez\lib\Security\Credential;
+use danolez\lib\Security\Encoding;
+use danolez\lib\Security\Delimiter;
 use Exception;
 
 class Encryption

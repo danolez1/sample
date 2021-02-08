@@ -1,15 +1,15 @@
 <!-- Modal -->
+<?php
+
+use danolez\lib\Security\Encoding;
+use Demae\Controller\ShopController\HomeController;
+?>
 <div class="modal fade" id="productModal" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <img class="product-img" src="<?php
-
-                                                use danolez\lib\Security\Encoding\Encoding;
-                                                use Demae\Controller\ShopController\HomeController;
-
-                                                echo $settings->getImagePlaceholder(); ?>" id="product-modal-img">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <div class="modal-header p-0 m-0" style="overflow: hidden;padding-left:-2px;">
+                <img class="product-img" src="<?php echo $settings->getImagePlaceholder(); ?>" data-placeholder="<?php echo $settings->getImagePlaceholder(); ?>" id="product-modal-img">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="position: absolute;z-index:1000; right:0;margin-right:.07em;margin-top:.07em; top:0;color:#FA1616;">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -22,7 +22,7 @@
                         <p class="mt-2"><span class="badge pt-2 pb-2 pr-2 pl-2 price-tag"><?php //echo $settings->getCurrency(); 
                                                                                             ?><span id="product-modal-price"></span></span>
                             <input type="hidden" name="product-details" />
-                            <input type="hidden" name="session" value="<?php echo $this->user != null ? Encoding::encode(json_encode(array($this->user->getEmail(), $this->user->getId())), HomeController::VALUE_ENCODE_ITERTATION) : $this->session->get(self::GUEST); ?>" />
+                            <input type="hidden" name="session" value="<?php echo $this->user != null ?  $this->user->getId() : $this->session->get(self::GUEST); ?>" />
                             <input type="hidden" name="product-modal-total" value="" />
                             <?php if ($settings->getDisplayRating()) { ?>
                                 <i class="mdi mdi-star-circle rating-icon"></i>
@@ -37,21 +37,13 @@
                     <h6 class="font-weight-bold text-dark mt-2 mb-2">Options</h6>
                 </div>
                 <!-- START OPTIONS -->
-                <div id="option-display">
-
-
-
-
-
-
-
-                </div>
+                <div id="option-display"></div>
                 <!-- END OPTIONS -->
                 <!-- ADDITIONAL NOTE -->
                 <div class="modal-option-header row col-12 pl-3 pb-3 pt-3" style="border:none">
                     <span class="text-left col-8"> Additional Notes </span>
                 </div>
-                <textarea name="product-modal-note" placeholder="Add a note (e.g extra pepper, salty etc.)" rows="3" style="width: 100%;"></textarea>
+                <textarea name="product-modal-note" placeholder="Add a note (e.g extra pepper, salty etc.)" maxlength="120" rows="3" style="width: 100%;"></textarea>
                 <!-- ENF NOTE -->
                 <div class="dropdown-divider"></div>
                 <div class="modal-footer">

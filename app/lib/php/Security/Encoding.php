@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\Security\Encoding;
+namespace danolez\lib\Security;
 
 abstract class Encoding
 {

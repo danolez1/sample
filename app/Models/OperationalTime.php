@@ -1,6 +1,6 @@
 <?php
 
-use danolez\lib\DB\Model\Model;
+use danolez\lib\DB\Model;
 
 class OperationalTime
 {

@@ -29,6 +29,12 @@
                          <span aria-hidden="true">&times;</span>
                      </button>
                  </div>
+                 <script>
+                     if (window.history.replaceState) {
+                         window.history.replaceState(null, null, window.location.href);
+                     }
+                     location.reload();
+                 </script>
              <?php } ?>
              <div class="card-wrapper mt-3"></div>
              <div class="form-container active">

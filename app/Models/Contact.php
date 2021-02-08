@@ -1,12 +1,13 @@
 <?php
 
-namespace Demae\Auth\Models\Contact;
+namespace Demae\Auth\Models;
 
 use ContactColumn;
-use danolez\lib\DB\Credential\Credential;
-use danolez\lib\DB\Model\Model;
-use danolez\lib\Security\Encoding\Encoding;
-use Demae\Auth\Models\Error\Error;
+use danolez\lib\DB\Credential;
+use danolez\lib\DB\Model;
+use danolez\lib\Res\Email;
+use danolez\lib\Security\Encoding;
+use Demae\Auth\Models\Error;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use ReflectionClass;
@@ -53,40 +54,20 @@ class Contact extends Model
 
     public  function mail()
     {
-        $server = "smtp.gmail.com"; //"smtp-pulse.com"; // "smtp.sendgrid.net";
-        $port = 465; //587
-        $username = 'danolez1fatuns@gmail.com';
-        $password = "God is good";
-        //SEND TWO WAYS
-        //ENCRYPT AUTH DATA
-        try {
-            $mail = new PHPMailer(TRUE);
-            $mail->setFrom('danolez1fatuns@gmail.com', 'Darth Vader');
-            $mail->addAddress($this->getEmail(), $this->getName());
-            $mail->Subject = 'Force';
-            $mail->isHTML(TRUE);
-            $mail->Body = '<html>There is a great disturbance in the <strong>Force</strong>.</html>';
-            $mail->AltBody = 'There is a great disturbance in the Force.';
-            $mail->IsSMTP();
-            $mail->Host = $server;
-            $mail->SMTPSecure = "tls";
-            $mail->Port = 587;
-            $mail->SMTPAuth = true;
-            $mail->Username = $username;
-            $mail->Password = $password;
-
-            /* Finally send the mail. */
-            if (!$mail->send()) {
-                /* PHPMailer error. */
-                //echo $mail->ErrorInfo;
-            } //else echo "O TI SEND";
-        } catch (Exception $e) {
-            /* PHPMailer exception. */
-            echo $e->errorMessage();
-        } catch (\Exception $e) {
-            /* PHP exception (note the backslash to select the global namespace Exception class). */
-            echo $e->getMessage();
-        }
+        $mail = new Email();
+        // // $mail->setTo($this->getEmail(), $this->getName());
+        // //Generate Subject for customer and leave for admin
+        // $mail->setSubject("Demae System - お問い合わせ");
+        // $message['en'] = "Thank you for your contacting us. We will get back to you shortly. This is an autoreply to indicate we got your message, so you don't have to reply.";
+        // $message['jp'] = "お問い合わせいただきありがとうございます。間もなくご連絡いたします。これは、メッセージを受け取ったことを示す自動返信なので、返信する必要はありません。";
+        // $body = file_get_contents('app/Views/email/contact.php');
+        // // $body = str_replace("{name}",  $this->getName() . '様', $body);
+        // $body = str_replace("{message['en']}", $message["en"], $body);
+        // $body = str_replace("{message['jp']}", $message["jp"], $body);
+        // $mail->setBody($message['en'] . "\r\n \r\n" . $message['jp']);
+        // $mail->setHtml($body);
+        // // $mail->sendWithGoogleSTMP(); //sendWithHostSTMP();
+        // $mail->sendWithHostSTMP();
     }
 
     public function validate()

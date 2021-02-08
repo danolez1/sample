@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\Res\Cookie;
+namespace danolez\lib\Res;
 
 class Cookie
 {

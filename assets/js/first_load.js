@@ -1,15 +1,52 @@
 function loadFormData(input) {
     for (const [key, value] of Object.entries(input)) {
-        var element = document.getElementsByName(key)[0];
-        if (element.nodeName == "INPUT") {
-            if (value != '')
-                element.setAttribute("value", value);
-        }
-        if (element.nodeName == "TEXTAREA") {
-            if (value != '')
-                element.innerText = value;
-        }
+        var elements = document.getElementsByName(key);
+        elements.forEach(function (element) {
+            if (element.nodeName == "INPUT") {
+                if (element.getAttribute('type') == "radio") {
+                    if (element.value == value) {
+                        element.setAttribute("value", value);
+                        element.setAttribute("checked", true);
+                        // console.log(element.value);
+                    }
+                } else {
+
+                    if (value != '')
+                        element.setAttribute("value", value);
+                }
+            }
+            if (element.nodeName == "TEXTAREA") {
+                if (value != '')
+                    element.innerText = value;
+            }
+        });
+        // var element = document.getElementsByName(key)[0];
+
     };
+}
+
+String.prototype.stripSlashes = function () {
+    return this.replace(/\\(.)/mg, "$1");
+}
+
+function spinner(id) {
+    return new jQuerySpinner({
+        parentId: id
+    });
+}
+
+function base64en(val) {
+    return btoa(unescape(encodeURIComponent(val)));
+}
+function base64de(val) {
+    return decodeURIComponent(escape(atob(val)));
+}
+
+function unicodeToChar(text) {
+    return text.replace(/\\u[\dA-F]{4}/gi,
+        function (match) {
+            return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16));
+        });
 }
 
 function postalGeocoding(zip) {
@@ -19,7 +56,7 @@ function postalGeocoding(zip) {
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
-                console.log(this.responseText);
+                // console.log(this.responseText);
                 for (const [key, value] of Object.entries(JSON.parse(this.responseText))) {
                     var input = document.getElementById(key);
                     if (input != undefined) {
@@ -110,7 +147,7 @@ function setCookie(cname, cvalue, exdays) {
     var d = new Date();
     d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
     var expires = "expires=" + d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/;SameSite=Lax;Secure";
 }
 
 function getCookie(cname) {

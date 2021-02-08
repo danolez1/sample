@@ -1,3 +1,6 @@
+<?php
+
+?>
 <main class="content-wrapper">
     <h3>Orders</h3>
     <p class="mb-4">You can manage your orders here</p>
@@ -5,9 +8,9 @@
     <div class="row col-12 btn-toolbar m-0 p-0" role="toolbar">
         <div class="btn-group col-12 me-2" role="group" style="margin-left: .5em;padding-left:0;">
             <button type="button" id="pending-order" class="btn btn-lg btn-outline-danger col-6 active">
-                Pending orders <span class="badge badge-info ml-2">9</span>
+                Pending orders <span class="badge badge-info ml-2"><?php echo $pendingOrder; ?></span>
             </button>
-            <button type="button" id="completed-order" class="btn btn-lg btn-outline-danger col-6">Completed orders</button>
+            <button type="button" id="completed-order" class="btn btn-lg btn-outline-danger col-6">Completed orders <span class="badge badge-info ml-2"><?php echo $completedOrder; ?></span></button>
         </div>
     </div>
 
@@ -39,11 +42,25 @@
 
 
         <div id="pending-order-display">
-            <?php include 'app/Views/admin/pages/order_item.php'; ?>
+            <?php
+            foreach ($this->orders as $order) {
+                if ($this->admin->getBranchId() == $order->getBranch() || $this->admin->getRole() == 1) {
+                    if (intval($order->getStatus()) != OrderColumn::ORDER_DELIVERED) {
+                        include 'app/Views/admin/pages/order_item.php';
+                    }
+                }
+            }
+            ?>
         </div>
 
         <div id="completed-order-display" style="display: none;">
-            <?php include 'app/Views/admin/pages/order_item.php'; ?>
+            <?php foreach ($this->orders as $order) {
+                if ($this->admin->getBranchId() == $order->getBranch() || $this->admin->getRole() == 1) {
+                    if (intval($order->getStatus()) == OrderColumn::ORDER_DELIVERED) {
+                        include 'app/Views/admin/pages/order_item.php';
+                    }
+                }
+            } ?>
         </div>
 
         <div class="card-footer p-2 row col-12 p-0 m-0">

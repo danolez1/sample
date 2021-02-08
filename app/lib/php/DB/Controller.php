@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\DB\Controller;
+namespace danolez\lib\DB;
 
 abstract class Controller
 {

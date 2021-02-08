@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\Res\Orientation;
+namespace danolez\lib\Res;
 
 abstract class Orientation
 {

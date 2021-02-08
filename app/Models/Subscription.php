@@ -1,6 +1,6 @@
 <?php
 
-use Demae\Auth\Models\Shop\PaymentDetails\CreditCard;
+use Demae\Auth\Models\Shop\CreditCard;
 
 class Subscription
 {

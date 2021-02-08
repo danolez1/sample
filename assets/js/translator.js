@@ -60,17 +60,29 @@ var translator = function (lang) {
 }
 
 $(document).ready(function () {
-    var defaultLang = getCookie("lingo") ?? 'en';
-    translator(defaultLang);
-    $("#defaultLang").val(defaultLang);
+    var timeZone = (Intl.DateTimeFormat().resolvedOptions().timeZone);
+    var continent = timeZone.split("/")[0];
+
+    var defaultL;
+    if (continent == "Asia") {
+        defaultL = getCookie("lingo") == "" ? 'jp' : getCookie("lingo");
+    } else {
+        defaultL = getCookie("lingo") == "" ? 'en' : getCookie("lingo");
+    }
+
+    translator(defaultL);
+    $("#defaultLang").val(defaultL);
+
     if ($("#defaultLang").val() == "en") {
         $("#lang1").html('日本語');
         $("#lang1").val('jp');
         $("#defaultLang").html('English');
+        translator(defaultL);
     } else {
         $("#defaultLang").html('日本語');
         $("#lang1").html('English');
         $("#lang1").val('en');
+        translator(defaultL);
     }
 
     $("#lang1").click(function () {
@@ -89,6 +101,7 @@ $(document).ready(function () {
             $("#defaultLang").val('en');
         }
     });
+
 });
 
 function setCookie(cname, cvalue, exdays) {

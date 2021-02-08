@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\Res\Network;
+namespace danolez\lib\Res;
 
 class Network
 {

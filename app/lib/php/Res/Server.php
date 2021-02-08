@@ -1,8 +1,8 @@
 <?php
 
-namespace danolez\lib\Res\Server;
+namespace danolez\lib\Res;
 
-use danolez\lib\Res\Curl\Curl;
+use danolez\lib\Res\Curl;
 
 class Server
 {
@@ -115,6 +115,14 @@ class Server
         }
 
         return $osPlatform;
+    }
+
+    public static function getUrl($base = false)
+    {
+        if ($base)
+            return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+        else
+            return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
     }
 
     public static function getBrowser()

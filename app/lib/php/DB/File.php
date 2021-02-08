@@ -1,9 +1,9 @@
 <?php
 
-namespace danolez\lib\DB\Model;
+namespace danolez\lib\DB;
 
-use danolez\lib\DB\Credential\Credential;
-use danolez\lib\Security\Encoding\Encoding;
+use danolez\lib\DB\Credential;
+use danolez\lib\Security\Encoding;
 
 class File
 {
@@ -18,7 +18,7 @@ class File
     const DIRECTORY_SEPERATOR = '/';
     const ITERATION = 1;
 
-    public function __construct($filePath)
+    public function __construct($filePath, $encode = true)
     {
         $file = file_exists($filePath);
         if (!$file) {
@@ -27,15 +27,18 @@ class File
         $this->setPath($filePath);
         $temp = explode(self::DIRECTORY_SEPERATOR, $filePath);
         $this->setFileName($temp[count($temp) - 1]);
-        $this->setFile(json_decode(Credential::decrypt(Encoding::decode(file_get_contents($filePath), self::ITERATION))) ?? json_encode(array()));
+        $this->setFile(json_decode($encode ? Credential::decrypt(Encoding::decode(file_get_contents($filePath), self::ITERATION)) : file_get_contents($filePath)));
         $this->setSize(strlen(json_encode($this->getFile())));
         $this->setDateCreated(filectime($this->getPath()));
         $this->setLastModified(filemtime($this->getPath()));
     }
 
-    public function save()
+    public function save($encode = true)
     {
-        return file_put_contents($this->getPath(), Encoding::encode(Credential::encrypt($this->getFile()), self::ITERATION));
+        if (!$encode) {
+            file_put_contents($this->getPath(), $this->getFile());
+        } else
+            return file_put_contents($this->getPath(), Encoding::encode(Credential::encrypt($this->getFile()), self::ITERATION));
     }
 
     /**

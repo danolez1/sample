@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\DB\Action;
+namespace danolez\lib\DB;
 
 abstract class Action
 {

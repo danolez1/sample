@@ -1,7 +1,9 @@
 <?php
 
-namespace danolez\lib\Res\Zip;
+namespace danolez\lib\Res;
 
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use ZipArchive;
 
 class Zip
@@ -10,31 +12,59 @@ class Zip
     private $zip;
     private $dir;
 
+
+
     public function __construct()
     {
-        $this->zip = new \ZipArchive();
+        $this->zip = new ZipArchive();
     }
 
-    public function zip($path)
+    public function error($error)
     {
-        $status = $this->zip->open($path,  ZipArchive::CREATE);
-        if (count($this->paths) > 0) {
-            foreach ($this->paths as $fileToAdd) {
-                $this->zip->addFile($fileToAdd);
+        return [
+            ZipArchive::ER_EXISTS => 'File already exists.',
+            ZipArchive::ER_INCONS => 'Zip archive inconsistent.',
+            ZipArchive::ER_INVAL => 'Invalid argument.',
+            ZipArchive::ER_MEMORY => 'Malloc failure.',
+            ZipArchive::ER_NOENT => 'No such file.',
+            ZipArchive::ER_NOZIP => 'Not a zip archive.',
+            ZipArchive::ER_OPEN => "Can't open file.",
+            ZipArchive::ER_READ => 'Read error.',
+            ZipArchive::ER_SEEK => 'Seek error.',
+        ][$error];
+    }
+
+    public function zip($name)
+    {
+        $status = $this->zip->open($name,  ZipArchive::CREATE | ZIPARCHIVE::OVERWRITE);
+        if ($status == true) {
+            if (!empty($this->paths)) {
+                foreach ($this->paths as $fileToAdd) {
+                    $this->zip->addFile($fileToAdd);
+                }
             }
-        }
-        if ($this->dir != NULL || $this->dir != "") {
-            if ($handle = opendir($this->dir)) {
-                while (false !== ($entry = readdir($handle))) {
-                    if ($entry != "." && $entry != ".." && !is_dir($this->dir . $entry)) {
-                        $this->zip->addFile($this->dir . DIRECTORY_SEPARATOR . $entry);
+            if (!isEmpty($this->dir)) {
+                $files = new RecursiveIteratorIterator(
+                    new RecursiveDirectoryIterator($this->dir),
+                    RecursiveIteratorIterator::LEAVES_ONLY
+                );
+                foreach ($files as $name => $file) {
+                    if (!str_contains($name, '.git')) {
+                        // Skip directories (they would be added automatically)
+                        if (!$file->isDir()) {
+                            // Get real and relative path for current file
+                            $filePath = $file->getRealPath();
+                            $relativePath = substr($filePath, strlen($this->dir) + 1);
+
+                            // Add current file to archive
+                            $this->zip->addFile($filePath, $relativePath);
+                        }
                     }
                 }
-                closedir($handle);
+                $this->zip->close();
             } else echo 'not dir';
-        }
-        $this->zip->close();
-        return $status;
+        } else
+            return $status;
     }
 
     public function addFiles(...$paths)

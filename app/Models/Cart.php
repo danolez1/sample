@@ -3,13 +3,14 @@
 namespace Demae\Auth\Models\Shop\Cart;
 
 use CartColumn;
-use danolez\lib\DB\Condition\Condition;
-use danolez\lib\DB\Credential\Credential;
-use danolez\lib\DB\Model\Model;
-use danolez\lib\Security\Encoding\Encoding;
-use Demae\Auth\Models\Error\Error;
-use Demae\Auth\Models\Shop\Product\Product;
-use Demae\Auth\Models\Shop\User\User;
+use danolez\lib\DB\Condition;
+use danolez\lib\DB\Credential;
+use danolez\lib\DB\Model;
+use danolez\lib\Security\Encoding;
+use Demae\Auth\Models\Error;
+use Demae\Auth\Models\Shop\Product;
+use Demae\Auth\Models\Shop\Setting;
+use Demae\Auth\Models\Shop\User;
 use Demae\Controller\ShopController\HomeController;
 use ReflectionClass;
 use ReflectionProperty;
@@ -25,6 +26,8 @@ class CartItem extends Model
     private $additionalNote;
     private $timeCreated;
     private $productDetails;
+    private $productImage;
+    private $productDescription;
 
     const KEY_ENCODE_ITERTATION = -1;
     const VALUE_ENCODE_ITERTATION = 2;
@@ -74,8 +77,9 @@ class CartItem extends Model
                     CartColumn::PRODUCTDETAILS => $obj[CartColumn::PRODUCTDETAILS],
                     CartColumn::AMOUNT => $obj[CartColumn::AMOUNT],
                     CartColumn::PRODUCTOPTIONS => $obj[CartColumn::PRODUCTOPTIONS],
+                    CartColumn::USERID => $obj[CartColumn::USERID],
                 ),
-                array('AND', 'AND')
+                array('AND', 'AND', 'AND')
             );
             if (count($query) > 0) {
                 foreach ($query as $item) {
@@ -94,10 +98,6 @@ class CartItem extends Model
         } else {
             $return[parent::ERROR] = Error::CouldNotAddToCart;
         }
-
-
-
-
         return json_encode($return);
     }
 
@@ -106,39 +106,48 @@ class CartItem extends Model
         try {
             $product = new Product();
             $product = $product->get($this->getProductId());
-            $basePrice = $product->getPrice();
-            $options = [];
-            for ($i = 0; $i < count($product->getProductOptions()); $i++) {
-                for ($j = 0; $j < count($this->getProductOptions()); $j++) {
-                    if ($product->getProductOptions()[$i]->name == $this->getProductOptions()[$j]->name) {
-                        if (intval($this->getProductOptions()[$j]->value) > 0) {
-                            $product->getProductOptions()[$i]->amount = $this->getProductOptions()[$j]->value;
-                            $options[] = $product->getProductOptions()[$i];
+            if ($product->getAvailability() == Product::AVAILABLE) {
+                $basePrice = $product->getPrice();
+                $this->setProductDetails($product->getName());
+                $this->setProductDescription($product->getDescription());
+                $this->setProductImage(isEmpty($product->getDisplayImage()) ? Setting::getInstance()->getImagePlaceholder() : $product->getDisplayImage());
+                $options = [];
+                $optionPrice = 0;
+                if (is_array($product->getProductOptions())) {
+                    for ($i = 0; $i < count($product->getProductOptions()); $i++) {
+                        for ($j = 0; $j < count($this->getProductOptions()); $j++) {
+                            if ($product->getProductOptions()[$i]->name == $this->getProductOptions()[$j]->name) {
+                                if (intval($this->getProductOptions()[$j]->value) > 0) {
+                                    $product->getProductOptions()[$i]->amount = $this->getProductOptions()[$j]->value;
+                                    $options[] = $product->getProductOptions()[$i];
+                                }
+                            }
                         }
                     }
+                    foreach ($options as $option) {
+                        $optionPrice += intval($option->amount) * intval($option->price);
+                    }
                 }
-            }
-            $optionPrice = 0;
-            foreach ($options as $option) {
-                $optionPrice += intval($option->amount) * intval($option->price);
-            }
-            $this->setProductOptions(json_encode($options));
-            $this->setAmount($basePrice + $optionPrice);
-            $guest = json_decode($this->getUserId());
+                $this->setProductOptions(json_encode($options));
+                $this->setAmount($basePrice + $optionPrice);
+                $guest = json_decode($this->getUserId());
+                if (!is_null($guest)) {
+                    if (count((array)$guest) == 2) { //user
+                        // $user = new User();
+                        // $user->setEmail($guest[0]);
+                        // $user->setId($guest[1]);
+                        // $user = $user->get();
+                        $this->setUserId($guest[1]);
+                    } else {
+                        $this->setUserId(Encoding::encode(json_encode($guest), HomeController::VALUE_ENCODE_ITERTATION));
+                    }
+                }
 
-            if (count($guest) == 2) { //user
-                // $user = new User();
-                // $user->setEmail($guest[0]);
-                // $user->setId($guest[1]);
-                // $user = $user->get();
-                $this->setUserId($guest[1]);
-            } else {
-                $this->setUserId(Encoding::encode(json_encode($guest), HomeController::VALUE_ENCODE_ITERTATION));
-            }
-            $this->setTimeCreated(time());
-            $this->setQuantity(1);
-            $this->setId(Encoding::encode(($this->table->getLastSN() + 1), self::VALUE_ENCODE_ITERTATION));
-            return $this;
+                $this->setTimeCreated(time());
+                $this->setQuantity(1);
+                $this->setId(Encoding::encode(($this->table->getLastSN() + 1), self::VALUE_ENCODE_ITERTATION));
+                return $this;
+            } else return null;
         } catch (\Exception $e) {
             return null;
         }
@@ -153,19 +162,54 @@ class CartItem extends Model
 
     public function delete()
     {
-        // $stmt = $this->table->remove(
-        //     array(
-        //         ProductColumn::ID => $obj[ProductColumn::ID],
-        //     )
-        // );
+        $return = array();
+        $obj = $this->object(false);
+        $query = (array) $this->table->get(
+            null,
+            Condition::WHERE,
+            array(
+                CartColumn::ID => $obj[CartColumn::ID],
+                CartColumn::USERID => $obj[CartColumn::USERID],
+            ),
+            array('AND')
+        );
+        if (count($query) > 0) {
+            $stmt = $this->table->remove(
+                array(
+                    CartColumn::ID => $obj[CartColumn::ID],
+                )
+            );
+            $return[parent::RESULT] = (bool) $stmt->affected_rows;
+        } else {
+            $return[parent::ERROR] = Error::ItemDoesNotExist; //nothing found
+        }
+        return json_encode($return);
     }
 
     public function update()
     {
-        // $obj = $this->object();
-        // $stmt = $this->table->update($obj[parent::PROPERTIES], $obj[parent::VALUES], array(ProductColumn::ID => $this->getId()));
-        // $return[parent::RESULT] = (bool) $stmt->affected_rows;
-
+        $return = array();
+        $obj = $this->object(false);
+        $query = (array) $this->table->get(
+            null,
+            Condition::WHERE,
+            array(
+                CartColumn::ID => $obj[CartColumn::ID],
+                CartColumn::USERID => $obj[CartColumn::USERID],
+            ),
+            array('AND')
+        );
+        if (count($query) > 0) {
+            if ($this->getQuantity() == 0) {
+                return $this->delete();
+            } else {
+                $stmt = $this->table->update(array(CartColumn::QUANTITY), array($this->getQuantity()), array(CartColumn::ID => $obj[CartColumn::ID]));
+                $return[parent::RESULT] = (bool) $stmt->affected_rows;
+            }
+        } else {
+            $return[parent::ERROR] = Error::ItemDoesNotExist; //nothing found
+        }
+        return json_encode($return);
     }
 
     public function properties($display = false): array
@@ -422,6 +466,46 @@ class CartItem extends Model
     public function setProductDetails($productDetails)
     {
         $this->productDetails = $productDetails;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of productImage
+     */
+    public function getProductImage()
+    {
+        return $this->productImage;
+    }
+
+    /**
+     * Set the value of productImage
+     *
+     * @return  self
+     */
+    public function setProductImage($productImage)
+    {
+        $this->productImage = $productImage;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of productDescription
+     */
+    public function getProductDescription()
+    {
+        return $this->productDescription;
+    }
+
+    /**
+     * Set the value of productDescription
+     *
+     * @return  self
+     */
+    public function setProductDescription($productDescription)
+    {
+        $this->productDescription = $productDescription;
 
         return $this;
     }

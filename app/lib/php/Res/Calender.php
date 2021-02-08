@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\Res\Calender;
+namespace danolez\lib\Res;
 
 class Calender
 {

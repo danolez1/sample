@@ -1,10 +1,10 @@
 <?php
 
-use danolez\lib\DB\Attribute\Attribute;
-use danolez\lib\DB\Credential\Credential;
-use danolez\lib\DB\Database\Database;
-use danolez\lib\DB\Database\DBBackup;
-use danolez\lib\DB\DataType\DataType;
+use danolez\lib\DB\Attribute;
+use danolez\lib\DB\Credential;
+use danolez\lib\DB\Database;
+use danolez\lib\DB\DBBackup;
+use danolez\lib\DB\DataType;
 
 
 $db = new Database(Credential::SHOP_DB);
@@ -99,7 +99,6 @@ $branchTb->addColumn(BranchColumn::SN, DataType::integer(10), Attribute::AUTO_IN
   ->addColumn(BranchColumn::LOG, DataType::TEXT)
   ->addColumn(BranchColumn::ADMIN, DataType::TEXT)
   ->addColumn(BranchColumn::MINORDER, DataType::TEXT)
-  ->addColumn(BranchColumn::AVERAGEDELIVERYTIME, DataType::TEXT)
   ->addColumn(BranchColumn::OPERATIONTIME, DataType::TEXT)
   ->addColumn(BranchColumn::SHIPPINGFEE, DataType::TEXT)
   ->addColumn(BranchColumn::DELIVERYTIME, DataType::TEXT)
@@ -107,16 +106,11 @@ $branchTb->addColumn(BranchColumn::SN, DataType::integer(10), Attribute::AUTO_IN
   ->addColumn(BranchColumn::DELIVERYAREAS, DataType::TEXT)
   ->addColumn(BranchColumn::DELIVERYDISTANCE, DataType::TEXT)
   ->addColumn(BranchColumn::ADDRESS, DataType::TEXT)
+  ->addColumn(BranchColumn::ADDRESS_NAME, DataType::TEXT)
+  ->addColumn(BranchColumn::PRINT_LANGUAGE, DataType::TEXT)
+  ->addColumn(BranchColumn::PRINTNODE_API, DataType::TEXT)
+  ->addColumn(BranchColumn::DEFAULT_PRINTER, DataType::TEXT)
   ->create();
-
-
-const OPERATIONTIME = "operationTime";
-const SHIPPINGFEE = "shippingFee";
-const DELIVERYTIME = "deliveryTime";
-const DELIVERYTIMERANGE = "deliveryTimeRange";
-const DELIVERYAREAS = "deliveryAreas";
-const DELIVERYDISTANCE = "deliveryDistance";
-const ADDRESS = "address";
 
 $cartTb = $db->Table(Credential::CARTS_TBL);
 $cartTb->addColumn(CartColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
@@ -129,28 +123,29 @@ $cartTb->addColumn(CartColumn::SN, DataType::integer(10), Attribute::AUTO_INCREM
   ->addColumn(CartColumn::ADDITIONALNOTE, DataType::TEXT)
   ->addColumn(CartColumn::TIMECREATED, DataType::TEXT)
   ->addColumn(CartColumn::PRODUCTDETAILS, DataType::TEXT)
+  ->addColumn(CartColumn::PRODUCTIMAGE, DataType::TEXT)
+  ->addColumn(CartColumn::PRODUCT_DESCRIPTION, DataType::TEXT)
   ->create();
 
-
 $orderTb = $db->Table(Credential::ORDERS_TBL);
-// $orderTb->addColumn(OrderColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
-//   ->addColumn(OrderColumn::ID, DataType::TEXT)
-//   // ->addColumn(OrderColumn:, DataType::TEXT)
-//   ->create();
-
-$notificationTb = $db->Table(Credential::NOTIFICATIONS_TBL);
-// $notificationTb->addColumn(NotificationColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
-//   ->addColumn(NotificationColumn::ID, DataType::TEXT)
-//   // ->addColumn(NotificationColumn:, DataType::TEXT)
-//   ->create();
-
-
-$deliveryTb = $db->Table(Credential::DELIVERY_TBL);
-// $deliveryTb->addColumn(DeliveryColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
-//   ->addColumn(DeliveryColumn:, DataType::TEXT)
-//   // ->addColumn(DeliveryColumn:, DataType::TEXT)
-//   ->create();
-
+$orderTb->addColumn(OrderColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
+  ->addColumn(OrderColumn::ID, DataType::TEXT)
+  ->addColumn(OrderColumn::DISPLAYID, DataType::TEXT)
+  ->addColumn(OrderColumn::CART, DataType::TEXT)
+  ->addColumn(OrderColumn::AMOUNT, DataType::TEXT)
+  ->addColumn(OrderColumn::USERDETAILS, DataType::TEXT)
+  ->addColumn(OrderColumn::VISIBILITY, DataType::TEXT)
+  ->addColumn(OrderColumn::STATUS, DataType::TEXT)
+  ->addColumn(OrderColumn::DELIVERYOPTION, DataType::TEXT)
+  ->addColumn(OrderColumn::DELIVERYFEE, DataType::TEXT)
+  ->addColumn(OrderColumn::SCHEDULED, DataType::TEXT)
+  ->addColumn(OrderColumn::ADDRESS, DataType::TEXT)
+  ->addColumn(OrderColumn::PAYMENTDETAILS, DataType::TEXT)
+  ->addColumn(OrderColumn::PAYMENTMETHOD, DataType::TEXT)
+  ->addColumn(OrderColumn::TIMECREATED, DataType::TEXT)
+  ->addColumn(OrderColumn::LOG, DataType::TEXT)
+  ->addColumn(OrderColumn::BRANCH, DataType::TEXT)
+  ->create();
 
 $favouriteTb = $db->Table(Credential::FAVORITES_TBL);
 $favouriteTb->addColumn(FavoriteColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
@@ -172,7 +167,6 @@ $categoryTb->addColumn(CategoryColumn::SN, DataType::integer(10), Attribute::AUT
   ->addColumn(CategoryColumn::CREATOR, DataType::TEXT)
   ->create();
 
-
 $paymentDetailsTb = $db->Table(Credential::PAYMENT_METHODS_TBL);
 $paymentDetailsTb->addColumn(PaymentDetailsColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
   ->addColumn(PaymentDetailsColumn::ID, DataType::TEXT)
@@ -181,6 +175,48 @@ $paymentDetailsTb->addColumn(PaymentDetailsColumn::SN, DataType::integer(10), At
   ->addColumn(PaymentDetailsColumn::USERID, DataType::TEXT)
   ->addColumn(PaymentDetailsColumn::LOG, DataType::TEXT)
   ->create();
+
+$trafficTb = $db->Table(Credential::TRAFFIC_TBL);
+$trafficTb->addColumn(TrafficLoggerColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
+  ->addColumn(TrafficLoggerColumn::COUNT, DataType::TEXT)
+  ->addColumn(TrafficLoggerColumn::PAGESVIEWED, DataType::TEXT)
+  ->addColumn(TrafficLoggerColumn::SESSION, DataType::TEXT)
+  ->addColumn(TrafficLoggerColumn::TIME, DataType::TEXT)
+  ->addColumn(TrafficLoggerColumn::URL, DataType::TEXT)
+  ->addColumn(TrafficLoggerColumn::LOG, DataType::TEXT)
+  ->create();
+
+$ratingTb = $db->Table(Credential::RATINGS_TBL);
+$ratingTb->addColumn(RatingsColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
+  ->addColumn(RatingsColumn::ID, DataType::TEXT)
+  ->addColumn(RatingsColumn::USERID, DataType::TEXT)
+  ->addColumn(RatingsColumn::PRODUCTID, DataType::TEXT)
+  ->addColumn(RatingsColumn::ORDERID, DataType::TEXT)
+  ->addColumn(RatingsColumn::RATING, DataType::TEXT)
+  ->addColumn(RatingsColumn::COMMENT, DataType::TEXT)
+  ->addColumn(RatingsColumn::TIME, DataType::TEXT)
+  ->create();
+
+$notificationTb = $db->Table(Credential::NOTIFICATIONS_TBL);
+// $notificationTb->addColumn(NotificationColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
+//   ->addColumn(NotificationColumn::ID, DataType::TEXT)
+//   // ->addColumn(NotificationColumn:, DataType::TEXT)
+//   ->create();
+
+
+$deliveryTb = $db->Table(Credential::DELIVERY_TBL);
+$deliveryTb->addColumn(DeliveryColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
+  ->addColumn(DeliveryColumn::ID, DataType::TEXT)
+  ->addColumn(DeliveryColumn::ORDERID, DataType::TEXT)
+  ->addColumn(DeliveryColumn::STATUS, DataType::TEXT)
+  ->addColumn(DeliveryColumn::COURIERID, DataType::TEXT)
+  ->addColumn(DeliveryColumn::LOCATION, DataType::TEXT)
+  ->addColumn(DeliveryColumn::FROM, DataType::TEXT)
+  ->addColumn(DeliveryColumn::TO, DataType::TEXT)
+  ->addColumn(DeliveryColumn::TIME, DataType::TEXT)
+  ->create();
+
+
 
 // $promotionTb = $db->Table(Credential::PROMOTIONS_TBL);
 // $promotionTb->addColumn(PromotionColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
@@ -195,7 +231,7 @@ $paymentDetailsTb->addColumn(PaymentDetailsColumn::SN, DataType::integer(10), At
 //   ->create();
 
 // $settingsTb = $db->Table(Credential::SETTINGS_TBL);
-// $settingsTb->addColumn(SettingsColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
+// $settingsTb//->addColumn(SettingsColumn::SN, DataType::integer(10), Attribute::AUTO_INCREMENT, Attribute::PRIMARY_KEY)
 //   ->addColumn(SettingsColumn::PAYMENTMETHODS, DataType::TEXT)
 //   ->addColumn(SettingsColumn::LOGO, DataType::TEXT)
 //   ->addColumn(SettingsColumn::ADDRESS, DataType::TEXT)
@@ -230,4 +266,4 @@ $paymentDetailsTb->addColumn(PaymentDetailsColumn::SN, DataType::integer(10), At
 //   ->addColumn(SettingsColumn::SHIPPINGFEE, DataType::TEXT)
 //   ->addColumn(SettingsColumn::DELIVERYAREAS, DataType::TEXT)
 //   ->addColumn(SettingsColumn::DELIVERYTIMERANGE, DataType::TEXT)
-//   ->create();
+  // ->delete();

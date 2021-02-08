@@ -1,5 +1,5 @@
 <?php 
-namespace danolez\lib\Res\Mail;
+namespace danolez\lib\Res;
 /**
 * A PHP class for sending email messages which includes capabilities for sending plaintext, html and multipart messages, including support for attachments.
 * 

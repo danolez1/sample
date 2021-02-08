@@ -1,13 +1,18 @@
 <?php
 
-namespace Demae\Auth\Models\Shop\Setting;
+namespace Demae\Auth\Models\Shop;
 
-use danolez\lib\DB\Credential\Credential;
-use danolez\lib\DB\Model\Model;
-use danolez\lib\Security\Encoding\Encoding;
-use Demae\Auth\Models\Shop\PaymentDetails\CreditCard;
+use danolez\lib\DB\Credential;
+use danolez\lib\DB\Model;
+use danolez\lib\Res\Email;
+use danolez\lib\Res\Orientation;
+use danolez\lib\Res\Server;
+use danolez\lib\Security\Encoding;
+use Demae\Auth\Models\Shop\CreditCard;
+use Demae\Controller\ShopController\HomeController;
 use ReflectionClass;
 use ReflectionProperty;
+use Sabberworm\CSS\Settings;
 use SettingsColumn;
 
 class Setting extends Model
@@ -50,6 +55,7 @@ class Setting extends Model
     private $deliveryTimeRange;
     private $deliveryAreas;
     private $deliveryDistance;
+    private $freeDeliveryPrice;
     private $timeCreated;
     // PAYMENT
     private $paymentMethods;
@@ -62,15 +68,25 @@ class Setting extends Model
     private $branches;
     private $subscriptions;
 
+    private $defaultPrinter;
+    private $printLanguage;
+    private $takeOut;
+    private $homeDelivery;
+    private $printNodeApi;
+
     const KEY_ENCODE_ITERTATION = -1;
     const VALUE_ENCODE_ITERTATION = 2;
+    const BASE_PAYMENT = 5000;
+    const ADDITIONAL_BRANCH = 3000;
+    const TAX = 0.10;
 
     public function __construct()
     {
         parent::__construct(parent::FILE_MODEL);
-        if ($this->file->getFile() == '[]') {
+        if ($this->file->getFile() == "") {
+            $this->defaultSettings();
             $this->file->setFile(json_encode($this->object(false)));
-            //default values
+            
             $this->file->save();
         } else {
             foreach ($this->file->getFile() as $property => $value) {
@@ -103,6 +119,15 @@ class Setting extends Model
         return new Setting();
     }
 
+    public function calculateSubscription(int $branch)
+    {
+        if ($branch < 2) return self::BASE_PAYMENT + (self::BASE_PAYMENT * self::TAX);
+        else if ($branch > 1) {
+            $cal = self::BASE_PAYMENT + (self::ADDITIONAL_BRANCH * ($branch - 1));
+            return $cal + ($cal * self::TAX);
+        }
+    }
+
     public function update()
     {
         $return = array();
@@ -110,6 +135,36 @@ class Setting extends Model
         $return[parent::RESULT] = $this->file->save();
         $return[parent::ERROR] = null;
         return json_encode($return);
+    }
+
+    public function sendNotificationMail()
+    {
+        $mail = new Email();
+        // $mail->setTo($this->email, $this->name); ADMIN
+        $EN = $_COOKIE['lingo'] == 'en';
+        $name = Setting::getInstance()->getStoreName();
+        $mail->setSubject($EN ? "【 $name 】- Notification" : "【 $name 】- お知らせ");
+        $message['en'] = "Thank you for using $name. You just added a payment method to your profile. This is an automatic message to indicate changes made on your profile, so you don't have to reply.";
+        $message['jp'] = "$name ご利用いただきありがとうございます。お客様のクレジットカードを追加しました。　これは、メッセージを受け取ったことを示す自動返信なので、返信する必要はありません。";
+        $body = file_get_contents('app/Views/email/contact.php');
+        $body = str_replace("{name}",  $this->name . '様', $body);
+        $body = str_replace("{message['en']}", $message["en"], $body);
+        $body = str_replace("{message['jp']}", $message["jp"], $body);
+        $body = str_replace("{{SOCIALS}}", "", $body);
+        // // <td style="word-break: break-word; vertical-align: top; padding-bottom: 0; padding-right: 5px; padding-left: 5px;" valign="top"><a href="https://www.facebook.com/" target="_blank"><img alt="Facebook" height="32" src="images/facebook2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; display: block;" title="Facebook" width="32" /></a></td>
+        // // <td style="word-break: break-word; vertical-align: top; padding-bottom: 0; padding-right: 5px; padding-left: 5px;" valign="top"><a href="https://twitter.com/" target="_blank"><img alt="Twitter" height="32" src="images/twitter2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; display: block;" title="Twitter" width="32" /></a></td>
+        // // <td style="word-break: break-word; vertical-align: top; padding-bottom: 0; padding-right: 5px; padding-left: 5px;" valign="top"><a href="https://instagram.com/" target="_blank"><img alt="Instagram" height="32" src="images/instagram2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; display: block;" title="Instagram" width="32" /></a></td>
+        // // <td style="word-break: break-word; vertical-align: top; padding-bottom: 0; padding-right: 5px; padding-left: 5px;" valign="top"><a href="https://www.linkedin.com/" target="_blank"><img alt="LinkedIn" height="32" src="images/linkedin2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; display: block;" title="LinkedIn" width="32" /></a></td>
+        $settings = HomeController::getSettings();
+        if (!$settings->getUseTitleAsLogo()) {
+            $mail->setAttachment($settings->getMetaContent());
+            $mail->setAttachmentName("logo-img");
+        }
+        $logo = '<img align="center" border="0" class="center autowidth" src="cid:logo-img" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; width: 100%; max-width: 140px; display: block;"  width="140" />';
+        $body = str_replace("{{LOGO}}", $settings->getUseTitleAsLogo() ? $settings->getLogo() : $logo, $body);
+        $mail->setBody($message['en'] . "\r\n \r\n" . $message['jp']);
+        $mail->setHtml($body);
+        $mail->sendWithHostSTMP();
     }
 
     public function properties($display = false): array
@@ -186,6 +241,54 @@ class Setting extends Model
         }
     }
 
+    public function defaultSettings()
+    {
+        $this->setPaymentMethods(null);
+        $this->setLogo('assets/images/home/logo_red.svg');
+        $this->setBannerTitle("FOOD DELIVERY");
+        $this->setBannerText("売上手数料なし,独自出前システム 飲食店、個人店舗のデリバリー＆テイクアウト、 手数料0円の独自受注システムがご利用できます。");
+        $this->setDeliveryTime("30");
+        $this->setOperationalTime(null);
+        $this->setMinOrder(800);
+        $this->setDisplayRating(true);
+        $this->setTitle("Demae System");
+        $this->setWebsiteUrl('https://test.demae-system.com');
+        $this->setStoreName("店舗名");
+        $this->setBannerImage('assets/image/shop/meatball.png');
+        $this->setSliderType(2);
+        $this->setMenuDisplayOrientation(Orientation::HORIZONTAL);
+        $this->setInfoDisplayOrientation(Orientation::HORIZONTAL);
+        $this->setDisplayOrderCount(true);
+        $this->setProductDisplayOrientation(Orientation::GRID);
+        // $this->setTheme();
+        $this->setDeliveryDistance(15000);
+        $this->setFooterType(1);
+        // $this->setBranches();
+        // $this->setColors();
+        $this->setCurrency('jpy');
+        $this->setAddress('Wagyu Creation 411 Hanare');
+        $this->setPhoneNumber("000-0000-0000");
+        $this->setAddressName(' 4-9-15 Ebisu, Shibuya-ku, Tokyo HAGIWA Building 5 3F');
+        // $this->setSocials(null);
+        $this->setShowTax(true);
+        $this->setDeliveryAreas('東、中央区、北区、南区、本町');
+        $this->setShippingFee(200);
+        $this->setDeliveryTimeRange(10);
+        $this->setImagePlaceholder("assets/images/shop/food_placeholder.png");
+        // $this->setSubscriptions();
+        $this->setTags("pizza, rice, meat, 焼鳥、焼肉");
+        $this->setDescription("pizza, rice, meat, 焼鳥、焼肉");
+        $this->setUseTitleAsLogo(true);
+        $this->setEmail('admin@demae-system.com');
+        $this->setFreeDeliveryPrice(1000);
+        $this->setTakeOut(true);
+        $this->setHomeDelivery(true);
+        // $this->setDefaultPrinter();
+        $this->setPrintLanguage('en');
+        $this->setPaymentMethods(array("cash" => true, 'card' => true));
+        $this->setPrintNodeApi('');
+        $this->setTimeCreated(time());
+    }
 
 
     /**
@@ -702,7 +805,7 @@ class Setting extends Model
      */
     public function getCurrency()
     {
-        $json = json_decode(file_get_contents('app\lib\php\Res\json\currency_code.json'));
+        $json = json_decode(file_get_contents(RESOURCES . 'json' . DIRECTORY_SEPARATOR . 'currency_code.json'));
         return $json->{strtoupper($this->currency)};
     }
 
@@ -994,6 +1097,146 @@ class Setting extends Model
     public function setEmail($email)
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of freeDeliveryPrice
+     */
+    public function getFreeDeliveryPrice()
+    {
+        return $this->freeDeliveryPrice;
+    }
+
+    /**
+     * Set the value of freeDeliveryPrice
+     *
+     * @return  self
+     */
+    public function setFreeDeliveryPrice($freeDeliveryPrice)
+    {
+        $this->freeDeliveryPrice = $freeDeliveryPrice;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of takeOut
+     */
+    public function getTakeOut()
+    {
+        return $this->takeOut;
+    }
+
+    /**
+     * Set the value of takeOut
+     *
+     * @return  self
+     */
+    public function setTakeOut($takeOut)
+    {
+        $this->takeOut = $takeOut;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of homeDelivery
+     */
+    public function getHomeDelivery()
+    {
+        return $this->homeDelivery;
+    }
+
+    /**
+     * Set the value of homeDelivery
+     *
+     * @return  self
+     */
+    public function setHomeDelivery($homeDelivery)
+    {
+        $this->homeDelivery = $homeDelivery;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of defaultPrinter
+     */
+    public function getDefaultPrinter()
+    {
+        return $this->defaultPrinter;
+    }
+
+    /**
+     * Set the value of defaultPrinter
+     *
+     * @return  self
+     */
+    public function setDefaultPrinter($defaultPrinter)
+    {
+        $this->defaultPrinter = $defaultPrinter;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of printLanguage
+     */
+    public function getPrintLanguage()
+    {
+        return $this->printLanguage;
+    }
+
+    /**
+     * Set the value of printLanguage
+     *
+     * @return  self
+     */
+    public function setPrintLanguage($printLanguage)
+    {
+        $this->printLanguage = $printLanguage;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of printNodeApi
+     */
+    public function getPrintNodeApi()
+    {
+        return $this->printNodeApi;
+    }
+
+    /**
+     * Set the value of printNodeApi
+     *
+     * @return  self
+     */
+    public function setPrintNodeApi($printNodeApi)
+    {
+        $this->printNodeApi = $printNodeApi;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of timeCreated
+     */
+    public function getTimeCreated()
+    {
+        return $this->timeCreated;
+    }
+
+    /**
+     * Set the value of timeCreated
+     *
+     * @return  self
+     */
+    public function setTimeCreated($timeCreated)
+    {
+        $this->timeCreated = $timeCreated;
 
         return $this;
     }

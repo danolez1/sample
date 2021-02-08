@@ -3,12 +3,12 @@
 namespace Demae\Auth\Models\Shop\Product;
 
 use CategoryColumn;
-use danolez\lib\DB\Condition\Condition;
-use danolez\lib\DB\Credential\Credential;
-use danolez\lib\DB\Model\Model;
-use danolez\lib\Security\Encoding\Encoding;
-use Demae\Auth\Models\Error\Error;
-use Demae\Auth\Models\Shop\Administrator\Administrator;
+use danolez\lib\DB\Condition;
+use danolez\lib\DB\Credential;
+use danolez\lib\DB\Model;
+use danolez\lib\Security\Encoding;
+use Demae\Auth\Models\Error;
+use Demae\Auth\Models\Shop\Administrator;
 use ProductColumn;
 use ReflectionClass;
 use ReflectionProperty;
@@ -72,7 +72,7 @@ class Category extends Model
                     array(
                         CategoryColumn::NAME => $obj[CategoryColumn::NAME],
                     )
-                )[0];
+                );
                 if (count($query) < 1) {
                     $this->setId(Encoding::encode(($this->table->getLastSN() + 1), self::VALUE_ENCODE_ITERTATION));
                     $obj = $this->object();

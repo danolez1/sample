@@ -1,12 +1,16 @@
 <?php
 
-namespace danolez\lib\DB\Database;
+namespace danolez\lib\DB;
 
-use danolez\lib\DB\Credential\Credential;
-use danolez\lib\DB\Table\Table;
+use danolez\lib\DB\Credential;
+use danolez\lib\DB\Table;
 use Exception;
 use mysqli;
 
+/**
+ *
+ * @property Table $table
+ * @property DBBackup $backup*/
 
 class Database
 {
@@ -35,6 +39,8 @@ class Database
                 $this->connect->query($sql);
                 $this->connect->select_db($name);
             }
+            $increase = "show global variables like '%connections%'";
+            // var_dump($this->connect->query("SET GLOBAL max_user_connections=1000000;"));
         }
         return $this->connect;
     }
@@ -91,6 +97,8 @@ class Database
      */
     public function __destruct()
     {
-        $this->connect->close();
+        if (!is_null($this->connect))
+            if (!is_null($this->DB()->connect_error))
+                $this->DB()->close();
     }
 }

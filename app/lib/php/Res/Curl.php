@@ -1,9 +1,9 @@
 <?php
 
-namespace danolez\lib\Res\Curl;
+namespace danolez\lib\Res;
 
-use danolez\lib\Res\Ini\Ini;
-use danolez\lib\Res\Server\Server;
+use danolez\lib\Res\Ini;
+use danolez\lib\Res\Server;
 
 class Curl
 {
@@ -27,6 +27,7 @@ class Curl
 
     public function __construct($url = null)
     {
+        $this->header = self::Header;
         if ($this->isUrl($url))
             $this->setUrl($url);
     }
@@ -60,7 +61,7 @@ class Curl
             CURLOPT_FOLLOWLOCATION => 0,
             CURLOPT_AUTOREFERER => 0,
             CURLOPT_HEADER => 0,
-            //CURLOPT_HTTPHEADER => $this->header,
+            CURLOPT_HTTPHEADER => $this->header,
             CURLOPT_ENCODING => self::Encoding,
             CURLOPT_SSL_VERIFYHOST => false,
             CURLOPT_SSL_VERIFYPEER => false,
@@ -96,11 +97,11 @@ class Curl
             CURLOPT_AUTOREFERER => 0,
             CURLOPT_FOLLOWLOCATION => 0,
             CURLOPT_HEADER => 0,
-            // CURLOPT_HTTPHEADER => $this->header,
+            CURLOPT_HTTPHEADER => $this->header,
             CURLOPT_ENCODING => self::Encoding,
             CURLOPT_TIMEOUT => $timeout,
             CURLOPT_USERAGENT => Server::get(Server::HTTP_USER_AGENT),
-            CURLOPT_POST => 1,
+            CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => $this->params
         ]);
         $result = curl_exec($this->_curl);

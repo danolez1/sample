@@ -1,9 +1,9 @@
 <?php
 
 
-namespace danolez\lib\DB\Column;
+namespace danolez\lib\DB;
 
-use danolez\lib\Security\Encoding\Encoding;
+use danolez\lib\Security\Encoding;
 
 abstract class Column
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace danolez\lib\DB\Model;
+namespace danolez\lib\DB;
 
-use danolez\lib\DB\Credential\Credential;
-use danolez\lib\DB\Database\Database;
+use danolez\lib\DB\Credential;
+use danolez\lib\DB\Database;
 
 abstract class Model
 {
@@ -51,6 +51,26 @@ abstract class Model
         unset($this->{$key});
     }
 
+    public function unsetppt($key = null)
+    {
+        unset($this->table);
+        unset($this->tableName);
+        unset($this->dataBase);
+        unset($this->dbName);
+        unset($this->file);
+    }
+
+    public static function unsetModelProperties($arr)
+    {
+        unset($arr['table']);
+        unset($arr['dataBase']);
+        unset($arr['tableName']);
+        unset($arr['dbName']);
+        unset($arr['file']);
+        unset($arr['type']);
+        return $arr;
+    }
+
     abstract protected function setTableName();
     abstract protected function setDBName();
     abstract protected function object();
@@ -76,7 +96,17 @@ abstract class Model
             $p = $this->dataBase->DB()->real_escape_string($p);
         return $p;
     }
+
+    /**
+     * Close Database connection
+     */
+    public function __destruct()
+    {
+        if (!is_null($this->dataBase))
+            $this->dataBase->DB()->close();
+    }
 }
+
 
 
 /**
@@ -101,6 +131,7 @@ abstract class Model
         $obj = new Mode();
         foreach (array_values($properties) as $key) {
             $encKey = $key->name;
+            if (isset($data->{$encKey})) {
           //  $encKey = Encoding::encode($key, self::KEY_ENCODE_ITERTATION);
             // Specific case decryption
             // if($encKey == AccountColumn::PASSWORD){            
@@ -108,6 +139,7 @@ abstract class Model
 
               $obj->{$encKey} = $data->{$encKey};
             //$obj->{$encKey} =  Credential::decrypt($data->{$encKey}); //,$key
+            }
         }
         return $obj;
     }

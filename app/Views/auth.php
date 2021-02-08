@@ -127,9 +127,9 @@
                         </div>
                         <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" name="login" trn="login">Login</button>
                         <a href="#register" class="btn btn-lg btn-primary btn-block text-uppercase mt-2" trn="sign-up">Sign Up</a>
-                        <hr class="my-4">
+                        <!-- <hr class="my-4">
                         <button class="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i class="bx bxl-twitter"></i> <span trn=""> Sign in with Google</span></button>
-                        <button class="btn btn-lg btn-facebook btn-block text-uppercase" type="submit"><i class='bx bxl-facebook'></i> <span trn=""> Sign in with Facebook</span> </button>
+                        <button class="btn btn-lg btn-facebook btn-block text-uppercase" type="submit"><i class='bx bxl-facebook'></i> <span trn=""> Sign in with Facebook</span> </button> -->
                     </form>
                     <?php if (!is_null($userController_error)) {
                         $_POST['lpassword'] = "";
@@ -174,9 +174,9 @@
                         </div>
                         <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" name="sign-up" trn="sign-up">Sign Up</button>
                         <a href="#login" class="btn btn-lg btn-primary btn-block text-uppercase mt-2" trn="login">Login</a>
-                        <hr class="my-4">
+                        <!-- <hr class="my-4">
                         <button class="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i class="bx bxl-twitter"></i><span trn=""> Sign up with Google</span> </button>
-                        <button class="btn btn-lg btn-facebook btn-block text-uppercase" type="submit"><i class='bx bxl-facebook'></i> <span trn=""> Sign up with Facebook</span> </button>
+                        <button class="btn btn-lg btn-facebook btn-block text-uppercase" type="submit"><i class='bx bxl-facebook'></i> <span trn=""> Sign up with Facebook</span> </button> -->
                     </form>
                     <?php if (!is_null($userController_error)) {
                         $_POST['rpassword'] = "";

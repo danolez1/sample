@@ -1,6 +1,6 @@
 <?php
 
-use danolez\lib\DB\Column\Column;
+use danolez\lib\DB\Column;
 
 /**
  * $ds = new Application();
@@ -77,6 +77,9 @@ class ProductColumn extends Column
     const AUTHOR = "author";
     const TAX = "tax";
     const BRANCHID = "branchId";
+
+    const AVAILABLE = 1;
+    const UNAVAILABLE = 2;
 }
 
 class AddressColumn extends Column
@@ -129,6 +132,10 @@ class BranchColumn extends Column
     const DELIVERYAREAS = "deliveryAreas";
     const DELIVERYDISTANCE = "deliveryDistance";
     const ADDRESS = "address";
+    const ADDRESS_NAME = "addressName";
+    const DEFAULT_PRINTER = "defaultPrinter";
+    const PRINT_LANGUAGE = "printLanguage";
+    const PRINTNODE_API = "printNodeApi";
 }
 
 class CartColumn extends Column
@@ -143,11 +150,33 @@ class CartColumn extends Column
     const ADDITIONALNOTE = "additionalNote";
     const TIMECREATED = "timeCreated";
     const PRODUCTDETAILS = "productDetails";
+    const PRODUCTIMAGE = "productImage";
+    const PRODUCT_DESCRIPTION = "productDescription";
+}
+
+class RatingsColumn extends Column
+{
+    const SN = "sn";
+    const ID = "id";
+    const USERID = "userId";
+    const PRODUCTID = "productId";
+    const ORDERID = 'orderId';
+    const RATING = "rating";
+    const COMMENT = "comment";
+    const TIME = "time";
 }
 
 class DeliveryColumn extends Column
 {
+    const ID = "id";
     const SN = "sn";
+    const ORDERID = "orderId";
+    const STATUS = "status";
+    const COURIERID = "courierId";
+    const LOCATION = "location";
+    const FROM = "from";
+    const TIME = "time";
+    const TO = "to";
 }
 
 class FavoriteColumn extends Column
@@ -159,37 +188,63 @@ class FavoriteColumn extends Column
     const TIMECREATED = "timeCreated";
     const LOG = "log";
 }
+
+class TrafficLoggerColumn extends Column
+{
+    const SN = "sn";
+    const SESSION = "session";
+    const COUNT = "count";
+    const IP = "ip";
+    const TIME = "time";
+    const URL = "url";
+    const PAGESVIEWED = "pagesViewed";
+    const LOG = "log";
+}
+
 class MessagingColumn extends Column
 {
     const SN = "sn";
 }
+
 class NotificationColumn extends Column
 {
     const SN = "sn";
 }
+
 class OrderColumn extends Column
 {
     const SN = "sn";
     const ID = "id";
     const DISPLAYID = "displayId";
-    const ORDERTYPE = "orderType";
-    const SCHEDULED = "scheduled";
     const CART = "cart";
     const AMOUNT = "amount";
     const USERDETAILS = "userDetails";
-    const PAYMENTDETAILS = "paymentDetails";
     const VISIBILITY = "visibility";
     const STATUS = "status";
-    const DELIVERYDETAILS = "deliveryDetails";
+    const DELIVERYOPTION = "deliveryOption";
+    const DELIVERYFEE = "deliveryFee";
+    const SCHEDULED = "scheduled";
+    const ADDRESS = "address";
+    const PAYMENTDETAILS = "paymentDetails";
+    const PAYMENTMETHOD = "paymentMethod";
     const TIMECREATED = "timeCreated";
     const LOG = "log";
-    const TAX = "tax";
+    const BRANCH = 'branch';
 
+    const ORDER_RECEIVED = 1;
+    const ORDER_READY = 2;
+    const ORDER_SHIPPED = 3;
+    const ORDER_ONWAY = 4;
+    const ORDER_DELIVERED = 5;
+
+    const VISIBLE = 1;
+    const UNVISIBLE = 2;
 
     const HOME_DELIVERY = 1;
     const TAKE_OUT = 2;
     const RESERVATION = 3;
 }
+
 class PaymentDetailsColumn extends Column
 {
     const SN = "sn";
@@ -198,12 +253,16 @@ class PaymentDetailsColumn extends Column
     const CREDITCARD = "creditCard";
     const TIMECREATED = "timeCreated";
     const LOG = "log";
+
+    const CARD = "card";
+    const CASH = "cash";
 }
 
 class PromotionColumn extends Column
 {
     const SN = "sn";
 }
+
 class SettingsColumn extends Column
 {
     const TITLE = "title";

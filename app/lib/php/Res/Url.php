@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\Res\Url;
+namespace danolez\lib\Res;
 
 class Url
 {

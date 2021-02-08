@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\DB\Route;
+namespace danolez\lib\DB;
 
 abstract class Router
 {

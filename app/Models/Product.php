@@ -1,14 +1,15 @@
 <?php
 
-namespace Demae\Auth\Models\Shop\Product;
+namespace Demae\Auth\Models\Shop;
 
-use danolez\lib\DB\Condition\Condition;
-use danolez\lib\DB\Credential\Credential;
-use danolez\lib\DB\Model\Model;
-use danolez\lib\Security\Encoding\Encoding;
-use Demae\Auth\Models\Error\Error;
-use Demae\Auth\Models\Shop\Administrator\Administrator;
+use danolez\lib\DB\Condition;
+use danolez\lib\DB\Credential;
+use danolez\lib\DB\Model;
+use danolez\lib\Security\Encoding;
+use Demae\Auth\Models\Error;
+use Demae\Auth\Models\Shop\Administrator;
 use ProductColumn;
+use Ratings;
 use ReflectionClass;
 use ReflectionProperty;
 
@@ -35,12 +36,15 @@ class ProductOption
 class Product extends Model
 {
     const KEY_ENCODE_ITERTATION = -1;
-    const VALUE_ENCODE_ITERTATION = 2;
+    const VALUE_ENCODE_ITERTATION = 3;
     const TAX = .08;
+
+    const AVAILABLE = 1;
+    const SOLD_OUT = 2;
     public $tempAuthor;
     private $id;
     private $quantity;
-    private $availability; //0-available,1-sold out
+    private $availability;
     private $ratings;
     private $price;
     private $name;
@@ -71,7 +75,7 @@ class Product extends Model
 
     public function availabilityText()
     {
-        if (intval($this->availability) == 0) {
+        if (intval($this->availability) != 1) {
             return '<span trn="sold-out">Sold Out</span>';
         }
     }
@@ -170,11 +174,44 @@ class Product extends Model
             $products = [];
             $query = (array) $this->table->get();
             foreach ($query as $product) {
-                $products[] = $this->setData($product);
+                $product = $this->setData($product);
+                $ratings = new Ratings();
+                $ratings->setProductId($product->getId());
+                $ratings  = $ratings->get($product->getId());
+                $rate = 0;
+                foreach ($ratings as $key => $rating) {
+                    $rate = $rate + intval($rating->getRating());
+                }
+                if (count($ratings) > 0)
+                    $product->setRatings($rate / count($ratings));
+                $products[] = $product;
             }
             return $products;
         }
     }
+
+    public function getStatusInfo()
+    {
+        $available = array('Available', 'color' => '#28A745', 'data' => ProductColumn::AVAILABLE, 'trn' => 'product-available');
+        $unavailable = array('Unavailable', 'color' => '#EFF3F3', 'data' => ProductColumn::UNAVAILABLE, 'trn' => 'product-unavailable');
+
+        switch ($this->availability) {
+            case ProductColumn::AVAILABLE:
+                return array($available, $unavailable);
+            case ProductColumn::UNAVAILABLE:
+                return array($unavailable, $available);
+        }
+    }
+
+
+    public function updateStatus($id, $status)
+    {
+        $return = array();
+        $stmt = $this->table->update(array(ProductColumn::AVAILABILITY), array($status), array(ProductColumn::ID => $id));
+        $return[parent::RESULT] = (bool) $stmt->affected_rows;
+        return json_encode($return);
+    }
+
 
     public function getDetails()
     {

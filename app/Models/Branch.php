@@ -1,14 +1,15 @@
 <?php
 
-namespace Demae\Auth\Models\Shop\Branch;
+namespace Demae\Auth\Models\Shop;
 
 use BranchColumn;
-use danolez\lib\DB\Condition\Condition;
-use danolez\lib\DB\Credential\Credential;
-use danolez\lib\DB\Model\Model;
-use danolez\lib\Security\Encoding\Encoding;
-use danolez\lib\Security\Encryption\Encryption;
-use Demae\Auth\Models\Error\Error;
+use danolez\lib\DB\Condition;
+use danolez\lib\DB\Credential;
+use danolez\lib\DB\Model;
+use danolez\lib\Res\Email;
+use danolez\lib\Security\Encoding;
+use danolez\lib\Security\Encryption;
+use Demae\Auth\Models\Error;
 use ReflectionClass;
 use ReflectionProperty;
 
@@ -23,15 +24,19 @@ class Branch extends Model
     private $log;
     private $admin;
     private $minOrder;
-    private $averageDeliveryTime;
     private $operationTime;
     private $shippingFee;
     private $deliveryTime;
     private $deliveryTimeRange;
     private $deliveryAreas;
     private $deliveryDistance;
+    private $addressName;
     private $address;
     protected $details;
+
+    private $defaultPrinter;
+    private $printLanguage;
+    private $printNodeApi;
 
     const KEY_ENCODE_ITERTATION = -1;
     const VALUE_ENCODE_ITERTATION = 2;
@@ -86,7 +91,20 @@ class Branch extends Model
 
     public function sendNotificationMail()
     {
-        # code...
+        $mail = new Email();
+        // // $mail->setTo($this->getEmail(), $this->getName());
+        // //Generate Subject for customer and leave for admin
+        // $mail->setSubject("Demae System - お問い合わせ");
+        // $message['en'] = "Thank you for your contacting us. We will get back to you shortly. This is an autoreply to indicate we got your message, so you don't have to reply.";
+        // $message['jp'] = "お問い合わせいただきありがとうございます。間もなくご連絡いたします。これは、メッセージを受け取ったことを示す自動返信なので、返信する必要はありません。";
+        // $body = file_get_contents('app/Views/email/contact.php');
+        // // $body = str_replace("{name}",  $this->getName() . '様', $body);
+        // $body = str_replace("{message['en']}", $message["en"], $body);
+        // $body = str_replace("{message['jp']}", $message["jp"], $body);
+        // $mail->setBody($message['en'] . "\r\n \r\n" . $message['jp']);
+        // $mail->setHtml($body);
+        // // $mail->sendWithGoogleSTMP(); //sendWithHostSTMP();
+        // $mail->sendWithHostSTMP();
     }
 
     public function getStatusName($status = null)
@@ -99,6 +117,14 @@ class Branch extends Model
                 return array("Closed", "trn" => "closed", "color" => "#000000", "other" => (1));
                 break;
         }
+    }
+
+    public function updateStatus($id, $status)
+    {
+        $return = array();
+        $stmt = $this->table->update(array(BranchColumn::STATUS), array($status), array(BranchColumn::ID => $id));
+        $return[parent::RESULT] = (bool) $stmt->affected_rows;
+        return json_encode($return);
     }
 
     public function delete()
@@ -131,12 +157,14 @@ class Branch extends Model
 
     public function update()
     {
+        $return = array();
         $obj = $this->object();
         $stmt = $this->table->update($obj[parent::PROPERTIES], $obj[parent::VALUES], array(BranchColumn::ID => $this->getId()));
         if ((bool) $stmt->affected_rows) {
             $this->sendNotificationMail();
         }
-        return (bool) $stmt->affected_rows;
+        $return[parent::RESULT] = (bool) $stmt->affected_rows;
+        return json_encode($return);
     }
 
 
@@ -184,10 +212,12 @@ class Branch extends Model
         $obj = new Branch();
         foreach (array_values($properties) as $key) {
             $encKey = $key->name;
-            if ($encKey == BranchColumn::LOG) {
-                $obj->{$encKey} = Encoding::decode($data->{$encKey}, self::VALUE_ENCODE_ITERTATION);
-            } else {
-                $obj->{$encKey} = $data->{$encKey};
+            if (isset($data->{$encKey})) {
+                if ($encKey == BranchColumn::LOG || $encKey == BranchColumn::PRINTNODE_API) {
+                    $obj->{$encKey} = Encoding::decode($data->{$encKey}, self::VALUE_ENCODE_ITERTATION);
+                } else {
+                    $obj->{$encKey} = $data->{$encKey};
+                }
             }
         }
         return $obj;
@@ -230,7 +260,7 @@ class Branch extends Model
         if (is_array($data)) {
             $temp  = array();
             foreach ($data as $key => $value) {
-                if ($key == BranchColumn::LOG) {
+                if ($key == BranchColumn::LOG || $key == BranchColumn::PRINTNODE_API) {
                     $assoc ? $temp[$key] = Encoding::encode($value, self::VALUE_ENCODE_ITERTATION)
                         : $temp[] = Encoding::encode($value, self::VALUE_ENCODE_ITERTATION);
                 } else {
@@ -331,16 +361,6 @@ class Branch extends Model
     public function  setMinOrder($minOrder)
     {
         $this->minOrder = $minOrder;
-    }
-
-    public function getAverageDeliveryTime()
-    {
-        return $this->averageDeliveryTime;
-    }
-
-    public function  setAverageDeliveryTime($averageDeliveryTime)
-    {
-        $this->averageDeliveryTime = $averageDeliveryTime;
     }
 
     /**
@@ -488,7 +508,92 @@ class Branch extends Model
      */
     public function getDetails()
     {
-        $this->details = array('shipping-fee' => $this->shippingFee, 'min-order' => $this->minOrder, 'delivery-time' => $this->deliveryTime, 'time-range' => $this->deliveryTimeRange, 'address' => $this->address, 'delivery-area' => $this->deliveryAreas, 'delivery-distance' => $this->deliveryDistance,);
+        $this->details = array(
+            'shipping-fee' => $this->shippingFee, 'min-order' => $this->minOrder, 'delivery-time' => $this->deliveryTime,
+            'time-range' => $this->deliveryTimeRange, 'address' => $this->address, 'delivery-area' => $this->deliveryAreas,
+            'delivery-distance' => $this->deliveryDistance, 'pnapi' => $this->getPrintNodeApi() ?? '', 'default-printer' => $this->getDefaultPrinter() ?? '',
+            'print-lang' => $this->getPrintLanguage() ?? ''
+        );
         return $this->details;
+    }
+
+    /**
+     * Get the value of addressName
+     */
+    public function getAddressName()
+    {
+        return $this->addressName;
+    }
+
+    /**
+     * Set the value of addressName
+     *
+     * @return  self
+     */
+    public function setAddressName($addressName)
+    {
+        $this->addressName = $addressName;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of defaultPrinter
+     */
+    public function getDefaultPrinter()
+    {
+        return $this->defaultPrinter;
+    }
+
+    /**
+     * Set the value of defaultPrinter
+     *
+     * @return  self
+     */
+    public function setDefaultPrinter($defaultPrinter)
+    {
+        $this->defaultPrinter = $defaultPrinter;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of printLanguage
+     */
+    public function getPrintLanguage()
+    {
+        return $this->printLanguage;
+    }
+
+    /**
+     * Set the value of printLanguage
+     *
+     * @return  self
+     */
+    public function setPrintLanguage($printLanguage)
+    {
+        $this->printLanguage = $printLanguage;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of printNodeApi
+     */
+    public function getPrintNodeApi()
+    {
+        return $this->printNodeApi;
+    }
+
+    /**
+     * Set the value of printNodeApi
+     *
+     * @return  self
+     */
+    public function setPrintNodeApi($printNodeApi)
+    {
+        $this->printNodeApi = $printNodeApi;
+
+        return $this;
     }
 }

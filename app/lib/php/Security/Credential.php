@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\Security\Credential;
+namespace danolez\lib\Security;
 
 abstract class Credential
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\Security\KeyFactory;
+namespace danolez\lib\Security;
 
 class KeyFactory
 {

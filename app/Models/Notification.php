@@ -1,10 +1,10 @@
 <?php
 
-namespace Demae\Auth\Models\Shop\Notification;
+namespace Demae\Auth\Models\Shop;
 
-use danolez\lib\DB\Credential\Credential;
-use danolez\lib\DB\Model\Model;
-use danolez\lib\Security\Encoding\Encoding;
+use danolez\lib\DB\Credential;
+use danolez\lib\DB\Model;
+use danolez\lib\Security\Encoding;
 use NotificationColumn;
 use ReflectionClass;
 use ReflectionProperty;
@@ -17,6 +17,7 @@ class Notification extends Model
     private $title;
     private $read;
     private $delete;
+
 
 
     const KEY_ENCODE_ITERTATION = -1;

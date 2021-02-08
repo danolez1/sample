@@ -1,8 +1,8 @@
 <?php
 
-namespace Demae\Auth\Models\Shop\Log;
+namespace Demae\Auth\Models\Shop;
 
-use danolez\lib\Res\Server\Server;
+use danolez\lib\Res\Server;
 
 class Log
 {
@@ -21,7 +21,7 @@ class Log
         $this->setMethod(Server::get(Server::REQUEST_METHOD));
         $this->setUserAgent(Server::get(Server::HTTP_USER_AGENT));
         // $this->setIp(Server::getIP());
-        $this->setGeoIp(Server::geoIP());
+        // $this->setGeoIp(Server::geoIP());
         $this->setTimeStamp(time());
         return $this;
     }

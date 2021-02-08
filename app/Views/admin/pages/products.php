@@ -1,6 +1,6 @@
 <?php
 
-use Demae\Auth\Models\Shop\Product\Product;
+use Demae\Auth\Models\Shop\Product;
 
 ?>
 <main class="content-wrapper" id="products-main">
@@ -49,8 +49,9 @@ use Demae\Auth\Models\Shop\Product\Product;
                         $product = $this->products[$i];
                         // $product->setAvailability(0);
                         // $product->setRatings(3.0);
-
-                        include 'app/Views/admin/pages/product-grid.php';
+                        $branches = fromDbJson($product->getBranchId());
+                        if (in_array($this->admin->getBranchId(), $branches) || $this->admin->getRole() == 1)
+                            include 'app/Views/admin/pages/product-grid.php';
                     }
                     ?>
                 </div>

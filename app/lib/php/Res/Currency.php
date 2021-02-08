@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\Res\Currency;
+namespace danolez\lib\Res;
 
 abstract class Currency
 {

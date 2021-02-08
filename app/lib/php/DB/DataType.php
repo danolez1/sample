@@ -1,6 +1,6 @@
 <?php
 
-namespace danolez\lib\DB\DataType;
+namespace danolez\lib\DB;
 
 abstract class DataType
 {
@@ -22,6 +22,8 @@ abstract class DataType
     const LONGBLOB = "LONGBLOB";
     const LONGTEXT = "LONGTEXT";
     const JSON = "JSON";
+    const CSV = 'CSV';
+    const MYSQL = "MYSQL";
     const MEDIUMBLOB = "MEDIUMBLOB";
     const MEDIUMINTEGER = "MEDIUMINT";
     const MEDIUMTEXT = "MEDIUMTEXT";

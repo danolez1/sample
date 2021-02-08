@@ -1,19 +1,26 @@
 <?php
 
-namespace Demae\Auth\Models\Shop\PaymentDetails;
+namespace Demae\Auth\Models\Shop;
 
-use danolez\lib\DB\Condition\Condition;
-use danolez\lib\DB\Credential\Credential;
-use danolez\lib\DB\Model\Model;
-use danolez\lib\Security\Encoding\Encoding;
-use danolez\lib\Security\Encryption\Encryption;
-use Demae\Auth\Models\Error\Error;
+use danolez\lib\DB\Condition;
+use danolez\lib\DB\Credential;
+use danolez\lib\DB\Model;
+use danolez\lib\Res\Email;
+use danolez\lib\Res\Server;
+use danolez\lib\Security\Encoding;
+use danolez\lib\Security\Encryption;
+use Demae\Auth\Models\Error;
+use Demae\Auth\Models\Shop\Setting;
+use Demae\Controller\ShopController\HomeController;
 use PaymentDetailsColumn;
 use ReflectionClass;
 use ReflectionProperty;
 
 class CreditCard
 {
+    public $cvv, $cardName, $cardNumber, $expiryDate, $cardType;
+    private $ntNumber, $id;
+
     public function __construct($object = null)
     {
         if ($object != null)
@@ -26,8 +33,6 @@ class CreditCard
                 }
             }
     }
-    public $cvv, $cardName, $cardNumber, $expiryDate, $cardType;
-    private $ntNumber, $id;
 
     public function mask($string)
     {
@@ -75,6 +80,7 @@ class PaymentDetails extends Model
     private $timeCreated;
     private $log;
     public $cards;
+    public $email, $name;
 
     const KEY_ENCODE_ITERTATION = -1;
     const VALUE_ENCODE_ITERTATION = 2;
@@ -104,10 +110,10 @@ class PaymentDetails extends Model
     {
         $error = null;
         if (is_null($this->creditCard->cardName) || $this->creditCard->cardName == "") {
-            $error = Error::NullName;
-        } else if (get_card_brand($this->creditCard->cardNumber) == "") {
+            $error = Error::NullCreditCardName;
+        } else if (get_card_brand($this->creditCard->cardNumber) == "" || strlen($this->creditCard->cardNumber) < 12) {
             $error = Error::InvalidCardNumber;
-        } else if (is_null($this->creditCard->cvv) || $this->creditCard->cvv == "") {
+        } else if (is_null($this->creditCard->cvv) || $this->creditCard->cvv == "" || strlen($this->creditCard->cvv) < 3) {
             $error = Error::InvalidCVV;
         } else {
             $expiryDate = explode("/", $this->creditCard->expiryDate);
@@ -132,7 +138,32 @@ class PaymentDetails extends Model
 
     public function sendNotificationMail()
     {
-        # code...
+        $mail = new Email();
+        $mail->setTo($this->email, $this->name);
+        $EN = $_COOKIE['lingo'] == 'en';
+        $name = Setting::getInstance()->getStoreName();
+        $mail->setSubject($EN ? "【 $name 】- Notification" : "【 $name 】- お知らせ");
+        $message['en'] = "Thank you for using $name. You just added a payment method to your profile. This is an automatic message to indicate changes made on your profile, so you don't have to reply.";
+        $message['jp'] = "$name ご利用いただきありがとうございます。お客様のクレジットカードを追加しました。　これは、メッセージを受け取ったことを示す自動返信なので、返信する必要はありません。";
+        $body = file_get_contents('app/Views/email/contact.php');
+        $body = str_replace("{name}", $EN ? "Dear " . $this->name . "," : $this->name . '様,', $body);
+        $body = str_replace("{message['en']}", $message["en"], $body);
+        $body = str_replace("{message['jp']}", $message["jp"], $body);
+        $body = str_replace("{{SOCIALS}}", "", $body);
+        // // <td style="word-break: break-word; vertical-align: top; padding-bottom: 0; padding-right: 5px; padding-left: 5px;" valign="top"><a href="https://www.facebook.com/" target="_blank"><img alt="Facebook" height="32" src="images/facebook2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; display: block;" title="Facebook" width="32" /></a></td>
+        // // <td style="word-break: break-word; vertical-align: top; padding-bottom: 0; padding-right: 5px; padding-left: 5px;" valign="top"><a href="https://twitter.com/" target="_blank"><img alt="Twitter" height="32" src="images/twitter2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; display: block;" title="Twitter" width="32" /></a></td>
+        // // <td style="word-break: break-word; vertical-align: top; padding-bottom: 0; padding-right: 5px; padding-left: 5px;" valign="top"><a href="https://instagram.com/" target="_blank"><img alt="Instagram" height="32" src="images/instagram2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; display: block;" title="Instagram" width="32" /></a></td>
+        // // <td style="word-break: break-word; vertical-align: top; padding-bottom: 0; padding-right: 5px; padding-left: 5px;" valign="top"><a href="https://www.linkedin.com/" target="_blank"><img alt="LinkedIn" height="32" src="images/linkedin2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; display: block;" title="LinkedIn" width="32" /></a></td>
+        $settings = HomeController::getSettings();
+        if (!$settings->getUseTitleAsLogo()) {
+            $mail->setAttachment($settings->getMetaContent());
+            $mail->setAttachmentName("logo-img");
+        }
+        $logo = '<img align="center" border="0" class="center autowidth" src="cid:logo-img" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; width: 100%; max-width: 140px; display: block;"  width="140" />';
+        $body = str_replace("{{LOGO}}", $settings->getUseTitleAsLogo() ? $settings->getLogo() : $logo, $body);
+        $mail->setBody($message['en'] . "\r\n \r\n" . $message['jp']);
+        $mail->setHtml($body);
+        $mail->sendWithHostSTMP();
     }
 
     public function delete()
@@ -169,17 +200,29 @@ class PaymentDetails extends Model
     }
 
 
-    public function get()
+    public function get($id = null)
     {
         $cards = [];
         $obj = $this->object(false);
-        $query = (array) $this->table->get(
-            null,
-            Condition::WHERE,
-            array(
-                PaymentDetailsColumn::USERID => $obj[PaymentDetailsColumn::USERID],
-            )
-        );
+        if ($id == null)
+            $query = (array) $this->table->get(
+                null,
+                Condition::WHERE,
+                array(
+                    PaymentDetailsColumn::USERID => $obj[PaymentDetailsColumn::USERID],
+                )
+            );
+        else {
+            $query = (array) $this->table->get(
+                null,
+                Condition::WHERE,
+                array(
+                    PaymentDetailsColumn::USERID => $obj[PaymentDetailsColumn::USERID],
+                    PaymentDetailsColumn::ID => $id,
+                ),
+                array("AND")
+            );
+        }
         if (count($query) > 0) {
             foreach ($query as $card) {
                 $d =  $this->setData($card);
@@ -198,7 +241,7 @@ class PaymentDetails extends Model
         if (is_null($validate)) {
             $this->generateId();
             $obj = $this->object(false);
-            $query = $this->table->get(
+            $query = (array) $this->table->get(
                 null,
                 Condition::WHERE,
                 array(
@@ -206,8 +249,8 @@ class PaymentDetails extends Model
                     PaymentDetailsColumn::ID => $obj[PaymentDetailsColumn::ID],
                 ),
                 array("AND")
-            )[0];
-            $req = (array) $query;
+            );
+            $req = !empty($query) ? $query[0] : [];
             if (count($req) < 1) {
                 $obj = $this->object();
                 $stmt = $this->table->insert($obj[parent::PROPERTIES], $obj[parent::VALUES]);

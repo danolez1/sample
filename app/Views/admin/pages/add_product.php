@@ -1,8 +1,8 @@
 <?php
 
-use danolez\lib\Security\Encoding\Encoding;
-use Demae\Auth\Models\Shop\Product\ProductOption;
-use Demae\Auth\Models\Shop\Setting\Setting;
+use danolez\lib\Security\Encoding;
+use Demae\Auth\Models\Shop\ProductOption;
+use Demae\Auth\Models\Shop\Setting;
 
 include 'app/Views/admin/pages/add_category.php';
 $editProduct = !is_null($this->editProduct);
@@ -17,9 +17,6 @@ $editProduct = !is_null($this->editProduct);
                 message: dictionary<?php echo "['" . $dashboardController_error->{"trn"} . "']['" . $_COOKIE['lingo'] . "']"; ?>,
                 delay: 500000000
             });
-            if (window.history.replaceState) {
-                window.history.replaceState(null, null, window.location.href);
-            }
         </script>
         <?php } else {
         if ($showDashboardController_result) {
@@ -42,12 +39,12 @@ $editProduct = !is_null($this->editProduct);
 
                 <h5 class="mt-3">Product Image</h5>
                 <div class="mt-2 col-12 p-0 m-0 upload-image text-center" style="background-color:#E0E0E0;border:#E0E0E0;" type="button">
-                    <label for="browse-product">
-                        <input type="hidden" value="<?php echo $editProduct ? isEmpty($this->editProduct->getDisplayImage()) : ''; ?>" name="product-img" />
+                    <label for="product-image">
+                        <input type="hidden" name="product-image" value="<?php echo $editProduct ? $this->editProduct->getDisplayImage() : ''; ?>">
                         <img id="browse-preview" class="img img-fluid" src="<?php echo $editProduct ? isEmpty($this->editProduct->getDisplayImage()) ? 'assets/images/dashboard/placeholder.svg' : $this->editProduct->getDisplayImage() : 'assets/images/dashboard/placeholder.svg'; ?>" />
                     </label>
                 </div>
-                <input type="file" id="browse-product" name="browse-product" accept="image/*" style="display: none">
+                <input type="file" id="product-image" name="product-image" accept="image/*" style="display: none">
 
                 <div class="mdc-layout-grid m-0 mt-4 p-0">
                     <div class="mdc-layout-grid__inner">
@@ -249,40 +246,52 @@ $editProduct = !is_null($this->editProduct);
                 <div class="card-footer p-2 save-changes preview-footer">
                     <a class="btn btn-danger btn-sm tx-14">Preview</a>
                 </div>
+                <div class="mt-2 pt-2">
+                    <div class="mt-lg-5 pt-lg-5">
+                        <div class="mt-lg-5 pt-lg-5">
+                            <div class="mt-lg-5 pt-lg-5">
+                                <div class="mt-lg-5 pt-lg-5">
+                                    <div class="card mt-lg-5">
+                                        <div class="card-body">
+                                            <h5 class="card-title mb-1">Options</h5>
+                                            <input type="hidden" name="options" value="<?php echo $editProduct ?  base64_encode(json_encode($this->editProduct->getProductOptions() ?? "")) : "" ?>" />
+                                            <div id="options-input-div">
+                                                <?php if ($editProduct) {
+                                                    foreach ($this->editProduct->getProductOptions() as $option) {
+                                                        echo '<span class="badge rounded-pill bg-primary text-light option-span ml-1 mr-1">' . $option->name . '<i class="icofont-close-line" onclick="delOption(this.parentNode.parentNode.childNodes,this.parentNode)"></i></span>';
+                                                    }
+                                                } ?>
+                                            </div>
 
-                <div class="card" style="margin-top: 8em;">
-                    <div class="card-body">
-                        <h5 class="card-title mb-1">Options</h5>
-                        <input type="hidden" name="options" value="<?php echo $editProduct ?  toDbJson($this->editProduct->getProductOptions() ?? "") : "" ?>" />
-                        <div id="options-input-div">
-                            <?php if ($editProduct) {
-                                foreach ($this->editProduct->getProductOptions() as $option) {
-                                    echo '<span class="badge rounded-pill bg-primary text-light option-span ml-1 mr-1">' . $option->name . '<i class="icofont-close-line" onclick="delOption(this.parentNode.parentNode.childNodes,this.parentNode)"></i></span>';
-                                }
-                            } ?>
-                        </div>
-
-                        <?php if ($this->admin->getRole() == 1) {
-                        ?>
-                            <h5 class="card-title mb-1 mt-4">Branch</h5>
-                            <?php for ($i = 0; $i < count($this->branches); $i++) {
-                                $branch = $this->branches[$i];
-                            ?>
-                                <div class="mdc-form-field">
-                                    <div class="mdc-checkbox">
-                                        <input type="checkbox" name="product-branch[]" <?php echo $editProduct ? in_array($branch->getId(), fromDbJson($this->editProduct->getBranchId())) ? 'checked' : '' : ''; ?> value="<?php echo $branch->getId(); ?>" id="basic-disabled-checkbox" class="mdc-checkbox__native-control" />
-                                        <div class="mdc-checkbox__background">
-                                            <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
-                                                <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                            </svg>
-                                            <div class="mdc-checkbox__mixedmark"></div>
+                                            <?php if ($this->admin->getRole() == 1) {
+                                            ?>
+                                                <h5 class="card-title mb-1 mt-4">Branch</h5>
+                                                <?php for ($i = 0; $i < count($this->branches); $i++) {
+                                                    $branch = $this->branches[$i];
+                                                ?>
+                                                    <div class="mdc-form-field">
+                                                        <div class="mdc-checkbox">
+                                                            <input type="checkbox" name="product-branch[]" <?php echo $editProduct ? in_array($branch->getId(), fromDbJson($this->editProduct->getBranchId())) ? 'checked' : '' : ''; ?> value="<?php echo $branch->getId(); ?>" id="basic-disabled-checkbox" class="mdc-checkbox__native-control" />
+                                                            <div class="mdc-checkbox__background">
+                                                                <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                                                                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                                                </svg>
+                                                                <div class="mdc-checkbox__mixedmark"></div>
+                                                            </div>
+                                                        </div>
+                                                        <label for="basic-disabled-checkbox" class="mt-2 h6" id="basic-disabled-checkbox-label"> <?php echo $branch->getName(); ?></label>
+                                                    </div>
+                                                <?php }
+                                            } else {
+                                                if ($editProduct) { ?>
+                                                    <input type="hidden" name="product-branch" value='<?php echo json_encode(fromDbJson($this->editProduct->getBranchId())); ?>' />
+                                            <?php }
+                                            } ?>
                                         </div>
                                     </div>
-                                    <label for="basic-disabled-checkbox" class="mt-2 h6" id="basic-disabled-checkbox-label"> <?php echo $branch->getName(); ?></label>
                                 </div>
-                        <?php }
-                        } ?>
-
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
