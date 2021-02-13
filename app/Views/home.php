@@ -122,7 +122,7 @@ $verticalInfo = ($settings->getInfoDisplayOrientation() == Orientation::VERTICAL
                 foreach ($this->products as $product) {
                     $branches = (fromDbJson($product->getBranchId()));
                     if ($this->branch != null) {
-                        if (in_array($this->branch->getId(), $branches)) {
+                        if (in_array($this->branch->getId(), $branches ?? [])) {
                             if ($settings->getProductDisplayOrientation() == Orientation::GRID) {
                                 include 'app/Views/shop/product-grid.php';
                             } else {

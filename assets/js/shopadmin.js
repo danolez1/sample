@@ -52,7 +52,7 @@ function async(api, btn) {
                     status: btn.attr('data')
                 },
                 function (data, status) {
-                    console.log(data);
+                    // console.log(data);
                     data = JSON.parse(data);
                     if (data.result == true) {
                         webToast.Success({
@@ -62,7 +62,7 @@ function async(api, btn) {
                         });
                         // location.reload();
                     } else {
-                        console.log(data);
+                        // console.log(data);
                     }
                 });
             break;
@@ -73,7 +73,7 @@ function async(api, btn) {
                     status: btn.attr('data')
                 },
                 function (data, status) {
-                    console.log(data);
+                    // console.log(data);
                     data = JSON.parse(data);
                     if (data.result == true) {
                         webToast.Success({
@@ -83,7 +83,7 @@ function async(api, btn) {
                         });
                         // location.reload();
                     } else {
-                        console.log(data);
+                        // console.log(data);
                     }
                 });
             break;
@@ -94,7 +94,7 @@ function async(api, btn) {
                     status: btn.attr('data')
                 },
                 function (data, status) {
-                    console.log(data);
+                    // console.log(data);
                     data = JSON.parse(data);
                     if (data.result == true) {
                         webToast.Success({
@@ -104,7 +104,7 @@ function async(api, btn) {
                         });
                         // location.reload();
                     } else {
-                        console.log(data);
+                        // console.log(data);
                     }
                 });
             break;
@@ -115,7 +115,7 @@ function async(api, btn) {
                     status: btn.attr('data')
                 },
                 function (data, status) {
-                    console.log(data);
+                    // console.log(data);
                     data = JSON.parse(data);
                     if (data.result == true) {
                         webToast.Success({
@@ -125,25 +125,14 @@ function async(api, btn) {
                         });
                         // location.reload();
                     } else {
-                        console.log(data);
+                        // console.log(data);
                     }
                 });
             break;
         default:
             break;
     }
-    console.log(api);
-}
-
-function playSound(url) {
-    var audio = document.createElement('audio');
-    audio.style.display = "none";
-    audio.src = url;
-    audio.autoplay = true;
-    audio.onended = function () {
-        audio.remove() //Remove when played.
-    };
-    document.body.appendChild(audio);
+    // console.log(api);
 }
 
 function getUpload(inputId, imgId, inputName, otherPreview) {
@@ -331,7 +320,7 @@ $(document).ready(function () {
                 updateRevenueGraph(allLabels, allData);
                 break;
             default:
-                console.log("wahala");
+            // console.log("wahala");
         }
 
     });
@@ -454,19 +443,16 @@ $(document).ready(function () {
 
     });
 
-    try {
-        setInterval(function () {
-            var orders = $('input[name="order-count"]').val();
-            var norder = $('input[name="noc"]');
-            $.post('get/orderNotification', {
-                id: orders
-            }, function (data, status) {
+    setInterval(function () {
+        var orders = $('input[name="order-count"]').val();
+        var norder = $('input[name="noc"]');
+        $.post('get/orderNotification', {
+            id: orders
+        }, function (data, status) {
+            try {
                 data = data.stripSlashes().stripSlashes().split('"[').join('[').split('["').join('[');
                 data = (data.split(']"').join(']').split('"{').join('{').split('}"').join('}'))
                 data = (JSON.parse(data));
-
-                // console.log(norder.val(), data.count);
-
                 if (data.result.length > 0) {
                     playSound('assets/audio/notification.mp3');
                     webToast.Info({
@@ -475,12 +461,12 @@ $(document).ready(function () {
                         delay: 5000
                     });
                 }
+            } catch (e) {
 
-            });
-        }, 15000)
-    } catch (e) {
+            }
+        });
+    }, 15000)
 
-    }
 
 
     try {
@@ -521,7 +507,7 @@ $(document).ready(function () {
                 $.post("post/deleteSubscription", {
                     id: id
                 }, function (data, status) {
-                    console.log(data);
+                    // console.log(data);
                     data = JSON.parse(data);
                     if (data.result == true) {
                         webToast.Success({
@@ -577,7 +563,7 @@ $(document).ready(function () {
                                 var ul = $("#product-categories-ul");
                                 var newbox = '<div class="mdc-form-field"><div class="mdc-checkbox"><input type="checkbox" name="product-category[]" value="' + data.data.id + '" id="basic-disabled-checkbox" class="mdc-checkbox__native-control" /><div class="mdc-checkbox__background"><svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24"><path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" /></svg><div class="mdc-checkbox__mixedmark"></div></div></div><label for="basic-disabled-checkbox" class="mt-2 h6" id="basic-disabled-checkbox-label">' + data.data.name + '</label></div>';
                                 ul.html(ul.html() + newbox);
-                                console.log(ul.html());
+                                // console.log(ul.html());
                             } else {
                                 var ul = $("#option-categories-ul");
                                 ul.html(ul.html() + '<li class="mdc-list-item" data-value="' + data.data.id + '">' + data.data.name + '</li>');
@@ -620,7 +606,7 @@ $(document).ready(function () {
                     });
                     // location.reload();
                 } else {
-                    console.log(data);
+                    // console.log(data);
                 }
             });
     });
@@ -749,7 +735,7 @@ $(document).ready(function () {
                                 id: async.attr("data-id")
                             },
                             function (data, status) {
-                                console.log(data);
+                                // console.log(data);
                                 data = JSON.parse(data);
                                 if (data.result == true) {
                                     if (window.history.replaceState) {
@@ -762,7 +748,7 @@ $(document).ready(function () {
                                     });
                                     location.reload();
                                 } else {
-                                    console.log(data);
+                                    // console.log(data);
                                 }
                             });
                     case "delete-staff":
@@ -771,7 +757,7 @@ $(document).ready(function () {
                                 id: async.attr("data-id")
                             },
                             function (data, status) {
-                                console.log(data);
+                                // console.log(data);
                                 data = JSON.parse(data);
                                 if (data.result == true) {
                                     if (window.history.replaceState) {
@@ -784,7 +770,7 @@ $(document).ready(function () {
                                     });
                                     location.reload();
                                 } else {
-                                    console.log(data);
+                                    // console.log(data);
                                 }
                             });
 
@@ -795,7 +781,7 @@ $(document).ready(function () {
                                 id: async.attr("data-id")
                             },
                             function (data, status) {
-                                console.log(data);
+                                // console.log(data);
                                 data = JSON.parse(data);
                                 if (data.result == true) {
                                     if (window.history.replaceState) {
@@ -808,7 +794,7 @@ $(document).ready(function () {
                                     });
                                     location.reload();
                                 } else {
-                                    console.log(data);
+                                    // console.log(data);
                                 }
                             });
                 }

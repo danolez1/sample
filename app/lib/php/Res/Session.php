@@ -45,13 +45,16 @@ class Session
         $path = '/' . (Encoding::encode($name));
         $limit = 60 * 60 * 24;
         // session_set_cookie_params($limit, $path, $domain, true, true);
-        session_name($name);
-        if (!isset($_COOKIE[$name])) {
-            $_COOKIE[$name] = session_create_id();
+        try {
+            session_name($name);
+            if (!isset($_COOKIE[$name])) {
+                $_COOKIE[$name] = session_create_id();
+            }
+            session_id($_COOKIE[$name]);
+            session_start();
+            session_regenerate_id(true); // ERROR DISPLAYING
+        } catch (\Exception $e) {
         }
-        session_id($_COOKIE[$name]);
-        session_start();
-        session_regenerate_id(true);
         $_COOKIE[$name] = session_id();
         $this->set(self::EXPIRES, time() + $limit);
     }

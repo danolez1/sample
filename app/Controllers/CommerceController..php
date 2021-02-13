@@ -9,7 +9,7 @@ use Demae\Auth\Models\Shop\Order;
 use Demae\Auth\Models\Shop\CreditCard;
 use Demae\Auth\Models\Shop\PaymentDetails;
 use Demae\Auth\Models\Shop\Setting;
-use Demae\Controller\ShopController\HomeController;
+use Demae\Controller\HomeController;
 
 class CommerceController extends Controller
 {

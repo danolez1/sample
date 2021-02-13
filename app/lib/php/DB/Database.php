@@ -27,22 +27,27 @@ class Database
         $SERVER_NAME = Credential::decrypt(Credential::SERVER_NAME3);
         $SERVER_PASSWORD = Credential::decrypt(Credential::SERVER_PASSWORD3);
         $SERVER_USERNAME = Credential::decrypt(Credential::SERVER_USERNAME3);
-        $this->connect = new mysqli($SERVER_NAME, $SERVER_USERNAME, $SERVER_PASSWORD);
+        try {
+            // $conn = mysqli_connect($SERVER_NAME, $SERVER_USERNAME, $SERVER_PASSWORD) or die("error");
+            $this->connect = new mysqli($SERVER_NAME, $SERVER_USERNAME, $SERVER_PASSWORD);
 
-        if ($this->connect->connect_errno) {
-            echo "Failed to connect to MySQL: " . $this->connect->connect_error;
-            exit();
-        } else {
-            if (!$this->connect->select_db($name)) {
-                //throw new Exception("Database doesn't exist.");
-                $sql = "CREATE DATABASE IF NOT EXISTS " . $name . ";";
-                $this->connect->query($sql);
-                $this->connect->select_db($name);
+            if ($this->connect->connect_errno) {
+                echo "Failed to connect to MySQL: " . $this->connect->connect_error;
+                exit();
+            } else {
+                if (!$this->connect->select_db($name)) {
+                    //throw new Exception("Database doesn't exist.");
+                    $sql = "CREATE DATABASE IF NOT EXISTS " . $name . ";";
+                    $this->connect->query($sql);
+                    $this->connect->select_db($name);
+                }
+                $increase = "show global variables like '%connections%'";
+                // var_dump($this->connect->query("SET GLOBAL max_user_connections=1000000;"));
             }
-            $increase = "show global variables like '%connections%'";
-            // var_dump($this->connect->query("SET GLOBAL max_user_connections=1000000;"));
+            return $this->connect;
+        } catch (\Exception $e) {
+            throw $e;
         }
-        return $this->connect;
     }
 
     /**
@@ -97,8 +102,11 @@ class Database
      */
     public function __destruct()
     {
-        if (!is_null($this->connect))
-            if (!is_null($this->DB()->connect_error))
-                $this->DB()->close();
+        try {
+            if (!is_null($this->connect))
+                if (!is_null($this->DB()->connect_error))
+                    $this->DB()->close();
+        } catch (\Exception $e) {
+        }
     }
 }

@@ -28,7 +28,7 @@ $shippingFee = (intval($this->orderData->getAmount()) >= intval($settings->getFr
                 }
             </script>
             <?php if ($_POST["delivery_option"] == OrderColumn::HOME_DELIVERY) { ?>
-                <?php header('location:track');
+                <?php
                 ?><script>
                     window.location.href = 'track';
                 </script>
@@ -41,17 +41,17 @@ $shippingFee = (intval($this->orderData->getAmount()) >= intval($settings->getFr
                     <form action="" method="post" role="form" class="php-email-form" style="background-color: #F5F8F7;" novalidate>
                         <div class="m-0 p-0 row col-12 justify-content-center">
                             <div class="col-lg-8 col-md-8 col-sm-12">
-                                <h3>Delivery Type</h3>
+                                <h3 trn="delivery-type">Delivery Type</h3>
                                 <?php if (!isEmpty($settings->getHomeDelivery())) { ?>
-                                    <h6>Choose between home delivery and take out </h6>
+                                    <h6 trn="choose-home-takeout">Choose between home delivery and take out</h6>
 
                                     <div class="row col-12 mt-4">
                                         <div class="form-check col-10 ">
                                             <input class="form-check-input mt-3" type="radio" name="delivery_option" value="<?php echo OrderColumn::HOME_DELIVERY ?>" checked>
-                                            <label class="form-check-label font-weight-bold ml-3">
+                                            <label class="form-check-label font-weight-bold ml-3" trn="home-or-office">
                                                 Home or office delivery
                                             </label>
-                                            <p class="ml-3">Fill in your address and we will deliver to your address</p>
+                                            <p class="ml-3" trn="fill-in-address">Fill in delivery address</p>
                                         </div>
                                         <div class="col-2 mt-3 text-right">
                                             <h4><?php echo  $settings->getCurrency() . number_format($shippingFee); ?></h4>
@@ -59,17 +59,17 @@ $shippingFee = (intval($this->orderData->getAmount()) >= intval($settings->getFr
                                     </div>
                                     <data hidden id="operationalTime" data-value="<?php echo base64_encode(json_encode($this->getOperationalTime())); ?>"></data>
                                     <input id="deliveryInfo" type="hidden" data-delivery-time="<?php echo base64_encode($settings->getDeliveryTime()); ?>" data-delivery-range="<?php echo base64_encode($settings->getDeliveryTimeRange()); ?>">
-                                    <div class="btn btn-sm btn-success ml-5" id="show-reservation">Reservation </div>
+                                    <div class="btn btn-sm btn-success ml-5" id="show-reservation" trn="reservation">Reservation</div>
                                     <div class="m-0 p-0 row mt-2 justify-content-center" style="display: none;">
                                         <div class="col-lg-11 col-sm-12">
                                             <div class="form-row">
                                                 <div class="col col-sm-6">
-                                                    <label class="text-muted">Date</label>
+                                                    <label class="text-muted" trn="date">Date</label>
                                                     <input autocomplete="off" onkeydown="return false" name="delivery-date" required data-toggle="datepicker" class="form-control" />
                                                 </div>
 
                                                 <div class="col col-sm-6">
-                                                    <label class="text-muted">Time</label>
+                                                    <label class="text-muted" trn="time">Time</label>
                                                     <input type="" onkeydown="return false" name="delivery-time" required data-toggle="timepicker" class="form-control" />
                                                 </div>
                                             </div>
@@ -80,10 +80,10 @@ $shippingFee = (intval($this->orderData->getAmount()) >= intval($settings->getFr
                                     <div class="row col-12  mt-2">
                                         <div class="form-check col-10">
                                             <input class="form-check-input mt-3" type="radio" name="delivery_option" value="<?php echo OrderColumn::TAKE_OUT ?>">
-                                            <label class="form-check-label font-weight-bold ml-3">
+                                            <label class="form-check-label font-weight-bold ml-3" trn="takeout">
                                                 Takeout
                                             </label>
-                                            <p class="ml-3">Shedule a pickup for a time convineint for you</p>
+                                            <p class="ml-3" trn="schedule-pickup">Schedule a convenient time for pickup</p>
                                         </div>
                                         <div class="col-2 mt-3 text-right">
                                             <h4><?php echo $settings->getCurrency() . number_format(0); ?></h4>
@@ -93,12 +93,12 @@ $shippingFee = (intval($this->orderData->getAmount()) >= intval($settings->getFr
                                         <div class="col-lg-11 col-sm-12">
                                             <div class="form-row">
                                                 <div class="col col-sm-6">
-                                                    <label class="text-muted">Date</label>
+                                                    <label class="text-muted" trn="date">Date</label>
                                                     <input autocomplete="off" onkeydown="return false" name="takeout-date" required data-toggle="datepicker" class="form-control" />
                                                 </div>
 
                                                 <div class="col col-sm-6">
-                                                    <label class="text-muted">Time</label>
+                                                    <label class="text-muted" trn="time">Time</label>
                                                     <input type="" onkeydown="return false" name="takeout-time" required data-toggle="timepicker" class="form-control" />
                                                 </div>
                                             </div>
@@ -106,12 +106,12 @@ $shippingFee = (intval($this->orderData->getAmount()) >= intval($settings->getFr
                                     </div>
                                 <?php } ?>
                                 <hr>
-                                <h3 class="mt-5">Address Location</h3>
+                                <h3 class="mt-5" trn="address-location">Address Location</h3>
                                 <?php if (!isEmpty($settings->getHomeDelivery())) { ?>
-                                    <h6 class="delivery-info">Enter in your address information</h6>
-                                    <h6 class="take-out-info" style="display: none;">Here is the locations of our close branch</h6>
+                                    <h6 class="delivery-info" trn="enter-info">Enter in your information</h6>
+                                    <h6 class="take-out-info" style="display: none;" trn="ordered-branch">Here is the locations of the branch you ordered from</h6>
                                 <?php } else { ?>
-                                    <h6>Here is the locations of our close branch</h6>
+                                    <h6 trn="ordered-branch">Here is the locations of the branch you ordered from</h6>
                                 <?php }
                                 if (!is_null($this->session->get(self::USER_ID))) { ?>
                                     <?php foreach ($this->addresses as $address) { ?>
@@ -123,12 +123,12 @@ $shippingFee = (intval($this->orderData->getAmount()) >= intval($settings->getFr
                                     <?php } ?>
                                     <div class="alert alert-dark col-12 ml-2" style="background-color: white; height:auto;" role="alert">
                                         <input data-id="use-new-address" class="form-check-input" style="top: -3px;left:26px;" type="radio" value="" id="use-new-info" name="checkout-address" />
-                                        <span class="ml-2">Use Different Information</span>
+                                        <span class="ml-2" trn='use-different-info'>Use Different Information</span>
                                     </div>
                                 <?php } ?>
 
                                 <div class="alert alert-dark col-12 ml-2 take-out-info" style="background-color: white; display:<?php echo (isEmpty($settings->getHomeDelivery())) ? 'block' : 'none' ?>" role="alert">
-                                    <span class="ml-2">Pickup Address<br>
+                                    <span class="ml-2" trn="pickup-address">Pickup Address<br>
                                         <?php echo $this->branch->getAddress(); ?>
                                     </span>
                                 </div>
@@ -136,18 +136,18 @@ $shippingFee = (intval($this->orderData->getAmount()) >= intval($settings->getFr
                                     <div class="col-lg-12 col-sm-12">
                                         <div class="form-row">
                                             <div class="col col-sm-6">
-                                                <input type="text" name="fname" required class="form-control" placeholder="First name">
+                                                <input type="text" name="fname" trn="fname" required class="form-control" placeholder="First name">
                                             </div>
                                             <div class="col col-sm-6">
-                                                <input type="text" name="lname" required class="form-control" placeholder="Last name">
+                                                <input type="text" name="lname" trn="lname" required class="form-control" placeholder="Last name">
                                             </div>
                                         </div>
                                         <div class="form-row mt-4">
                                             <div class="col col-sm-6">
-                                                <input type="text" name="phone" required class="form-control" placeholder="Phone Number">
+                                                <input type="text" name="phone" trn="phone-nuumber" required class="form-control" placeholder="Phone Number">
                                             </div>
                                             <div class="col col-sm-6">
-                                                <input type="text" name="email" required required class="form-control" placeholder="Email">
+                                                <input type="text" name="email" trn="email" required required class="form-control" placeholder="Email">
                                             </div>
                                         </div>
                                         <?php if (!isEmpty($settings->getHomeDelivery())) { ?>
@@ -180,18 +180,18 @@ $shippingFee = (intval($this->orderData->getAmount()) >= intval($settings->getFr
                                         <?php } ?>
                                     </div>
                                 </div>
-                                <h3 class="mt-5">Payment details</h3>
-                                <h6>Amount : <b><?php echo $settings->getCurrency() . number_format($this->orderData->getAmount() + $shippingFee); ?></b>(<span trn="tax-included"></span>)</h6><br>
-                                <h6>We accept : </h6>
+                                <h3 class="mt-5" trn="payment-details">Payment details</h3>
+                                <h6><span trn="amount">Amount</span> : <b><?php echo $settings->getCurrency() . number_format($this->orderData->getAmount() + $shippingFee); ?></b>(<span trn="tax-included"></span>)</h6><br>
+                                <h6><span trn="we-accept">We accept</span> : </h6>
 
                                 <?php if (in_array('<i class="icofont-cash-on-delivery-alt"></i>', $settings->getPaymentMethods())) { ?>
 
                                     <div class="form-check col-10 mt-2">
                                         <input class="form-check-input mt-3" type="radio" name="payment_option" value="cash" checked>
-                                        <label class="form-check-label font-weight-bold ml-3">
+                                        <label class="form-check-label font-weight-bold ml-3" trn="pay-with-cash">
                                             Pay with cash
                                         </label>
-                                        <p class="ml-4">You will be paying on delivery</p>
+                                        <p class="ml-4" trn="pay-on-delivery">You will be paying on delivery</p>
                                     </div>
                                 <?php }
                                 $cards = $settings->getPaymentMethods();
@@ -203,7 +203,7 @@ $shippingFee = (intval($this->orderData->getAmount()) >= intval($settings->getFr
 
                                     <div class="form-check col-10 mt-4">
                                         <input class="form-check-input mt-3" type="radio" name="payment_option" value="card">
-                                        <label class="form-check-label font-weight-bold ml-3">
+                                        <label class="form-check-label font-weight-bold ml-3" trn="pay-with-card">
                                             Pay with credit card
                                         </label>
                                         <p class="ml-4" style="font-size:32px;"><?php foreach ($cards as $payment) echo $payment . ' '; ?></p>
@@ -220,7 +220,7 @@ $shippingFee = (intval($this->orderData->getAmount()) >= intval($settings->getFr
                                         <?php } ?>
                                         <div class="alert alert-dark col-12 ml-2" style="background-color: white;" role="alert">
                                             <input data-id="use-new-payment" class="form-check-input" style="top: -3px;left:26px;" type="radio" value="" id="use-new-card" name="checkout-payment" />
-                                            <span class="ml-2">Use Different Card</span>
+                                            <span class="ml-2" trn="use-different-card">Use Different Card</span>
                                         </div>
                                     <?php } ?>
                                 </div>
@@ -249,9 +249,9 @@ $shippingFee = (intval($this->orderData->getAmount()) >= intval($settings->getFr
                                 </div>
                                 <input type="hidden" name="deliveryTime" value="<?php echo ($settings->getDeliveryTime() . '-' . $settings->getDeliveryTimeRange()); ?>" />
                                 <div class="m-0 p-0 row col-12 justify-content-center mt-5 mb-5">
-                                    <button type="submit" name="place-order" id="checkout" class="btn btn-sm btn-danger add-to-cart col-10"><span>Place Order</span><span class="mdi mdi-arrow-right-bold ml-2"></span></button>
+                                    <button type="submit" name="place-order" id="checkout" class="btn btn-sm btn-danger add-to-cart col-10"><span trn="place-order">Place Order</span><span class="mdi mdi-arrow-right-bold ml-2"></span></button>
                                     <?php if (is_null($this->session->get(self::USER_ID))) { ?>
-                                        <p class="mt-3"><a href="profile"><span class="text-danger">Sign up</span></a> to save Address & billing information </p>
+                                        <p class="mt-3"><a href="profile"><span class="text-danger" trn="sign-up">Sign up</span></a><span trn="to-save-info">to save Address & billing information</span> </p>
                                     <?php } ?>
                                 </div>
                             </div>
@@ -281,7 +281,7 @@ $shippingFee = (intval($this->orderData->getAmount()) >= intval($settings->getFr
         ?>
         deliveryTimeToast.show('<?php echo  $deliveryTimeDisplay; ?> ' + dictionary['min'][lang]);
     </script>
-    <data id="delivery-time-display" value="<?php echo $settings->getDeliveryTime(); ?>" hidden><?php echo  $deliveryTimeDisplay; ?><span trn="min"></span></data>
+    <data id="delivery-time-display" value="<?php echo $settings->getDeliveryTime(); ?>" hidden><?php echo  $deliveryTimeDisplay; ?><span trn="minutes"></span></data>
 <?php }
         } else {
             $order = $this->track->order;

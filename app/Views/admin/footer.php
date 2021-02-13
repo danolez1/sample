@@ -10,7 +10,7 @@ if (!$this->includesOnly) {
 ?>
         <div id="timer" class="card p-2" style="display:none">
             <div class="card-body p-2">
-                <h5 class="card-title text-light">Average Delivery Time</h5>
+                <h5 class="card-title text-light" trn="average-delivery-time">Average Delivery Time</h5>
                 <div class="input-group">
                     <input type="number" id="avdetime" class="form-control text-right" value="<?php echo $deliveryTime; ?>">
                     <div class="input-group-append" id="save-average-time" data-id="<?php echo Encoding::encode(json_encode(array($this->admin->getId(), $this->admin->getUsername()))); ?>">
@@ -25,13 +25,13 @@ if (!$this->includesOnly) {
         <div class="mdc-layout-grid">
             <div class="mdc-layout-grid__inner">
                 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
-                    <span class="tx-14">Copyright © 2020 <a href="https://www.demae-system.com/" class="text-danger tx-15">Demae-System</a>. All rights reserved.</span>
+                    <span class="tx-14">Copyright © 2020 <a href="https://www.demae-system.com/" class="text-danger tx-15">Demae-System.</a>All rights reserved.</span>
                 </div>
                 <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop d-flex justify-content-end">
                     <div class="d-flex align-items-center">
-                        <a href="">Documentation</a>
+                        <a href="" trn="documentation">Documentation</a>
                         <span class="vertical-divider"></span>
-                        <a href="">FAQ</a>
+                        <a href="" trn="faq">FAQ</a>
                     </div>
                 </div>
             </div>
@@ -67,7 +67,7 @@ if (!$this->includesOnly) {
 <!-- Custom js for this page-->
 <script src="assets/js/mdtimepicker.js"></script>
 <script src="assets/js/translator.js"></script>
-<?php echo $script; ?>
+<?php echo $script ?? ''; ?>
 <script src="assets/js/shopadmin.js?<?php echo time() ?>"></script>
 <script src="assets/js/dashboard.js?<?php echo time() ?>"></script>
 <!-- End custom js for this page-->

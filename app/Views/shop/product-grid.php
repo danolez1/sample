@@ -4,13 +4,13 @@ use danolez\lib\Security\Encoding;
 use Demae\Auth\Models\Shop\Product;
 
 include 'app/Views/shop/product.php'; ?>
-<div data-categories="<?php echo ($product->getCategory()); ?>" class="col-12 p-2 m-0 <?php echo ($verticalMenu || $verticalInfo) ? 'col-md-6 col-sm-10 col-lg-5' : 'col-md-4 col-sm-6  col-lg-4'; ?>  mt-4 grid-product-card-wrap ">
+<div data-categories="<?php echo ($product->getCategory()); ?>" class="col-12 p-2 m-0 <?php echo ($verticalMenu ?? true || $verticalInfo ?? true) ? 'col-md-6 col-sm-10 col-lg-5' : 'col-md-4 col-sm-6  col-lg-4'; ?>  mt-4 grid-product-card-wrap ">
     <div class="grid-product-card" style="min-width: 230px !important;">
         <!-- PROMOTIONAL INFO -->
         <?php ?>
         <?php ?>
         <!-- END PROMOTIONAL INFO -->
-        <i style="color: #FA1616;" class="<?php echo in_array($product->getId(), $this->favorites) ? 'ri-heart-fill' : 'ri-heart-line'; ?> grid-product-fav" data-id="<?php echo !isEmpty($this->user) ? Encoding::encode(json_encode(array($this->user->getId() ?? null, $this->user->getEmail() ?? null, $product->getId()))) : ""; ?>"></i>
+        <i style="color: #FA1616;" class="<?php echo in_array($product->getId(), $this->favorites ?? []) ? 'ri-heart-fill' : 'ri-heart-line'; ?> grid-product-fav" data-id="<?php echo !isEmpty($this->user) ? Encoding::encode(json_encode(array($this->user->getId() ?? null, $this->user->getEmail() ?? null, $product->getId()))) : ""; ?>"></i>
         <img class="grid-product-card-img-top" src="<?php echo isEmpty($product->getDisplayImage()) ? $settings->getImagePlaceholder() : $product->getDisplayImage(); ?>">
         <?php if (intval($product->getAvailability()) == Product::SOLD_OUT) { ?>
             <div class="grid-product-img-info">

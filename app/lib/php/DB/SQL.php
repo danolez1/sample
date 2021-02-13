@@ -5,7 +5,7 @@ namespace danolez\lib\DB;
 use danolez\lib\DB\Action;
 use danolez\lib\DB\Attribute;
 use danolez\lib\DB\Credential;
-use danolez\lib\DB\Database ;
+use danolez\lib\DB\Database;
 use danolez\lib\DB\Table;
 use Exception;
 
@@ -96,34 +96,37 @@ class SQL
      */
     public function query(string $sql = null, array &$params = null, $fectch = false)
     {
-        if ($sql == null)
-            $sql = $this->sql;
-        if ($params == null)
-            $params = $this->params;
+        try {
+            if ($sql == null)
+                $sql = $this->sql;
+            if ($params == null)
+                $params = $this->params;
 
-        $params = $this->purify($params);
-        $sql .= ";";
+            $params = $this->purify($params);
+            $sql .= ";";
 
-        $test = strtolower($sql);
-        $delTable = (strpos($test, "drop table") !== false);
-        $delDatabase = (strpos($test, "drop database") !== false);
+            $test = strtolower($sql);
+            $delTable = (strpos($test, "drop table") !== false);
+            $delDatabase = (strpos($test, "drop database") !== false);
 
-        if ($delTable || $delDatabase) {
-            throw new Exception("Unauthorized Action");
-        } else {
-            try {
-                $stmt = $this->DB->DB()->prepare($sql);
-                if (count($params) > 0)
-                    $stmt->bind_param($this->getParamsDataType($params), ...$params); //call_user_func_array(array($stmt,"bind_param"),$this->param);
-                $stmt->execute();
-                if (!$fectch)
-                    $stmt->store_result();
-                return $stmt;
-                //return $this->DB->DB()->query($sql);
-            } catch (Exception $e) {
-                throw new Exception($this->DB->DB()->error);
-                // var_dump($this->DB->DB()->error);
+            if ($delTable || $delDatabase) {
+                throw new Exception("Unauthorized Action");
+            } else {
+                try {
+                    $stmt = $this->DB->DB()->prepare($sql);
+                    if (count($params) > 0)
+                        $stmt->bind_param($this->getParamsDataType($params), ...$params); //call_user_func_array(array($stmt,"bind_param"),$this->param);
+                    $stmt->execute();
+                    if (!$fectch)
+                        $stmt->store_result();
+                    return $stmt;
+                    //return $this->DB->DB()->query($sql);
+                } catch (Exception $e) {
+                    throw new Exception($this->DB->DB()->error);
+                    // var_dump($this->DB->DB()->error);
+                }
             }
+        } catch (\Exception $e) {
         }
     }
 
@@ -175,7 +178,8 @@ class SQL
                 // $p = stripcslashes($p);
                 $p = strip_tags($p);
                 $p = htmlentities($p);
-                $p = $this->DB->DB()->real_escape_string($p);
+                if ($this->DB->DB())
+                    $p = $this->DB->DB()->real_escape_string($p);
             } else {
                 $this->purify($p);
             }

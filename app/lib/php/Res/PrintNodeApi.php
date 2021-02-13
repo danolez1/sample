@@ -11,23 +11,23 @@ use PrintNode\Printer;
 use PrintNode\PrintJob;
 use PrintNode\Request;
 
-require_once('app\lib\php\Res\PrintNode\src\PrintNode\EntityInterface.php');
-require_once('app\lib\php\Res\PrintNode\src\PrintNode\Entity.php');
-require_once('app\lib\php\Res\PrintNode\src\PrintNode\Account.php');
-require_once('app\lib\php\Res\PrintNode\src\PrintNode\ApiKey.php');
-require_once('app\lib\php\Res\PrintNode\src\PrintNode\Client.php');
-require_once('app\lib\php\Res\PrintNode\src\PrintNode\Computer.php');
-require_once('app\lib\php\Res\PrintNode\src\PrintNode\CredentialsInterface.php');
-require_once('app\lib\php\Res\PrintNode\src\PrintNode\Credentials.php');
-require_once('app\lib\php\Res\PrintNode\src\PrintNode\Download.php');
-require_once('app\lib\php\Res\PrintNode\src\PrintNode\PrintJob.php');
-require_once('app\lib\php\Res\PrintNode\src\PrintNode\Printer.php');
-require_once('app\lib\php\Res\PrintNode\src\PrintNode\Request.php');
-require_once('app\lib\php\Res\PrintNode\src\PrintNode\Response.php');
-require_once('app\lib\php\Res\PrintNode\src\PrintNode\Scale.php');
-require_once('app\lib\php\Res\PrintNode\src\PrintNode\State.php');
-require_once('app\lib\php\Res\PrintNode\src\PrintNode\Tag.php');
-require_once('app\lib\php\Res\PrintNode\src\PrintNode\Whoami.php');
+// require_once('app' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR . 'Res' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'EntityInterface.php');
+// require_once('app' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR . 'Res' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'Entity.php');
+// require_once('app' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR . 'Res' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'Account.php');
+// require_once('app' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR . 'Res' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'ApiKey.php');
+// require_once('app' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR . 'Res' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'Client.php');
+// require_once('app' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR . 'Res' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'Computer.php');
+// require_once('app' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR . 'Res' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'CredentialsInterface.php');
+// require_once('app' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR . 'Res' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'Credentials.php');
+// require_once('app' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR . 'Res' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'Download.php');
+// require_once('app' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR . 'Res' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'PrintJob.php');
+// require_once('app' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR . 'Res' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'Printer.php');
+// require_once('app' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR . 'Res' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'Request.php');
+// require_once('app' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR . 'Res' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'Response.php');
+// require_once('app' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR . 'Res' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'Scale.php');
+// require_once('app' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR . 'Res' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'State.php');
+// require_once('app' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR . 'Res' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'Tag.php');
+// require_once('app' . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR . 'Res' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'PrintNode' . DIRECTORY_SEPARATOR . 'Whoami.php');
 
 class PrintNodeApi
 {
@@ -106,7 +106,7 @@ class PrintNodeApi
     public function updateStore()
     {
         $account = new Account();
-        // Let's change the Child Account name.
+        /* Let's change the Child Account name.*/
         $account->Account = array(
             "firstname" => "ANewFirstName",
             "lastname" => "ANewLastName"
@@ -251,7 +251,7 @@ class PrintNodeApi
             $this->defaultPrinter = Setting::getInstance()->getDefaultPrinter();
             $this->printJobs = $this->request->getPrintJobs();
         } catch (Exception $e) {
-            // var_dump($e->getMessage());
+            /* var_dump($e->getMessage());*/
         }
 
         return $this;

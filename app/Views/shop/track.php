@@ -1,6 +1,6 @@
  <div style="background: #F5F8F7;">
      <div class="row col-12 justify-content-center pt-4">
-         <h3>Track Delivery</h3>
+         <h3 trn="track-delivery">Track Delivery</h3>
      </div>
      <hr>
      <?php $order = ($this->track->order);
@@ -35,8 +35,6 @@
                      <img src="assets/images/home/delivery_guy.svg" class="img-fluid mt-5 mt-lg-0 col-8" data-aos="zoom-in-up">
                  </div>
              </div>
-
-
          </div>
      </section>
      <div class="row col-12 justify-content-center pt-4 pb-5">

@@ -3,7 +3,7 @@
     <div class="modal-dialog">
         <div class="modal-content p-1">
             <div class="modal-header p-1">
-                <h5 class="modal-title position-absolute" trn="" id="staticBackdropLabel">Add Credit Card</h5>
+                <h5 class="modal-title position-absolute" trn="" id="staticBackdropLabel" trn="add-card">Add Credit Card</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

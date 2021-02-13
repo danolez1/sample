@@ -1,6 +1,6 @@
 <main class="content-wrapper">
-    <h3>Customers</h3>
-    <p class="mb-4">You can get information on your registered users here. Tap each row to send a mail to your customers </p>
+    <h3 trn="customers">Customers</h3>
+    <p class="mb-4" trn="customers-instruct">You can get information on your registered users here. Tap each row to send a mail to your customers </p>
     <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
         <div class="mdc-card p-0">
             <div class="table-responsive">
@@ -14,7 +14,7 @@
                                     <div class="mdc-notched-outline">
                                         <div class="mdc-notched-outline__leading"></div>
                                         <div class="mdc-notched-outline__notch">
-                                            <label for="text-field-hero-input" class="mdc-floating-label">Search..</label>
+                                            <label for="text-field-hero-input" class="mdc-floating-label" trn="search">Search..</label>
                                         </div>
                                         <div class="mdc-notched-outline__trailing"></div>
                                     </div>
@@ -24,9 +24,9 @@
                                 <span>Sort by :</span>
                                 <button class="btn btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">New Customer</button>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="#">Old Customer</a>
-                                    <a class="dropdown-item" href="#">Total Order</a>
-                                    <a class="dropdown-item" href="#">Name</a>
+                                    <a class="dropdown-item" href="#" trn="old-customer">Old Customer</a>
+                                    <a class="dropdown-item" href="#" trn="total-order">Total Order</a>
+                                    <a class="dropdown-item" href="#" trn="name">Name</a>
                                 </div>
                             </div>
                         </div>
@@ -34,11 +34,11 @@
                     <thead>
                         <tr style="background: #EFF3F3;">
 
-                            <th class="text-left">Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Total Order</th>
-                            <th>Date Joined</th>
+                            <th class="text-left" trn="name">Name</th>
+                            <th trn="email">Email</th>
+                            <th trn="phone">Phone</th>
+                            <th trn="total-order">Total Order</th>
+                            <th trn="date-joined">Date Joined</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -62,7 +62,7 @@
                         <?php } ?>
                         <tr>
                             <td>
-                                <span class="tx-14 pt-2"> Showing: 1 - 10 of 1000 Customers</span>
+                                <span class="tx-14 pt-2" trn="paging-footer"> Showing: 1 - 10 of 1000 Customers</span>
                             </td>
                             <td></td>
                             <td></td>
@@ -86,6 +86,6 @@
     </div>
 
     <div class="row col-12 justify-content-center mt-5">
-        <p>Click on a customer row to send an email to them</p>
+        <p trn="click-customer">Click on a customer row to send an email to them</p>
     </div>
 </main>

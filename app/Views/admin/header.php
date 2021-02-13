@@ -72,7 +72,7 @@ use danolez\lib\Security\Encoding; ?>
     <?php
 
     if (!$this->includesOnly) {
-      if (intval($this->admin->getRole()) == 1 || intval($this->admin->getRole()) == 2) { ?>
+      if (!is_null($this->admin) && (intval($this->admin->getRole()) == 1 || intval($this->admin->getRole()) == 2)) { ?>
         <button class="hover" id="delivery-time-fab" type="button" data-toggle="modal" data-target="#delivery-time">
           <img src="assets/images/dashboard/timer.svg" alt="cart" width="46" height="46">
         </button>
@@ -89,6 +89,5 @@ use danolez\lib\Security\Encoding; ?>
         <?php if (!is_null($this->session->get(self::ADMIN_ID))) { ?>
           <input type="hidden" value="<?php echo Encoding::encode(json_encode(array($this->branchOrder, $this->admin->getBranchId(), $this->admin->getRole()))); ?>" name="order-count" />
           <input type="hidden" value="<?php echo $this->branchOrder ?>" name="noc" />
-          <audio id="notification" src="assets/audio/notification.mp3">
-          </audio>
+          <audio id="notification" src="assets/audio/notification.mp3"></audio>
         <?php } ?>

@@ -20,7 +20,7 @@ use Demae\Auth\Models\Shop\Product\Category;
 use Demae\Auth\Models\Shop\Product;
 use Demae\Auth\Models\Shop\Setting;
 use Demae\Auth\Models\Shop\User;
-use Demae\Controller\ShopController\HomeController;
+use Demae\Controller\HomeController;
 use Ratings;
 
 class ApiRoute extends Router
@@ -37,7 +37,11 @@ class ApiRoute extends Router
 
     public function __construct($query)
     {
-        // UserAuth
+        if (count(explode("/", $query)) > 1) {
+            $query = explode("/", $query);
+            unset($query[0]);
+            $query = implode('/', $query);
+        }
         parent::__construct($query);
         // Could be more flexible
         // check in_array() and change case factor

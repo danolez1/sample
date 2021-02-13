@@ -9,7 +9,8 @@ use danolez\lib\Res\Orientation;
 use danolez\lib\Res\Server;
 use danolez\lib\Security\Encoding;
 use Demae\Auth\Models\Shop\CreditCard;
-use Demae\Controller\ShopController\HomeController;
+use Demae\Controller\HomeController;
+use OperationalTime;
 use ReflectionClass;
 use ReflectionProperty;
 use Sabberworm\CSS\Settings;
@@ -86,7 +87,7 @@ class Setting extends Model
         if ($this->file->getFile() == "") {
             $this->defaultSettings();
             $this->file->setFile(json_encode($this->object(false)));
-            
+
             $this->file->save();
         } else {
             foreach ($this->file->getFile() as $property => $value) {
@@ -271,6 +272,16 @@ class Setting extends Model
         $this->setAddressName(' 4-9-15 Ebisu, Shibuya-ku, Tokyo HAGIWA Building 5 3F');
         // $this->setSocials(null);
         $this->setShowTax(true);
+        for ($i = 0; $i < count(daysOfWeek()); $i++) {
+            $operationTime = new OperationalTime();
+            $operationTime->setDay(daysOfWeek()[$i]);
+            $operationTime->setOpen("");
+            $operationTime->setBreakStart("");
+            $operationTime->setBreakEnd("");
+            $operationTime->setClose("");
+            $times[] = $operationTime->properties(true);
+        }
+        $this->setOperationalTime(json_encode($times));
         $this->setDeliveryAreas('東、中央区、北区、南区、本町');
         $this->setShippingFee(200);
         $this->setDeliveryTimeRange(10);
@@ -396,7 +407,7 @@ class Setting extends Model
      */
     public function getOperationalTime()
     {
-        return $this->operationalTime;
+        return ($this->operationalTime);
     }
 
     /**

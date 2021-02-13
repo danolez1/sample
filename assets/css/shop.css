@@ -856,6 +856,7 @@ input[type="number"] {
   height: 2px;
   background-color: #e0e0e0;
 }
+
 ul.timeline {
   list-style-type: none;
   position: relative;
@@ -867,7 +868,7 @@ ul.timeline:before {
   position: absolute;
   left: 29px;
   width: 2px;
-  height: 95%;
+  height: 93%;
   z-index: 400;
 }
 ul.timeline > li {

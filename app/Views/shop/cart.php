@@ -8,7 +8,7 @@ use Demae\Auth\Models\Shop\Product;
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Cart</h5>
+                <h5 class="modal-title" trn="cart">Cart</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -24,14 +24,14 @@ use Demae\Auth\Models\Shop\Product;
                     } ?>
                 </div>
                 <div class="modal-footer modal-footer-fixed pb-1">
-                    <span>Total</span><br>
+                    <span trn="total">Total</span><br>
                     <div class="row col-12 text-left ml-2" style="padding: 0">
                         <div class="col-5 text-start" style="padding: 0;">
                             <span class="badge total-price" id="cart-total"><?php echo $settings->getCurrency() . number_format($total); ?></span>
-                            <?php if ($settings->getShowTax()) { ?> <div style="font-size: 12px;font-weight:500;"><span>Tax :</span> <span id="tax"><?php echo $settings->getCurrency() . number_format($total * Product::TAX) ?></span></div><?php } ?>
+                            <?php if ($settings->getShowTax()) { ?> <div style="font-size: 12px;font-weight:500;"><span trn="tax">Tax</span> : <span id="tax"><?php echo $settings->getCurrency() . number_format($total * Product::TAX) ?></span></div><?php } ?>
                         </div>
                         <div class="col-7 text-right pr-2" style="padding: 0;">
-                            <button type="button" class="btn btn-sm btn-success col-11" id="cart-checkout"><span>Check Out</span><span class="mdi mdi-arrow-right-bold ml-2"></span></button>
+                            <button type="button" class="btn btn-sm btn-success col-11" id="cart-checkout"><span trn="checkout">Check Out</span><span class="mdi mdi-arrow-right-bold ml-2"></span></button>
                         </div>
                     </div>
 

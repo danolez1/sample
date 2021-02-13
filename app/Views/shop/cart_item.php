@@ -13,7 +13,7 @@ use danolez\lib\Security\Encoding; ?>
                 <div style="font-size:14px">
                     <span class="text-muted"><?php foreach (fromDbJson($cartItem->getProductOptions()) as $option) echo unicode2html($option->name ). ' <strong> X' . $option->amount . '</strong> ・'; ?></span><br>
                     <!-- Fanta Onions <strong>X3</strong>・Ketup <strong>X1</strong> -->
-                    <span class="text-muted"><span>Note</span>: "<?php echo $cartItem->getAdditionalNote(); ?>" </span>
+                    <span class="text-muted"><span trn="note">Note</span>: "<?php echo $cartItem->getAdditionalNote(); ?>" </span>
                 </div>
             </div>
             <div class="col-lg-3 col-md-3 col-sm-6 text-lg-center text-sm-right">

@@ -8,7 +8,7 @@ include 'app/Views/admin/pages/add_category.php';
 $editProduct = !is_null($this->editProduct);
 ?>
 <main class="content-wrapper">
-    <h4>Add Product</h4>
+    <h4><?php echo $this->query == 'edit-product' ? '<span trn="edit-product">Edit Product</span>' : '<span trn="add-product">Add Product</span>'; ?></h4>
     <?php if (!is_null($dashboardController_error)) {
         echo "WTH"; ?>
         <script>
@@ -37,7 +37,7 @@ $editProduct = !is_null($this->editProduct);
         <div class="row col-12 mt-3">
             <div class="col-lg-8 col-md-12 col-sm-12 col-12">
 
-                <h5 class="mt-3">Product Image</h5>
+                <h5 class="mt-3" trn="product-image">Product Image</h5>
                 <div class="mt-2 col-12 p-0 m-0 upload-image text-center" style="background-color:#E0E0E0;border:#E0E0E0;" type="button">
                     <label for="product-image">
                         <input type="hidden" name="product-image" value="<?php echo $editProduct ? $this->editProduct->getDisplayImage() : ''; ?>">
@@ -50,14 +50,14 @@ $editProduct = !is_null($this->editProduct);
                     <div class="mdc-layout-grid__inner">
                         <div class="mdc-layout-grid__cell--span-12">
                             <div class="mdc-card">
-                                <h6 class="card-title">Product Information</h6>
+                                <h6 class="card-title" trn="product-info">Product Information</h6>
                                 <div class="template-demo">
                                     <div class="mdc-layout-grid__inner">
                                         <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12-desktop">
                                             <div class="mdc-text-field">
                                                 <input class="mdc-text-field__input" value="<?php echo $editProduct ? $this->editProduct->getName() : '' ?>" required name="product-name" id="text-field-hero-input">
                                                 <div class="mdc-line-ripple"></div>
-                                                <label for="text-field-hero-input" class="mdc-floating-label">Product Name</label>
+                                                <label for="text-field-hero-input" class="mdc-floating-label" trn="product-name">Product Name</label>
                                             </div>
                                         </div>
                                         <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12-desktop">
@@ -66,7 +66,7 @@ $editProduct = !is_null($this->editProduct);
                                                 <div class=" mdc-notched-outline">
                                                     <div class="mdc-notched-outline__leading"></div>
                                                     <div class="mdc-notched-outline__notch">
-                                                        <label for="text-field-hero-input" class="mdc-floating-label">Product Description</label>
+                                                        <label for="text-field-hero-input" class="mdc-floating-label" trn="product-descr">Product Description</label>
                                                     </div>
                                                     <div class="mdc-notched-outline__trailing"></div>
                                                 </div>
@@ -79,7 +79,7 @@ $editProduct = !is_null($this->editProduct);
                                                 <div class="mdc-notched-outline">
                                                     <div class="mdc-notched-outline__leading"></div>
                                                     <div class="mdc-notched-outline__notch">
-                                                        <label for="text-field-hero-input" class="mdc-floating-label">Price</label>
+                                                        <label for="text-field-hero-input" class="mdc-floating-label" trn="price">Price</label>
                                                     </div>
                                                     <div class="mdc-notched-outline__trailing"></div>
                                                 </div>
@@ -100,7 +100,7 @@ $editProduct = !is_null($this->editProduct);
                                                         </li>
                                                     </ul>
                                                 </div>
-                                                <span class="mdc-floating-label">Available</span>
+                                                <span class="mdc-floating-label" trn="available">Available</span>
                                                 <div class="mdc-line-ripple"></div>
                                             </div>
                                         </div>
@@ -108,10 +108,10 @@ $editProduct = !is_null($this->editProduct);
 
                                         <div class="row d-flex p-0 m-0 col-12 mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12-desktop col-12">
                                             <div class="col-6 pl-2">
-                                                <h5 class="pt-1">Category</h5>
+                                                <h5 class="pt-1" trn="category">Category</h5>
                                             </div>
                                             <div class="col-6"> <a class="btn btn-danger btn-sm tx-14 float-right" style="height: 30px;" data-toggle="modal" data-page="add-product-category" data-target="#addCategoryModal" data-id="<?php echo Encoding::encode(json_encode(array($this->admin->getId(), $this->admin->getUserName()))) ?>">
-                                                    <i class='bx bx-plus'></i>Add Category</a>
+                                                    <i class='bx bx-plus'></i><span trn="add-cat">Add Category</span></a>
                                             </div>
                                         </div>
 
@@ -120,7 +120,7 @@ $editProduct = !is_null($this->editProduct);
                                                 <?php for ($i = 0; $i < count($productCategories); $i++) { ?>
                                                     <div class="mdc-form-field">
                                                         <div class="mdc-checkbox">
-                                                            <input type="checkbox" name="product-category[]" <?php echo $editProduct ? in_array($productCategories[$i]->getId(), fromDbJson($this->editProduct->getCategory())) ? 'checked' : '' : ''; ?> value="<?php echo $productCategories[$i]->getId(); ?>" id="basic-disabled-checkbox" class="mdc-checkbox__native-control" />
+                                                            <input type="checkbox" name="product-category[]" <?php echo $editProduct ? in_array($productCategories[$i]->getId(), fromDbJson($this->editProduct->getCategory())??[]) ? 'checked' : '' : ''; ?> value="<?php echo $productCategories[$i]->getId(); ?>" id="basic-disabled-checkbox" class="mdc-checkbox__native-control" />
                                                             <div class="mdc-checkbox__background">
                                                                 <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
                                                                     <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
@@ -143,7 +143,7 @@ $editProduct = !is_null($this->editProduct);
                     <div class="mdc-layout-grid__inner">
                         <div class="mdc-layout-grid__cell--span-12">
                             <div class="mdc-card">
-                                <h6 class="card-title">Product Options</h6>
+                                <h6 class="card-title" trn="product-options">Product Options</h6>
                                 <div class="template-demo">
                                     <div class="mdc-layout-grid__inner">
                                         <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
@@ -163,7 +163,7 @@ $editProduct = !is_null($this->editProduct);
                                                         <?php } ?>
                                                     </ul>
                                                 </div>
-                                                <span class="mdc-floating-label ml-3">Category</span>
+                                                <span class="mdc-floating-label ml-3" trn="category">Category</span>
                                                 <div class="mdc-line-ripple"></div>
                                             </div>
                                         </div>
@@ -173,7 +173,7 @@ $editProduct = !is_null($this->editProduct);
                                                 <div class="mdc-notched-outline">
                                                     <div class="mdc-notched-outline__leading"></div>
                                                     <div class="mdc-notched-outline__notch">
-                                                        <label for="text-field-hero-input" class="mdc-floating-label">Name</label>
+                                                        <label for="text-field-hero-input" class="mdc-floating-label" trn="name">Name</label>
                                                     </div>
                                                     <div class="mdc-notched-outline__trailing"></div>
                                                 </div>
@@ -187,13 +187,14 @@ $editProduct = !is_null($this->editProduct);
                                                 <div class="mdc-select__menu mdc-menu-surface demo-width-class">
                                                     <ul class="mdc-list" style="width: 15em;">
                                                         <li class="mdc-list-item mdc-list-item--selected" data-value="1" aria-selected="true">
-                                                            Yes</li>
+                                                            <span trn="yes">Yes</span>
+                                                        </li>
                                                         <li class="mdc-list-item" data-value="0">
-                                                            No
+                                                            <span trn="no">No</span>
                                                         </li>
                                                     </ul>
                                                 </div>
-                                                <span class="mdc-floating-label">Available</span>
+                                                <span class="mdc-floating-label" trn="available">Available</span>
                                                 <div class="mdc-line-ripple"></div>
                                             </div>
                                         </div>
@@ -204,7 +205,7 @@ $editProduct = !is_null($this->editProduct);
                                                 <div class="mdc-notched-outline">
                                                     <div class="mdc-notched-outline__leading"></div>
                                                     <div class="mdc-notched-outline__notch">
-                                                        <label for="text-field-hero-input" class="mdc-floating-label">Price</label>
+                                                        <label for="text-field-hero-input" class="mdc-floating-label" trn="price">Price</label>
                                                     </div>
                                                     <div class="mdc-notched-outline__trailing"></div>
                                                 </div>
@@ -219,13 +220,14 @@ $editProduct = !is_null($this->editProduct);
                                                 <div class="mdc-select__menu mdc-menu-surface demo-width-class">
                                                     <ul class="mdc-list" style="width: 15em;">
                                                         <li class="mdc-list-item mdc-list-item--selected" data-value="<?php echo ProductOption::SINGLE_ITEM ?>" aria-selected="true">
-                                                            Single Item</li>
+                                                            <span trn="single-item">Single Item</span>
+                                                        </li>
                                                         <li class="mdc-list-item" data-value="<?php echo ProductOption::MULTIPLE_ITEM ?>">
-                                                            Multiple Item
+                                                            <span trn="multiple-item">Multiple Item</span>
                                                         </li>
                                                     </ul>
                                                 </div>
-                                                <span class="mdc-floating-label">Option Type</span>
+                                                <span class="mdc-floating-label" trn="option-type">Option Type</span>
                                                 <div class="mdc-line-ripple"></div>
                                             </div>
                                         </div>
@@ -236,9 +238,9 @@ $editProduct = !is_null($this->editProduct);
                     </div>
                 </div>
                 <div class="card-footer p-2 text-right save-changes">
-                    <a id="add-option-btn" class="btn btn-danger tx-14">Add</a>
+                    <a id="add-option-btn" class="btn btn-danger tx-14" trn="add">Add</a>
                 </div>
-                <button type="submit" name="<?php echo $editProduct ? 'update-product' : 'create-product' ?>" class="btn btn-danger mt-3 col-12" trn="<?php echo $editProduct ? 'save' : 'create' ?>"><?php echo $editProduct ? 'Save' : 'Create' ?></button>
+                <button type="submit" name="<?php echo $editProduct ? 'update-product' : 'create-product' ?>" class="btn btn-danger mt-3 col-12" trn="<?php echo $editProduct ? 'save' : 'create' ?>"><?php echo $editProduct ? '<span trn="save">Save</span>' : '<span trn="create">Create</span>' ?></button>
             </div>
 
             <div class="col-lg-4 col-md-12 col-sm-12 col-12 mt-5">
@@ -253,11 +255,11 @@ $editProduct = !is_null($this->editProduct);
                                 <div class="mt-lg-5 pt-lg-5">
                                     <div class="card mt-lg-5">
                                         <div class="card-body">
-                                            <h5 class="card-title mb-1">Options</h5>
+                                            <h5 class="card-title mb-1" trn="options">Options</h5>
                                             <input type="hidden" name="options" value="<?php echo $editProduct ?  base64_encode(json_encode($this->editProduct->getProductOptions() ?? "")) : "" ?>" />
                                             <div id="options-input-div">
                                                 <?php if ($editProduct) {
-                                                    foreach ($this->editProduct->getProductOptions() as $option) {
+                                                    foreach ($this->editProduct->getProductOptions() ?? [] as $option) {
                                                         echo '<span class="badge rounded-pill bg-primary text-light option-span ml-1 mr-1">' . $option->name . '<i class="icofont-close-line" onclick="delOption(this.parentNode.parentNode.childNodes,this.parentNode)"></i></span>';
                                                     }
                                                 } ?>
@@ -265,13 +267,13 @@ $editProduct = !is_null($this->editProduct);
 
                                             <?php if ($this->admin->getRole() == 1) {
                                             ?>
-                                                <h5 class="card-title mb-1 mt-4">Branch</h5>
+                                                <h5 class="card-title mb-1 mt-4" trn="branch">Branch</h5>
                                                 <?php for ($i = 0; $i < count($this->branches); $i++) {
                                                     $branch = $this->branches[$i];
                                                 ?>
                                                     <div class="mdc-form-field">
                                                         <div class="mdc-checkbox">
-                                                            <input type="checkbox" name="product-branch[]" <?php echo $editProduct ? in_array($branch->getId(), fromDbJson($this->editProduct->getBranchId())) ? 'checked' : '' : ''; ?> value="<?php echo $branch->getId(); ?>" id="basic-disabled-checkbox" class="mdc-checkbox__native-control" />
+                                                            <input type="checkbox" name="product-branch[]" <?php echo $editProduct ? in_array($branch->getId(), fromDbJson($this->editProduct->getBranchId()) ?? []) ? 'checked' : '' : ''; ?> value="<?php echo $branch->getId(); ?>" id="basic-disabled-checkbox" class="mdc-checkbox__native-control" />
                                                             <div class="mdc-checkbox__background">
                                                                 <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
                                                                     <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />

@@ -19,7 +19,7 @@ use Demae\Auth\Models\Shop\Delivery;
 use Demae\Auth\Models\Shop\CreditCard;
 use Demae\Auth\Models\Shop\Product;
 use Demae\Auth\Models\Shop\Setting;
-use Demae\Controller\ShopController\HomeController;
+use Demae\Controller\HomeController;
 use Dompdf\Dompdf;
 use OrderColumn;
 use PaymentDetailsColumn;
@@ -181,7 +181,7 @@ class Order extends Model
                 $cart->setUserId($item->userId);
                 $cart->delete();
             }
-            // $this->printWithPrintNode();
+            $this->printWithPrintNode();
         }
         $return[Model::ERROR] = $error;
         return ($return);
@@ -302,8 +302,8 @@ class Order extends Model
         $scheduledTime = $scheduled->time;
         $reservation = "";
         if (isEmpty($scheduledTime) || isEmpty($scheduledDate)) {
-            $time = date('d/m/y H:i', time() + ($deliveryTime * 60))
-                . ' - ' . date('H:i', time() + ($deliveryTime * 60) + ($range * 60));
+            $time = date('Y/m/d H:i', time() + ($deliveryTime * 60))
+                . ' ~ ' . date('H:i', time() + ($deliveryTime * 60) + ($range * 60));
         } else {
             $time = $scheduledDate . " " . $scheduledTime;
             $reservation = $EN ? "***RESERVATION***" : "***予約***";
@@ -370,22 +370,26 @@ class Order extends Model
         $dompdf->setPaper($customPaper, 'portrait');
         $dompdf->render();
         $pdf = $dompdf->output();
-        // $dompdf->stream();//"filename.pdf", array("Attachment" => 1));
-        // echo $pdf;
-        //$this->settings
 
         $branch = new Branch();
-        $branch = $branch->get('', $this->branch);
-        $printNode = new PrintNodeApi(!empty($branch) ? $branch[0]->getPrintNodeApi() : Setting::getInstance()->getPrintNodeApi());
-        $this->sendNotificationMail();
+        $branch = $branch->get('', $this->branch) ?? new Branch();
+        $printNode = new PrintNodeApi();
+        $printNode->setDefaultPrinter($branch[0]->getDefaultPrinter() ?? Setting::getInstance()->getDefaultPrinter());
+        $printNode->setApi($branch[0]->getPrintNodeApi() ?? Setting::getInstance()->getPrintNodeApi());
         $printNode->setContent($pdf);
         $printNode->setSrc('Demae System');
         $printNode->setTitle('New Order');
-        $statusCode = json_decode($printNode->print())->statusCode;
-        if ($statusCode != 201) {
-            $this->printWithPrintNode();
-            //Add to mail message
+        $print = $printNode->print();
+        // var_dump($print);
+        if (!$print) {
+            // $statusCode = json_decode($print)->statusCode;
+            // var_dump($print);
+            // if ($statusCode != 201) {
+            //     // $this->printWithPrintNode();
+            //     //Add to mail message
+            // }
         }
+        $this->sendNotificationMail();
     }
 
 
@@ -411,7 +415,19 @@ class Order extends Model
         $template = $this->generateEmailTemplate($EN);
         $mail->setHtml($template->body);
         $mail->setAttachments($template->attachments);
-        $mail->sendWithHostSTMP();
+        // $mail->sendWithHostSTMP();
+
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($template->body);
+        $customPaper =  'A4'; //array(0, 0, 950, 950);
+        $dompdf->setPaper($customPaper, 'portrait');
+        $dompdf->render();
+        if ($this->deliveryOption == OrderColumn::TAKE_OUT) {
+            var_dump("DANIEL");
+            $name = $_COOKIE['lingo'] == 'en' ? "Order " . $this->getDisplayId() : '注文' . $this->getDisplayId();
+            $dompdf->stream("$name.pdf", array("Attachment" => 1));
+        }
+        return;
     }
 
     public function getDeliveryMethodText()

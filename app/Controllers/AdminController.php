@@ -1,6 +1,6 @@
 <?php
 
-namespace Demae\Controller\ShopController;
+namespace Demae\Controller;
 
 use danolez\lib\DB\Controller;
 use danolez\lib\DB\Model;
@@ -57,21 +57,21 @@ class AdminController extends Controller
             $this->admin->setId(Encoding::decode($this->session->get(self::ADMIN_ID), self::VALUE_ENCODE_ITERTATION));
             $this->admin->setUsername(Encoding::decode($this->session->get(self::ADMIN_USERNAME), self::VALUE_ENCODE_ITERTATION));
             $this->admin =  $this->admin->get();
-        }
-        // $this->admin->setRole(3);
 
-        $ceoPage = (in_array($this->query, $this->ceoPages));
-        $managerPage = (in_array($this->query, $this->managerPages));
-        if (($managerPage && intval($this->admin->getRole()) > 2) || ($ceoPage && intval($this->admin->getRole()) > 1)) {
-            header('location:' . 'orders');
-        }
-        if ($this->query == 'branches' && intval($this->admin->getRole()) == 2) {
-            header('location:' . 'branch-setting');
-        }
 
-        if (!is_null($this->session->get(self::EDIT_PRODUCT)) && ($this->query != 'add-product' && $this->query != 'edit-product')) {
-            unset($_SESSION[self::EDIT_PRODUCT]);
-            unset($_SESSION['editProductId']);
+            $ceoPage = (in_array($this->query, $this->ceoPages));
+            $managerPage = (in_array($this->query, $this->managerPages));
+            if (($managerPage && intval($this->admin->getRole()) > 2) || ($ceoPage && intval($this->admin->getRole()) > 1)) {
+                header('location:' . 'orders');
+            }
+            if ($this->query == 'branches' && intval($this->admin->getRole()) == 2) {
+                header('location:' . 'branch-setting');
+            }
+
+            if (!is_null($this->session->get(self::EDIT_PRODUCT)) && ($this->query != 'add-product' && $this->query != 'edit-product')) {
+                unset($_SESSION[self::EDIT_PRODUCT]);
+                unset($_SESSION['editProductId']);
+            }
         }
 
         $this->pageSwitch();
@@ -81,6 +81,8 @@ class AdminController extends Controller
 
     public function renderPage()
     {
+        $userController_error  = null;
+        $userController_result = null;
         $userController = new UserController($_POST);
         $userController->setAdmin($this->admin);
         $userController = $userController->adminAuth();
@@ -101,60 +103,59 @@ class AdminController extends Controller
             }
         }
 
-        $dashboardController = new DashboardController($_POST);
-        $dashboardController->setAdmin($this->admin);
-        $dashboardController->setEditProduct($this->editProduct);
 
-        if (!is_null($this->session->get(self::ADMIN_ID))) {
-            if (intval($this->admin->getRole()) == 1 || intval($this->admin->getRole()) == 2) {
-                $this->branches = new Branch();
-                $this->branches = $this->branches->get($this->admin);
-                $this->staff = new Administrator();
-                $this->staff = $this->staff->getStaffs($this->admin);
-                $this->customers = new User();
-                $this->customers = $this->customers->getAllUser();
-                $dashboardController->setBranch($this->branches);
-                //branch Id to check which
-                $dashboardController = $dashboardController->management();
-                if ($dashboardController != null) {
-                    $dashboardController_error = (json_decode($dashboardController)->{Model::ERROR});;
-                    $dashboardController_result = isset(json_decode($dashboardController)->{Model::RESULT});;
-                    $showDashboardController_result = true;
+        if ($this->admin != null) {
+            $dashboardController = new DashboardController($_POST);
+            $dashboardController->setAdmin($this->admin);
+            $dashboardController->setEditProduct($this->editProduct);
+
+            $dashboardController_error = null;
+            $dashboardController_result = null;
+            $showDashboardController_result = false;
+            if (!is_null($this->session->get(self::ADMIN_ID))) {
+                if (intval($this->admin->getRole()) == 1 || intval($this->admin->getRole()) == 2) {
+                    $this->branches = new Branch();
+                    $this->branches = $this->branches->get($this->admin);
+                    $this->staff = new Administrator();
+                    $this->staff = $this->staff->getStaffs($this->admin);
+                    $this->customers = new User();
+                    $this->customers = $this->customers->getAllUser();
+                    $dashboardController->setBranch($this->branches);
+                    //branch Id to check which
+                    $dashboardController = $dashboardController->management();
+                    if ($dashboardController != null) {
+                        $dashboardController_error = (json_decode($dashboardController)->{Model::ERROR});;
+                        $dashboardController_result = isset(json_decode($dashboardController)->{Model::RESULT});;
+                        $showDashboardController_result = true;
+                    }
                 }
             }
-        }
-        $this->orders = new Order();
-        $this->orders = $this->orders->get();
-        $this->traffic = new TrafficLogger();
-        $this->traffic = $this->traffic->get();
-        $weeklyTraffic = 0;
-        foreach ($this->traffic as $traffic) {
-            if (date('W', intval($traffic->getTime())) == date('W')) {
-                $weeklyTraffic = $weeklyTraffic + intval($traffic->getCount());
+            $this->orders = new Order();
+            $this->orders = $this->orders->get();
+            $totalEarnings = 0;
+            foreach ($this->orders as $order) {
+                $totalEarnings = $totalEarnings + intval($order->getAmount());
             }
-        }
-        $totalEarnings = 0;
-        foreach ($this->orders as $order) {
-            $totalEarnings = $totalEarnings + intval($order->getAmount());
-        }
-        $this->products = new Product();
-        $this->products = $this->products->get();
-        $productCategories = new Category();
-        $productCategories->setType(Category::TYPE_PRODUCT);
-        $productCategories = $productCategories->get();
+            $this->products = new Product();
+            $this->products = $this->products->get();
+            $productCategories = new Category();
+            $productCategories->setType(Category::TYPE_PRODUCT);
+            $productCategories = $productCategories->get();
 
-        $optionsCategories = new Category();
-        $optionsCategories->setType(Category::TYPE_OPTION);
-        $optionsCategories = $optionsCategories->get();
+            $optionsCategories = new Category();
+            $optionsCategories->setType(Category::TYPE_OPTION);
+            $optionsCategories = $optionsCategories->get();
 
-        $this->settings = new Setting();
-        $pendingOrder = 0;
-        $completedOrder = 0;
+            $this->settings = new Setting();
+            $this->settings->setOperationalTime(fromDbJson($this->settings->getOperationalTime()));
+            $pendingOrder = 0;
+            $completedOrder = 0;
 
-        $data = [];
-        $monthlyData = [];
-        $yearlyData = [];
-        if ($this->admin != null) {
+            $data = [];
+            $monthlyData = [];
+            $yearlyData = [];
+
+
             foreach ($this->orders as $order) {
                 if ($this->admin->getBranchId() == $order->getBranch() || $this->admin->getRole() == 1) {
                     $dataTime = date("j F Y", (intval($order->getTimeCreated())));
@@ -172,9 +173,37 @@ class AdminController extends Controller
                     }
                 }
             }
-            $script = "<script>";
+
             if ($this->page == "app/Views/admin/home.php") {
+
+                $this->traffic = new TrafficLogger();
+                $this->traffic = $this->traffic->get();
+                $weeklyTraffic = 0;
+
                 $dates = array_keys($data);
+
+                $script = "<script>";
+                $script .= "var weekVisits = [";
+
+                $visitData = [];
+                foreach ($this->traffic as $traffic) {
+                    if (date('Y:W', intval($traffic->getTime())) == date('Y:W')) {
+                        $weeklyTraffic = $weeklyTraffic + intval($traffic->getCount());
+                        $dataTime = date("j F Y", (intval($traffic->getTime())));
+                        $visitData[$dataTime] = isset($visitData[$dataTime]) ? $visitData[$dataTime] + intval($traffic->getCount()) : 0 + intval($traffic->getCount());
+                    }
+                }
+                for ($i = 6; $i > -1; $i--) {
+                    if (in_array(date('j F Y', strtotime("-" . $i . "days")), $dates)) {
+                        $script .= "'" . $visitData[date('j F Y', strtotime("-" . $i . "days"))] . "',";
+                    } else {
+                        $script .= "'0',";
+                    }
+                }
+
+                $script .= "];";
+
+
                 $label = "var weekLabels = [";
                 $datas = "var weekData = [";
                 for ($i = 6; $i > -1; $i--) {
@@ -253,7 +282,7 @@ class AdminController extends Controller
 
                 $years = (array_keys($yearlyData));
                 asort($years);
-                $d = intval(date("Y")) - intval($years[0]);
+                $d = intval(date("Y")) - intval(empty($years) ? 0 : $years[0]);
                 $label .= "var allLabels = [";
                 $datas .= "var allData = [";
                 for ($i = $d; $i > -1; $i--) {
@@ -273,10 +302,9 @@ class AdminController extends Controller
                 $label .= "];";
 
                 $script .= $label . $datas;
+                $script .= "</script>";
             }
-            $script .= "</script>";
         }
-
 
         include 'app/Views/admin/header.php';
         if (@include($this->page));

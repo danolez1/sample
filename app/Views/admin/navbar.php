@@ -9,7 +9,7 @@
         <div class="mdc-notched-outline">
           <div class="mdc-notched-outline__leading"></div>
           <div class="mdc-notched-outline__notch">
-            <label for="text-field-hero-input" class="mdc-floating-label">Search..</label>
+            <label for="text-field-hero-input" class="mdc-floating-label" trn="search">Search..</label>
           </div>
           <div class="mdc-notched-outline__trailing"></div>
         </div>
@@ -32,7 +32,7 @@
                 <i class="mdi mdi-account-edit-outline text-primary"></i>
               </div>
               <div class="item-content d-flex align-items-start flex-column justify-content-center">
-                <h6 class="item-subject font-weight-normal">Edit profile</h6>
+                <h6 class="item-subject font-weight-normal" trn="edit-profile">Edit profile</h6>
               </div>
             </li>
             <li class="mdc-list-item" role="menuitem">
@@ -40,7 +40,7 @@
                 <i class="mdi mdi-settings-outline text-primary"></i>
               </div>
               <div class="item-content d-flex align-items-start flex-column justify-content-center">
-                <h6 class="item-subject font-weight-normal">Logout</h6>
+                <h6 class="item-subject font-weight-normal" trn="logout">Logout</h6>
               </div>
             </li>
           </ul>
@@ -58,16 +58,16 @@
                 <i class="mdi mdi-alert-circle-outline text-primary"></i>
               </div>
               <div class="item-content d-flex align-items-start flex-column justify-content-center">
-                <h6 class="item-subject font-weight-normal">Settings</h6>
+                <h6 class="item-subject font-weight-normal" trn="settings">Settings</h6>
               </div>
             </li>
             <li class="mdc-list-item" role="menuitem">
               <div class="item-thumbnail item-thumbnail-icon-only">
                 <i class="mdi mdi-progress-download text-primary"></i>
               </div>
-              <div class="item-content d-flex align-items-start flex-column justify-content-center">
-                <h6 class="item-subject font-weight-normal">Update</h6>
-              </div>
+              <!-- <div class="item-content d-flex align-items-start flex-column justify-content-center">
+                <h6 class="item-subject font-weight-normal" trn="">Check for update</h6> 
+              </div> -->
             </li>
           </ul>
         </div>
@@ -77,9 +77,9 @@
           <i class="mdi mdi-bell"></i>
         </button>
         <div class="mdc-menu mdc-menu-surface" tabindex="-1">
-          <h6 class="title"> <i class="mdi mdi-bell-outline mr-2 tx-16"></i> Notifications</h6>
+          <h6 class="title"> <i class="mdi mdi-bell-outline mr-2 tx-16"></i> <span trn="notifications">Notifications</span></h6>
           <ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical">
-            <li class="mdc-list-item" role="menuitem">
+            <!-- <li class="mdc-list-item" role="menuitem">
               <div class="item-thumbnail item-thumbnail-icon">
                 <i class="mdi mdi-email-outline"></i>
               </div>
@@ -87,8 +87,8 @@
                 <h6 class="item-subject font-weight-normal">You received a new message</h6>
                 <small class="text-muted"> 6 min ago </small>
               </div>
-            </li>
-            <li class="mdc-list-item" role="menuitem">
+            </li> -->
+            <!-- <li class="mdc-list-item" role="menuitem">
               <div class="item-thumbnail item-thumbnail-icon">
                 <i class="mdi mdi-account-outline"></i>
               </div>
@@ -114,7 +114,7 @@
                 <h6 class="item-subject font-weight-normal">You have a new update</h6>
                 <small class="text-muted"> 3 days ago </small>
               </div>
-            </li>
+            </li> -->
           </ul>
         </div>
       </div>
@@ -125,7 +125,7 @@
             <span class="count">3</span>
           </span>
         </button>
-        <div class="mdc-menu mdc-menu-surface" tabindex="-1">
+        <!-- <div class="mdc-menu mdc-menu-surface" tabindex="-1">
           <h6 class="title"><i class="mdi mdi-email-outline mr-2 tx-16"></i> Messages</h6>
           <ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical">
             <li class="mdc-list-item" role="menuitem">
@@ -156,7 +156,7 @@
               </div>
             </li>
           </ul>
-        </div>
+        </div> -->
       </div>
       <div class="menu-button-container d-none d-md-block">
         <button class="mdc-button mdc-menu-button">
@@ -164,20 +164,20 @@
         </button>
         <div class="mdc-menu mdc-menu-surface" tabindex="-1">
           <ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical">
-            <li class="mdc-list-item" role="menuitem">
+            <!-- <li class="mdc-list-item" role="menuitem">
               <div class="item-thumbnail item-thumbnail-icon-only">
                 <i class="mdi mdi-lock-outline text-primary"></i>
               </div>
               <div class="item-content d-flex align-items-start flex-column justify-content-center">
                 <h6 class="item-subject font-weight-normal">Lock screen</h6>
               </div>
-            </li>
+            </li> -->
             <li class="mdc-list-item" role="menuitem">
               <div class="item-thumbnail item-thumbnail-icon-only">
                 <i class="mdi mdi-logout-variant text-primary"></i>
               </div>
               <div class="item-content d-flex align-items-start flex-column justify-content-center">
-                <h6 class="item-subject font-weight-normal">Logout</h6>
+                <h6 class="item-subject font-weight-normal" trn="logout">Logout</h6>
               </div>
             </li>
           </ul>

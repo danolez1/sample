@@ -3,8 +3,8 @@
 namespace Demae\Route;
 
 use danolez\lib\DB\Router;
-use Demae\Controller\ShopController\AdminController;
-use Demae\Controller\ShopController\HomeController;
+use Demae\Controller\AdminController;
+use Demae\Controller\HomeController;
 use Demae\Route\ApiRoute;
 
 class AppRoute extends Router
@@ -26,7 +26,9 @@ class AppRoute extends Router
         } else if (in_array($query, $this->admin) ||  in_array($pages[0], $this->admin)) {
             new AdminController($query);
         } else if (in_array($query, $this->apiMethod) || in_array($pages[0], $this->apiMethod)) {
-            new ApiRoute($query);
+            // new ApiRoute($query);
+            new ApiRoute($this->query);
+            
         } else {
             include 'app/Views/404.php';
         }

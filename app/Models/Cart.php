@@ -11,7 +11,7 @@ use Demae\Auth\Models\Error;
 use Demae\Auth\Models\Shop\Product;
 use Demae\Auth\Models\Shop\Setting;
 use Demae\Auth\Models\Shop\User;
-use Demae\Controller\ShopController\HomeController;
+use Demae\Controller\HomeController;
 use ReflectionClass;
 use ReflectionProperty;
 //getall

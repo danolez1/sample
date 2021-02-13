@@ -27,8 +27,8 @@ if (!is_null($dashboardController_error)) { ?>
 <?php }
 } ?>
 <main class="content-wrapper">
-    <h3>Staffs</h3>
-    <p class="mb-4">You can change your staff positions, branch or add new staff here</p>
+    <h3 trn="staffs">Staffs</h3>
+    <p class="mb-4" trn="staffs-instruct">You can change your staff positions, branch or add new staff here</p>
     <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
         <div class="mdc-card p-0">
             <div class="table-responsive">
@@ -40,12 +40,12 @@ if (!is_null($dashboardController_error)) { ?>
                     <?php } ?>
                     <thead>
                         <tr style="background: #EFF3F3;">
-                            <th>Name</th>
-                            <th>Email</th>
+                            <th trn="name">Name</th>
+                            <th trn="email">Email</th>
                             <?php if ($this->admin->getRole() == 1) { ?>
-                                <th>Branch</th>
+                                <th trn="branch">Branch</th>
                             <?php } ?>
-                            <th>Level</th>
+                            <th trn="level">Level</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -60,7 +60,8 @@ if (!is_null($dashboardController_error)) { ?>
                                 <td> <?php echo $staff->getEmail(); ?></td>
                                 <?php if ($this->admin->getRole() == 1) { ?>
                                     <td class="text-uppercase"> <?php $branch = new Branch();
-                                                                echo  $branch->get(null, $staff->getBranchId())[0]->getName(); ?> </td>
+                                                                $branch = $branch->get(null, $staff->getBranchId());
+                                                                if (!empty($branch)) echo $branch[0]->getName(); ?> </td>
                                 <?php } ?>
                                 <td>
                                     <input type="hidden" name="role" value="5" />
@@ -80,30 +81,32 @@ if (!is_null($dashboardController_error)) { ?>
                             </tr>
                         <?php } ?>
                         <form method="post" class="php-form" action="">
-                            <tr class="php-form" id="add-staff-form" style="display:<?php echo ($staffInfo) ? 'table-row' : 'none' ?>">
+                            <tr class="php-form" id="add-staff-form" style="display: none">
                                 <td>
                                     <input type="text" class="form-control" required name="name" />
                                 </td>
                                 <td>
                                     <input type="text" class="form-control" required name="email" />
                                 </td>
-                                <?php if ($this->admin->getRole() == 1) { ?>
-                                    <td>
+                                <?php if (!empty($this->branches)) {
+                                    if ($this->admin->getRole() == 1) { ?>
+                                        <td>
+                                            <input type="hidden" name="branch" value="<?php echo $this->branches[0]->getId(); ?>" />
+                                            <button class="btn btn-light dropdown-toggle" type="button" data="<?php echo $this->branches[0]->getId(); ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $this->branches[0]->getName(); ?></button>
+                                            <div class="dropdown-menu p-0">
+                                                <?php for ($i = 1; $i < count($this->branches); $i++) {
+                                                    $branch = $this->branches[$i];
+                                                ?>
+                                                    <a type="button" class="dropdown-item" data="<?php echo $branch->getId(); ?>">
+                                                        <?php echo $branch->getName(); ?>
+                                                    </a>
+                                                <?php } ?>
+                                            </div>
+                                        </td>
+                                    <?php } else { ?>
                                         <input type="hidden" name="branch" value="<?php echo $this->branches[0]->getId(); ?>" />
-                                        <button class="btn btn-light dropdown-toggle" type="button" data="<?php echo $this->branches[0]->getId(); ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo $this->branches[0]->getName(); ?></button>
-                                        <div class="dropdown-menu p-0">
-                                            <?php for ($i = 1; $i < count($this->branches); $i++) {
-                                                $branch = $this->branches[$i];
-                                            ?>
-                                                <a type="button" class="dropdown-item" data="<?php echo $branch->getId(); ?>">
-                                                    <?php echo $branch->getName(); ?>
-                                                </a>
-                                            <?php } ?>
-                                        </div>
-                                    </td>
-                                <?php } else { ?>
-                                    <input type="hidden" name="branch" value="<?php echo $this->branches[0]->getId(); ?>" />
-                                <?php } ?>
+                                <?php }
+                                } ?>
                                 <td>
                                     <input type="hidden" name="role" value="5" />
                                     <button class="btn btn-success dropdown-toggle" data-async="staff-level" trn="staff" data="5" color="#28A745" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Staff</button>
@@ -117,7 +120,7 @@ if (!is_null($dashboardController_error)) { ?>
                                     </div>
                                 </td>
                                 <td class="pr-3">
-                                    <button type="submit" name="add-staff" class=" btn btn-light text-success font-weight-bold h5">save</button>
+                                    <button type="submit" name="add-staff" class=" btn btn-light text-success font-weight-bold h5" trn="save">save</button>
                             </tr>
                         </form>
                         <?php if (!is_null($dashboardController_error)) {
@@ -125,7 +128,7 @@ if (!is_null($dashboardController_error)) { ?>
                         } ?>
                         <tr>
                             <td>
-                                <button id="add-staff" type="button" class="btn btn-sm btn-outline-danger ml-2"> <i class='bx bx-plus'></i> Add New Staff </button>
+                                <button id="add-staff" type="button" class="btn btn-sm btn-outline-danger ml-2"> <i class='bx bx-plus'></i> <span trn="add-new-staff">Add New Staff</span> </button>
                             </td>
                         </tr>
 

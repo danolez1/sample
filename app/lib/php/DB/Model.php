@@ -102,8 +102,12 @@ abstract class Model
      */
     public function __destruct()
     {
-        if (!is_null($this->dataBase))
-            $this->dataBase->DB()->close();
+        try {
+            if (!is_null($this->dataBase))
+                $this->dataBase->DB()->close();
+        } catch (\Exception $e) {
+            
+        }
     }
 }
 

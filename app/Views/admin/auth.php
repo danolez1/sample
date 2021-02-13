@@ -20,14 +20,14 @@
                                             <div class="mdc-text-field w-100">
                                                 <input class="mdc-text-field__input" type="text" name="username" required id="text-field-hero-input">
                                                 <div class="mdc-line-ripple"></div>
-                                                <label for="text-field-hero-input" class="mdc-floating-label">Username</label>
+                                                <label for="text-field-hero-input" class="mdc-floating-label" trn="username">Username</label>
                                             </div>
                                         </div>
                                         <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
                                             <div class="mdc-text-field w-100">
                                                 <input class="mdc-text-field__input" type="password" name="password" required id="text-field-hero-input">
                                                 <div class="mdc-line-ripple"></div>
-                                                <label for="text-field-hero-input" class="mdc-floating-label">Password</label>
+                                                <label for="text-field-hero-input" class="mdc-floating-label" trn="password">Password</label>
                                             </div>
                                         </div>
                                         <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
@@ -41,14 +41,14 @@
                                                         <div class="mdc-checkbox__mixedmark"></div>
                                                     </div>
                                                 </div>
-                                                <label for="checkbox-1">Remember me</label>
+                                                <label for="checkbox-1" trn="remember-me">Remember me</label>
                                             </div>
                                         </div>
                                         <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop d-flex align-items-center justify-content-end">
-                                            <a href="#">Forgot Password</a>
+                                            <a href="#" trn="forgot-password">Forgot Password</a>
                                         </div>
                                         <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12">
-                                            <button type="submit" name="auth" class="mdc-button mdc-button--raised w-100">
+                                            <button type="submit" name="auth" class="mdc-button mdc-button--raised w-100" trn="login">
                                                 Login
                                             </button>
                                         </div>

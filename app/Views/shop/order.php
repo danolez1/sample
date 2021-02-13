@@ -7,12 +7,12 @@ use danolez\lib\Security\Encoding;
     <div class="m-0 p-0 row col-12 justify-content-center">
         <div class="col-lg-8 col-md-8 col-sm-12">
             <div data-aos="fade-left" class="mb-3" data-aos-easing="ease-in-back">
-                <h3>Order Successful <i class="ri-checkbox-circle-fill pt-2 text-success"></i></h3>
-                <p>Below are the details of your order</p>
+                <h3　trn="order-successful">Order Successful<i class="ri-checkbox-circle-fill pt-2 text-success"></i></h3>
+                <p trn="order-details-below">Below are the details of your order</p>
                 <div class="card mt-5 mb-5">
                     <div class="card-body">
                         <div class="row col-12">
-                            <h3 class="order-title">Order <?php echo $order->getDisplayId(); ?></h3>
+                            <h3 class="order-title"><span trn="order">Order</span>?php echo $order->getDisplayId(); ?></h3>
                             <h5 class="order-sub-title ml-5 mt-1 mb-4">
                                 <?php echo date('M j Y ', intval($order->getTimeCreated())) . date('G:i', intval($order->getTimeCreated())); ?>
                             </h5>
@@ -34,12 +34,12 @@ use danolez\lib\Security\Encoding;
                                                 echo $option->name . ' <strong> x' . $option->amount . '</strong> ・';
                                             } ?>
                                         </span><br>
-                                        <span class="text-muted">Note: "<?php echo $item->additionalNote; ?>" </span>
+                                        <span class="text-muted"><span trn="note">Note</span> "<?php echo $item->additionalNote; ?>" </span>
                                     </div>
                                 </div>
                                 <div class="col-lg-3 col-md-4 col-sm-3 text-center text-sm-left pt-2">
                                     <?php if (($settings->getDisplayRating())) { ?>
-                                        <button type="button" class="btn btn-sm btn-danger" data-id="<?php echo Encoding::encode(json_encode(array($item->productId, $order->getId(), $this->user->getId()))); ?>" data-toggle="modal" data-target="#ratingModal"> Rate Food</button>
+                                        <button type="button" class="btn btn-sm btn-danger" data-id="<?php echo Encoding::encode(json_encode(array($item->productId, $order->getId(), $this->user->getId()))); ?>" data-toggle="modal" data-target="#ratingModal" trn="rate-food">Rate Food</button>
                                     <?php } ?>
                                 </div>
                                 <div class="col-lg-2 col-md-12 col-sm-3 text-right">
@@ -50,7 +50,7 @@ use danolez\lib\Security\Encoding;
                         <hr />
                         <div class="row col-12">
                             <div class="col-6">
-                                <button type="button" data-id="<?php echo $order->getCart(); ?>" class="btn btn-sm btn-outline-info order-again">Order again</button>
+                                <button type="button" data-id="<?php echo $order->getCart(); ?>" class="btn btn-sm btn-outline-info order-again" trn="order-again">Order again</button>
                             </div>
                             <div class="col-6 text-right"><span class="order-title" trn=""> <?php echo $settings->getCurrency() . number_format(intval($item->amount) * intval($item->quantity)); ?></span></div>
                         </div>
@@ -68,7 +68,7 @@ use danolez\lib\Security\Encoding;
                                         <form action="" method="post" role="form" class="php-email-form" style="background-color: #fefefe;">
                                             <div class="row col-12">
                                                 <div class="col-12 text-center">
-                                                    <h4 class="text-danger">Did you enjoy the meal?</h4>
+                                                    <h4 class="text-danger" trn="did-you-enjoy">Did you enjoy the meal?</h4>
                                                 </div>
                                             </div>
                                             <div class="rating">
@@ -172,12 +172,12 @@ use danolez\lib\Security\Encoding;
                                                 </div>
                                             </div>
                                             <div class="col mt-3">
-                                                <input type="text" class="form-control pl-3" autocomplete="off" name="comment" placeholder="Leave a coment">
+                                                <input type="text" class="form-control pl-3" autocomplete="off" name="comment" trn="leave-comment" placeholder="Leave a comment">
                                             </div>
                                         </form>
                                     </div>
                                     <div class="modal-footer justify-content-center">
-                                        <button type="button" class="btn btn-danger" id="rate-order">Rate</button>
+                                        <button type="button" class="btn btn-danger" id="rate-order" trn="rate">Rate</button>
                                     </div>
                                 </div>
                             </div>

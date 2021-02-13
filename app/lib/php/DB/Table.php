@@ -279,8 +279,11 @@ class Table
      */
     public function __destruct()
     {
-        if (!is_null($this->db))
-            if (!is_null($this->db->DB()->connect_error))
-                $this->db->DB()->close();
+        try {
+            if (!is_null($this->db))
+                if (!is_null($this->db->DB()->connect_error))
+                    $this->db->DB()->close();
+        } catch (\Exception $e) {
+        }
     }
 }

@@ -2,55 +2,6 @@
     'use strict'; 
     $(function() {
 
-    //Revenue Chart
-    // if ($("#revenue-chart").length) {
-    //     var revenueChartCanvas = $("#revenue-chart").get(0).getContext("2d");
-
-    //     var revenueChart = new Chart(revenueChartCanvas, {
-    //         type: 'bar',
-    //         data: {
-    //         labels: label,
-    //         datasets: [{
-    //             data: [105, 195, 290, 320, 400, 100, 290],
-    //             backgroundColor: "rgba(255, 86, 48, 0.3)",
-    //             }
-    //         ]
-    //         },
-    //         options: {
-    //         responsive: true,
-    //         maintainAspectRatio: false,
-    //         scales: {
-    //             yAxes: [{
-    //             gridLines: {
-    //                 drawBorder: false,
-    //                 zeroLineColor: "rgba(0, 0, 0, 0.09)",
-    //                 color: "rgba(0, 0, 0, 0.09)"
-    //             },
-    //             ticks: {
-    //                 fontColor: '#bababa',
-    //                 min:0,
-    //                 stepSize: 100,
-    //             }
-    //             }],
-    //             xAxes: [{
-    //             ticks: {
-    //                 fontColor: '#bababa',
-    //                 beginAtZero: true
-    //             },
-    //             gridLines: {
-    //                 display: false,
-    //                 drawBorder: false
-    //             },
-    //             barPercentage: 0.4
-    //             }]
-    //         },
-    //         legend: {
-    //             display: false
-    //         }
-    //         }
-    //     });
-    // }
-
     //Sales Chart
     if ($("#chart-sales").length) {
         var salesChartCanvas = $("#chart-sales").get(0).getContext("2d");
@@ -65,9 +16,9 @@
         var salesChart = new Chart(salesChartCanvas, {
           type: 'line',
           data: {
-            labels: ["2am", "4am", "6am", "8am", "10am", "12am"],
+            labels: weekLabels,
             datasets: [{
-                data: [80, 115, 115, 150, 130, 160],
+                data: weekData,
                 backgroundColor: gradient1,
                 borderColor: [
                   '#08bdde'
@@ -79,7 +30,7 @@
                 fill: 'origin',
               },
               {
-                data: [250, 310, 270, 330, 270, 380],
+                data: weekVisits,
                 backgroundColor: gradient2,
                 borderColor: [
                   '#00b67a'
@@ -140,11 +91,11 @@
               text.push('<div>');
               text.push('<div class="d-flex align-items-center">');
               text.push('<span class="bullet-rounded" style="border-color: ' + chart.data.datasets[1].borderColor[0] +' "></span>');
-              text.push('<p class="tx-12 text-muted mb-0 ml-2">Gross volume</p>');
+              text.push('<p class="tx-12 text-muted mb-0 ml-2" trn="sales">Sales</p>');
               text.push('</div>');
               text.push('<div class="d-flex align-items-center">');
               text.push('<span class="bullet-rounded" style="border-color: ' + chart.data.datasets[0].borderColor[0] +' "></span>');
-              text.push('<p class="tx-12 text-muted mb-0 ml-2">New Cusromers</p>');
+              text.push('<p class="tx-12 text-muted mb-0 ml-2" trn="visits">Visits</p>');
               text.push('</div>');
               text.push('</div>');
               return text.join('');

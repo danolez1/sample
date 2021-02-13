@@ -3,7 +3,7 @@
     <div class="row col-12 mb-3 back-btn">
         <a href="shop">
             <i class="mdi mdi-arrow-left-bold ml-2"></i>
-            <span style="font-size: 14px;" trn="back-home"> Back to Home</span></a>
+            <span style="font-size: 14px;" trn="back-home">Back to Home</span></a>
     </div>
     <div class="row col-12 justify-content-center mt-3">
         <div class="col-lg-4 col-md-6 text-lg-right text-sm-center pt-lg-0 pt-md-2">

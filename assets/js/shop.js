@@ -366,8 +366,17 @@ $(document).ready(function () {
         }
     }
 
+    function pad(num) {
+        num = parseInt(num);
+        if (num < 10) {
+            return "0" + num;
+        } else return num;
+    }
+
     try {
-        setInterval(function () {
+
+        var update = setInterval(function () {
+            var lang = getCookie('lingo');
             var track = $('input[name="track-id"]');
             $.post('post/updateDelivery', {
                 id: track.val(),
@@ -384,10 +393,15 @@ $(document).ready(function () {
                         // var cD = new Date();
                         var id = element.status;
                         //same year getFullYear()
-                        html += '<li class="row justify-content-between"><h5 trn="' + showDeliveryInfo(id).trn + '">' + showDeliveryInfo(id)[0] + '</h5><p class="float-right">' + months[d.getMonth()] + " " + d.getDate() + ", " + d.getDate() + ":" + d.getMinutes() + '</p></li>'
+                        html += '<li class="row justify-content-between"><h5 trn="' + showDeliveryInfo(id).trn + '">' + dictionary[showDeliveryInfo(id).trn][lang] + '</h5><p class="float-right">' + months[d.getMonth()] + " " + d.getDate() + ", " + pad(d.getHours()) + ":" + pad(d.getMinutes()) + '</p></li>'
                     });
 
                     timeline.html(html);
+                    if (track.attr('data-id') < data.status.length)
+                        playSound('assets/audio/beep.mp3');
+                    if (data.status.length == 4)
+                        clearInterval(update);
+                    track.attr('data-id', data.status.length);
                 } catch (e) {
 
                 }
@@ -530,7 +544,7 @@ $(document).ready(function () {
         modal.find('input[name="product-modal-total"]').val(content.price);
         modal.find(('input[name="product-details"]')).val(encode(JSON.stringify(content)));
         try {
-            modal.find('#product-modal-ratings').html(parseInt(content.ratings == "" ? 0 : content.ratings).toFixed(1));
+            modal.find('#product-modal-ratings').html(content.ratings == "" ? 0 : content.ratings);
         } catch (e) {
 
         }

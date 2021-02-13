@@ -27,8 +27,8 @@ if (!is_null($dashboardController_error)) { ?>
 <?php }
 } ?>
 <main class="content-wrapper">
-    <h3>Branches</h3>
-    <p class="mb-4">You can change your staff positions, branch or add new staff here</p>
+    <h3　trn="branches">Branches</h3>
+    <p class="mb-4" trn="branches-instruct">You can change your staff positions, branch or add new staff here</p>
     <input id="selectedBranch" type="hidden" value="<?php echo ($this->admin->getRole() == 1) ? '' : $this->branches[0]->getId() ?>" />
 
     <?php if ($this->admin->getRole() == 1) { ?>
@@ -38,10 +38,10 @@ if (!is_null($dashboardController_error)) { ?>
                     <table class="table table-hoverable dashboard-table">
                         <thead>
                             <tr style="background: #EFF3F3;">
-                                <th>Branch</th>
-                                <th>Location</th>
-                                <th>No of Staffs</th>
-                                <th>Status</th>
+                                <th trn="branch">Branch</th>
+                                <th trn="location">Location</th>
+                                <th trn="no-of-staff">No of Staffs</th>
+                                <th trn="status">Status</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -69,7 +69,7 @@ if (!is_null($dashboardController_error)) { ?>
                                 </tr>
                             <?php } ?>
                             <form method="post" class="php-form" action="">
-                                <tr id="add-branch-form" style="display:<?php echo ($branchInfo) ? 'table-row' : 'none' ?>">
+                                <tr id="add-branch-form" style="display: none">
                                     <td>
                                         <input type="text" class="form-control" required name="name" />
                                     </td>
@@ -87,7 +87,7 @@ if (!is_null($dashboardController_error)) { ?>
                                         </div>
                                     </td>
                                     <td class="pr-3">
-                                        <button type="submit" name="add-branch" class=" btn btn-light text-success font-weight-bold h5">save</button>
+                                        <button type="submit" name="add-branch" class=" btn btn-light text-success font-weight-bold h5" trn="save">save</button>
                                 </tr>
                             </form>
                             <?php if (!is_null($dashboardController_error)) {
@@ -95,7 +95,7 @@ if (!is_null($dashboardController_error)) { ?>
                             } ?>
                             <tr>
                                 <td>
-                                    <button id="add-branch" type="button" class="btn btn-sm btn-outline-danger ml-2"> <i class='bx bx-plus'></i> Add New Branch </button>
+                                    <button id="add-branch" type="button" class="btn btn-sm btn-outline-danger ml-2"> <i class='bx bx-plus'></i> <span trn="add-new-branch">Add New Branch</span> </button>
                                 </td>
                             </tr>
 
@@ -119,7 +119,7 @@ if (!is_null($dashboardController_error)) { ?>
                             <tr>
                                 <div class="pt-3 pl-3 pb-3 m-0 row col-12 d-flex m-0" style="min-width:673px;width: 100% !important;">
                                     <span class="col-6">
-                                        Opening Hours
+                                        <span trn="opening-hours">Opening Hours</span>
                                     </span>
                                     <div class="col-6 text-right">
                                         <button type="submit" id="add-branch" name="save-branch-optime" class="btn btn-sm btn-outline-danger ml-2"> <i class="icofont-save"></i> Save </button>
@@ -128,17 +128,17 @@ if (!is_null($dashboardController_error)) { ?>
                             </tr>
                             <thead>
                                 <tr style="background: #EFF3F3;">
-                                    <th>Days</th>
-                                    <th>Opening</th>
-                                    <th>Break Period</th>
-                                    <th>Closing</th>
+                                    <th trn="days">Days</th>
+                                    <th trn="opening">Opening</th>
+                                    <th trn="break-period">Break Period</th>
+                                    <th trn="closing">Closing</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php for ($i = 0; $i < count(daysOfWeek()); $i++) { ?>
                                     <tr>
                                         <td>
-                                            <?php echo daysOfWeek()[$i]; ?>
+                                            <span trn="<?php echo strtolower(daysOfWeek()[$i]); ?>"> <?php echo daysOfWeek()[$i]; ?></span>
                                         </td>
                                         <td>
                                             <div class="input-group mb-3" style="min-width:170px !important;">
@@ -188,7 +188,7 @@ if (!is_null($dashboardController_error)) { ?>
                     <input name="branch-id" type="hidden" value="<?php echo ($this->admin->getRole() == 1) ? '' : $this->branches[0]->getId() ?>" />
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title mb-3">Branch Information</h5>
+                            <h5 class="card-title mb-3" trn="branch-info">Branch Information</h5>
                             <div class="mdc-layout-grid__cell stretch-card mb-3 mdc-layout-grid__cell--span-6-desktop">
                                 <div class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
                                     <i class="material-icons mdc-text-field__icon icofont-yen yen"></i>
@@ -196,7 +196,7 @@ if (!is_null($dashboardController_error)) { ?>
                                     <div class="mdc-notched-outline">
                                         <div class="mdc-notched-outline__leading"></div>
                                         <div class="mdc-notched-outline__notch">
-                                            <label for="text-field-hero-input" class="mdc-floating-label">Minimum Order</label>
+                                            <label for="text-field-hero-input" class="mdc-floating-label" trn="min-order">Minimum Order</label>
                                         </div>
                                         <div class="mdc-notched-outline__trailing"></div>
                                     </div>
@@ -209,7 +209,7 @@ if (!is_null($dashboardController_error)) { ?>
                                     <div class="mdc-notched-outline">
                                         <div class="mdc-notched-outline__leading"></div>
                                         <div class="mdc-notched-outline__notch">
-                                            <label for="text-field-hero-input" class="mdc-floating-label">Shipping Fee</label>
+                                            <label for="text-field-hero-input" class="mdc-floating-label" trn="shipping-fee">Shipping Fee</label>
                                         </div>
                                         <div class="mdc-notched-outline__trailing"></div>
                                     </div>
@@ -222,7 +222,7 @@ if (!is_null($dashboardController_error)) { ?>
                                     <div class="mdc-notched-outline">
                                         <div class="mdc-notched-outline__leading"></div>
                                         <div class="mdc-notched-outline__notch">
-                                            <label for="text-field-hero-input" class="mdc-floating-label">Delivery Time</label>
+                                            <label for="text-field-hero-input" class="mdc-floating-label" trn="delivery-time">Delivery Time</label>
                                         </div>
                                         <div class="mdc-notched-outline__trailing"></div>
                                     </div>
@@ -235,7 +235,7 @@ if (!is_null($dashboardController_error)) { ?>
                                     <div class="mdc-notched-outline">
                                         <div class="mdc-notched-outline__leading"></div>
                                         <div class="mdc-notched-outline__notch">
-                                            <label for="text-field-hero-input" class="mdc-floating-label">Time Range</label>
+                                            <label for="text-field-hero-input" class="mdc-floating-label" trn="time-range">Time Range</label>
                                         </div>
                                         <div class="mdc-notched-outline__trailing"></div>
                                     </div>
@@ -248,7 +248,7 @@ if (!is_null($dashboardController_error)) { ?>
                                     <div class="mdc-notched-outline">
                                         <div class="mdc-notched-outline__leading"></div>
                                         <div class="mdc-notched-outline__notch">
-                                            <label for="text-field-hero-input" class="mdc-floating-label">Store Address</label>
+                                            <label for="text-field-hero-input" class="mdc-floating-label" trn="store-address">Store Address</label>
                                         </div>
                                         <div class="mdc-notched-outline__trailing"></div>
                                     </div>
@@ -261,7 +261,7 @@ if (!is_null($dashboardController_error)) { ?>
                                     <div class="mdc-notched-outline">
                                         <div class="mdc-notched-outline__leading"></div>
                                         <div class="mdc-notched-outline__notch">
-                                            <label for="text-field-hero-input" class="mdc-floating-label">Delivery Distance</label>
+                                            <label for="text-field-hero-input" class="mdc-floating-label" trn="delivery-distance">Delivery Distance</label>
                                         </div>
                                         <div class="mdc-notched-outline__trailing"></div>
                                     </div>
@@ -273,7 +273,7 @@ if (!is_null($dashboardController_error)) { ?>
                                     <div class="mdc-notched-outline">
                                         <div class="mdc-notched-outline__leading"></div>
                                         <div class="mdc-notched-outline__notch">
-                                            <label for="text-field-hero-input" class="mdc-floating-label">Delivery Area</label>
+                                            <label for="text-field-hero-input" class="mdc-floating-label" trn="delivery-area">Delivery Area</label>
                                         </div>
                                         <div class="mdc-notched-outline__trailing"></div>
                                     </div>
@@ -281,22 +281,22 @@ if (!is_null($dashboardController_error)) { ?>
                             </div>
                         </div>
                     </div>
-                    <?php if($this->admin->getRole() == 2){ ?>
-                    <div class="card-footer p-2 save-changes">
-                        <button type="submit" name="branch-details" class="btn btn-danger btn-sm tx-14">Save changes</button>
-                    </div>
-                    <?php }?>
+                    <?php if ($this->admin->getRole() == 2) { ?>
+                        <div class="card-footer p-2 save-changes">
+                            <button type="submit" name="branch-details" class="btn btn-danger btn-sm tx-14" trn="save-changes">Save changes</button>
+                        </div>
+                    <?php } ?>
                 </form>
             </div>
 
             <div class="col-lg-6 col-md-12 col-sm-12 col-12 m-0 pl-2 p-0">
                 <?php
-
-                $printers = new PrintNodeApi($this->branches[0]->getPrintNodeApi());
+                $printers = [];
                 try {
+                    $printers = new PrintNodeApi($this->branches[0]->getPrintNodeApi());
                     $printers = $printers->getPrinters();
                 } catch (Exception $e) {
-                    $printer = array();
+                    $printers = array();
                 }
                 // var_dump((array_values($printers))) 
                 ?>
@@ -306,7 +306,7 @@ if (!is_null($dashboardController_error)) { ?>
                         <div class="mdc-layout-grid__inner">
                             <div class="mdc-layout-grid__cell--span-12">
                                 <div class="mdc-card">
-                                    <h6 class="card-title">Printer Information</h6>
+                                    <h6 class="card-title" trn="printer-info">Printer Information</h6>
                                     <div class="template-demo">
                                         <div class="mdc-layout-grid__inner">
                                             <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
@@ -329,7 +329,7 @@ if (!is_null($dashboardController_error)) { ?>
                                                     <div class="mdc-select__selected-text"></div>
                                                     <div class="mdc-select__menu mdc-menu-surface demo-width-class">
                                                         <ul class="mdc-list" style="width: 15em;">
-                                                            <?php foreach ($printers as $printer) {
+                                                            <?php foreach ($printers??[] as $printer) {
                                                                 if ($printer->getId() == $this->settings->getDefaultPrinter()) { ?>
                                                                     <li class="mdc-list-item mdc-list-item--selected" data-value="<?php echo $printer->getId(); ?>" aria-selected="true">
                                                                         <?php echo $printer->getName(); ?> </li>
@@ -341,7 +341,7 @@ if (!is_null($dashboardController_error)) { ?>
                                                             } ?>
                                                         </ul>
                                                     </div>
-                                                    <span class="mdc-floating-label">Printers</span>
+                                                    <span class="mdc-floating-label" trn="printers">Printers</span>
                                                     <div class="mdc-line-ripple"></div>
                                                 </div>
                                             </div>
@@ -359,7 +359,7 @@ if (!is_null($dashboardController_error)) { ?>
                                                             </li>
                                                         </ul>
                                                     </div>
-                                                    <span class="mdc-floating-label">Print Language</span>
+                                                    <span class="mdc-floating-label" trn="print-lang">Print Language</span>
                                                     <div class="mdc-line-ripple"></div>
                                                 </div>
                                             </div>
@@ -369,12 +369,12 @@ if (!is_null($dashboardController_error)) { ?>
                             </div>
                         </div>
                     </div>
-                    <?php if($this->admin->getRole() == 2){ ?>
-                    <div class="card-footer p-2 save-changes">
-                        <button type="submit" name="branch-printer-info" class="btn btn-danger btn-sm tx-14">Save changes</button>
-                        <!-- <button class="btn btn-danger btn-sm tx-14 float-right">Test Print</button> -->
-                    </div>
-                    <?php }?>
+                    <?php if ($this->admin->getRole() == 2) { ?>
+                        <div class="card-footer p-2 save-changes">
+                            <button type="submit" name="branch-printer-info" class="btn btn-danger btn-sm tx-14" trn="save-changes">Save changes</button>
+                            <!-- <button class="btn btn-danger btn-sm tx-14 float-right">Test Print</button> -->
+                        </div>
+                    <?php } ?>
                 </form>
             </div>
 

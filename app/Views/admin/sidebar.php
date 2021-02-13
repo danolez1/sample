@@ -12,7 +12,7 @@
                     <div class="mdc-list-item mdc-drawer-item">
                         <a class="mdc-drawer-link" href="dashboard">
                             <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon mdi mdi-view-dashboard" aria-hidden="true"></i>
-                            Dashboard
+                            <span trn="dashboard">Dashboard</span>
                         </a>
                     </div>
                 <?php } ?>
@@ -20,7 +20,7 @@
                     <a class="mdc-drawer-link" href="orders">
                         <!-- <a class="mdc-expansion-panel-link" href="branches" data-toggle="expansionPanel" data-target="ui-sub-menu"> -->
                         <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon bx bxs-dish" aria-hidden="true"></i>
-                        Orders
+                        <span trn="orders"> Orders</span>
                         <i class="mdc-drawer-arrow material-icons" style="visibility: hidden;">chevron_right</i>
                         <span class="badge badge-info"><?php echo $pendingOrder; ?></span>
                     </a>
@@ -43,26 +43,26 @@
                     <div class="mdc-list-item mdc-drawer-item">
                         <a class="mdc-drawer-link" href="products">
                             <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon icofont-fast-food" aria-hidden="true"></i>
-                            Products
+                            <span trn="products">Products</span>
                         </a>
                     </div>
 
                     <div class="mdc-list-item mdc-drawer-item">
                         <a class="mdc-drawer-link" href="<?php echo  intval($this->admin->getRole()) == 1 ? 'branches' : 'branch-setting'; ?>">
                             <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon mdi mdi-source-branch" aria-hidden="true"></i>
-                            <?php echo  intval($this->admin->getRole()) == 1 ? 'Branches' : 'Settings'; ?>
+                            <?php echo  intval($this->admin->getRole()) == 1 ? '<span trn="branches">Branches</span>' : '<span trn="settings">Settings</span>'; ?>
                         </a>
                     </div>
                     <div class="mdc-list-item mdc-drawer-item">
                         <a class="mdc-drawer-link" href="staffs">
                             <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon icofont-people" aria-hidden="true"></i>
-                            Staffs
+                            <span trn="staffs">Staffs</span>
                         </a>
                     </div>
                     <div class="mdc-list-item mdc-drawer-item">
                         <a class="mdc-drawer-link" href="users">
                             <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon icofont-users" aria-hidden="true"></i>
-                            Customers
+                            <span trn="customers"> Customers</span>
                         </a>
                     </div>
                 <?php }
@@ -70,14 +70,14 @@
                     <div class="mdc-list-item mdc-drawer-item">
                         <a class="mdc-drawer-link" href="promotions">
                             <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon icofont-gift" aria-hidden="true"></i>
-                            Promotions
+                            <span trn="promotions">Promotions</span>
                         </a>
                     </div>
 
                     <div class="mdc-list-item mdc-drawer-item">
                         <a class="mdc-drawer-link" href="settings">
                             <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon icofont-settings" aria-hidden="true"></i>
-                            Settings
+                            <span trn="settings">Settings</span>
                         </a>
                     </div>
                 <?php } ?>
@@ -98,10 +98,10 @@
                     <p class="mt-0 mb-0 ml-2 tx-10" trn="<?php echo $this->admin->getRoleName()[0]["trn"]; ?>"><?php echo $this->admin->getRoleName()[0][0]; ?></p>
                 </div>
             </div>
-            <p class="tx-10 mt-3 mb-1">Branch: <br>Info: </p>
+            <p class="tx-10 mt-3 mb-1"><span trn="branch">Branch</span>: <br><span trn="info">Info</span> : </p>
             <div class="text-center mt-2">
                 <a href="admin-logout">
-                    <span class="mdc-button mdc-button--raised mdc-button--white p-1 col-6">Logout</span>
+                    <span class="mdc-button mdc-button--raised mdc-button--white p-1 col-6" trn="logout">Logout</span>
                 </a>
             </div>
         </div>

@@ -1,6 +1,6 @@
 <?php
 
-namespace Demae\Controller\ShopController;
+namespace Demae\Controller;
 
 use Colors;
 use CommerceController;
@@ -10,7 +10,7 @@ use danolez\lib\Res\Orientation;
 use danolez\lib\Res\Server;
 use danolez\lib\Res\Session;
 use danolez\lib\Security\Encoding;
-use danolez\lib\Security\KeyFactory\KeyFactory;
+use danolez\lib\Security\KeyFactory;
 use Demae\Auth\Models\Contact\Contact;
 use Demae\Auth\Models\Shop\Address;
 use Demae\Auth\Models\Shop\Branch;
@@ -78,6 +78,7 @@ class HomeController extends Controller
                 header('location:' . 'profile');
             }
         } else {
+            // $this->user = new User();
             if ($pages[0] == "profile") {
                 header('location:' . 'auth');
             }
@@ -174,13 +175,16 @@ class HomeController extends Controller
                         }
                         $this->cart = $carts;
                     } else {
-                        $cart = new CartItem();
-                        $cart->setProductId($this->orderData->pId);
-                        $cart->setProductOptions($this->orderData->options);
-                        $cart->setAmount($this->orderData->total);
-                        $cart->setAdditionalNote($this->orderData->note);
-                        $cart = array($cart->verifyItem());
-                        $this->cart = $cart;
+                        try {
+                            $cart = new CartItem();
+                            $cart->setProductId($this->orderData->pId);
+                            $cart->setProductOptions($this->orderData->options);
+                            $cart->setAmount($this->orderData->total);
+                            $cart->setAdditionalNote($this->orderData->note);
+                            $cart = array($cart->verifyItem());
+                            $this->cart = $cart;
+                        } catch (\Exception $e) {
+                        }
                     }
                 }
                 $this->getTracking();
@@ -309,12 +313,18 @@ class HomeController extends Controller
         $commerceController->setSession($this->session);
         $commerceController = $commerceController->manage();
 
+        $commerceController_error  = null;
+        $commerceController_result = null;
+        $showCommerceController_result = false;
         if ($commerceController != null) {
             $showCommerceController_result = true;
             $commerceController_error = (json_decode($commerceController)->{Model::ERROR});
             $commerceController_result = isset(json_decode($commerceController)->{Model::RESULT});
         }
 
+        $userController_result = null;
+        $userController_error = null;
+        $showUserController_result = false;
         if ($userController != null) {
             $showUserController_result = true;
             $userController_error = (json_decode($userController)->{Model::ERROR});

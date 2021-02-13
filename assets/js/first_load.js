@@ -29,6 +29,29 @@ String.prototype.stripSlashes = function () {
     return this.replace(/\\(.)/mg, "$1");
 }
 
+function playSound(url) {
+    var btn = document.createElement('button');
+    btn.style.display = "none";
+    var audio = document.createElement('audio');
+    audio.style.display = "none";
+    audio.src = url;
+    audio.autoplay = true;
+    audio.loop = false;
+    audio.preload = true;
+    audio.onended = function () {
+        audio.remove() //Remove when played.
+    };
+    document.body.appendChild(audio);
+    btn.addEventListener('click', function () {
+        audio.play;
+        audio.pause;
+        audio.play;
+    });
+    document.body.appendChild(btn);
+    btn.click();
+
+}
+
 function spinner(id) {
     return new jQuerySpinner({
         parentId: id

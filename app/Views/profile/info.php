@@ -37,18 +37,18 @@
                     <h3 class="col-form-label mt-3 mb-2" trn="personal-info">Personal information</h3>
                     <div class="form-row">
                         <div class="col">
-                            <input type="text" name="fname" value="<?php echo count(explode(' ', $this->user->getName()) > 1) ? explode(' ', $this->user->getName())[0] : $this->user->getName(); ?>" class="form-control" trn="first-name" placeholder="First name">
+                            <input type="text" name="fname" trn="fname" value="<?php echo count(explode(' ', $this->user->getName()) ?? []) > 1 ? explode(' ', $this->user->getName())[0] : $this->user->getName(); ?>" class="form-control" trn="first-name" placeholder="First name">
                         </div>
                         <div class="col">
-                            <input type="text" name="lname" value="<?php echo count(explode(' ', $this->user->getName()) > 1) ? explode(' ', $this->user->getName())[1] : ''; ?>" class="form-control" trn="last-name" placeholder="Last name">
+                            <input type="text" name="lname" trn="lname" value="<?php echo count(explode(' ', $this->user->getName() ?? []) ?? []) > 1 ? explode(' ', $this->user->getName())[1] : ''; ?>" class="form-control" trn="last-name" placeholder="Last name">
                         </div>
                     </div>
                     <div class="form-row mt-4">
                         <div class="col">
-                            <input type="text" name="phone" value="<?php echo $this->user->getPhoneNumber(); ?>" class="form-control" trn="phone" placeholder="Phone Number">
+                            <input type="text" name="phone" trn="phone-number" value="<?php echo $this->user->getPhoneNumber(); ?>" class="form-control" trn="phone" placeholder="Phone Number">
                         </div>
                         <div class="col">
-                            <input type="text" name="email" value="<?php echo $this->user->getEmail(); ?>" class="form-control" trn="email" placeholder="Email">
+                            <input type="text" name="email" trn="email" value="<?php echo $this->user->getEmail(); ?>" class="form-control" trn="email" placeholder="Email">
                         </div>
                     </div>
                     <h3 class="col-form-label mt-5 mb-1" trn="address">Address</h3>

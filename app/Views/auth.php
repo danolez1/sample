@@ -153,7 +153,7 @@
                                 <div class="alert alert-danger text-center col-lg-6 col-md-6 col-sm-12 p-1" role="alert">
                                     <strong style="font-size:12px;" trn="<?php echo $userController_error->{"trn"} ?>"><?php echo $userController_error->{0}; ?></strong>
                                 </div>
-                            <?php } else if ($registration_result) { ?>
+                            <?php } else if ($userController_result) { ?>
                                 <div class="alert alert-success text-center col-lg-6 col-md-6 col-sm-12" role="alert">
                                     <strong style="font-size:12px;" trn="reg-successful">Registration Successful</strong>
                                 </div>

@@ -11,7 +11,7 @@ use danolez\lib\Security\Encoding;
 use danolez\lib\Security\Encryption;
 use Demae\Auth\Models\Error;
 use Demae\Auth\Models\Shop\Setting;
-use Demae\Controller\ShopController\HomeController;
+use Demae\Controller\HomeController;
 use ReflectionClass;
 use ReflectionProperty;
 use UserColumn;

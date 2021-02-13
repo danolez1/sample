@@ -161,6 +161,19 @@ class Product extends Model
 
     public function get($id = null)
     {
+        $orders = new Order();
+        $orders = $orders->get();
+        $obj = [];
+        foreach ($orders as $order) {
+            $cart = fromDbJson($order->getCart());
+            foreach ($cart as $item) {
+                if (isset($obj[$item->productId]))
+                    $obj[$item->productId] =  intval($obj[$item->productId]) + 1;
+                else
+                    $obj[$item->productId] = 1;
+            }
+        }
+
         if ($id != null) {
             $query = (array) $this->table->get(
                 null,
@@ -168,22 +181,49 @@ class Product extends Model
                 array(
                     ProductColumn::ID => $id,
                 )
-            )[0];
-            return $this->setData($query);
-        } else {
-            $products = [];
-            $query = (array) $this->table->get();
-            foreach ($query as $product) {
-                $product = $this->setData($product);
+            );
+            $query = !empty($query) ? $query[0] : null;
+            $product = $this->setData($query);
+            if (!is_null($query)) {
+                if (isset($obj[$product->getId()])) {
+                    $product->setOrderCount($obj[$product->getId()]);
+                }
                 $ratings = new Ratings();
                 $ratings->setProductId($product->getId());
                 $ratings  = $ratings->get($product->getId());
+
                 $rate = 0;
-                foreach ($ratings as $key => $rating) {
-                    $rate = $rate + intval($rating->getRating());
+                $count = 0;
+                foreach ($ratings as  $rating) {
+                    if ($rating->getProductId() == $product->getId()) {
+                        $rate = $rate + intval($rating->getRating());
+                        $count++;
+                    }
                 }
-                if (count($ratings) > 0)
-                    $product->setRatings($rate / count($ratings));
+                if ($count > 0)
+                    $product->setRatings($rate / $count);
+            }
+            return $product;
+        } else {
+            $products = [];
+            $query = (array) $this->table->get();
+            $ratings = new Ratings();
+            $ratings  = $ratings->get();
+            foreach ($query as $product) {
+                $product = $this->setData($product);
+                if (isset($obj[$product->getId()])) {
+                    $product->setOrderCount($obj[$product->getId()]);
+                }
+                $rate = 0;
+                $count = 0;
+                foreach ($ratings as  $rating) {
+                    if ($rating->getProductId() == $product->getId()) {
+                        $rate = $rate + intval($rating->getRating());
+                        $count++;
+                    }
+                }
+                if ($count > 0)
+                    $product->setRatings($rate / $count);
                 $products[] = $product;
             }
             return $products;
@@ -192,8 +232,8 @@ class Product extends Model
 
     public function getStatusInfo()
     {
-        $available = array('Available', 'color' => '#28A745', 'data' => ProductColumn::AVAILABLE, 'trn' => 'product-available');
-        $unavailable = array('Unavailable', 'color' => '#EFF3F3', 'data' => ProductColumn::UNAVAILABLE, 'trn' => 'product-unavailable');
+        $available = array('Available', 'color' => '#28A745', 'data' => ProductColumn::AVAILABLE, 'trn' => 'available');
+        $unavailable = array('Unavailable', 'color' => '#EFF3F3', 'data' => ProductColumn::UNAVAILABLE, 'trn' => 'unavailable');
 
         switch ($this->availability) {
             case ProductColumn::AVAILABLE:

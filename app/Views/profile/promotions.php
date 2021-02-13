@@ -2,9 +2,9 @@
  <div id="#promotions" style="display:none">
 
      <div class="row col-lg-8 col-sm-12">
-         <?php if (count($promotions) < 1) { ?>
+         <?php if (count($promotions ?? []) < 1) { ?>
              <div class="alert alert-danger" role="alert">
-                 <h4 class="alert-heading"><span trn="">No Promotion at the moment </span></h4>
+                 <h4 class="alert-heading"><span trn="no-promotion">No Promotion at the moment</span></h4>
              </div>
              <?php } else {
                 for ($i = 0; $i < count($promotions); $i++) { ?>

@@ -118,6 +118,7 @@
 <script src="assets/js/date-picker.js"></script>
 <script src="assets/js/jquery.timepicker.min.js"></script>
 <script src="assets/js/jquery.card.js"></script>
+<script src="assets/js/howler.js"></script>
 <script src="assets/js/shop.js?<?php echo time(); ?>"></script>
 <script src="assets/js/404.js"></script>
 <script src="assets/js/translator.js"></script>

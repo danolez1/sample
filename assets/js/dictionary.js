@@ -43,13 +43,13 @@ var dictionary = {
         jp: "ログイン"
     }, "opening-hours": {
         en: "Opening Hours",
-        jp: ""
+        jp: "営業時間"
     }, "delivery-areas": {
         en: "Delivery Areas",
-        jp: ""
+        jp: "配達エリア"
     }, "order-conditions": {
         en: "Order conditions",
-        jp: ""
+        jp: "注文条件"
     }, "free-shipping": {
         en: " above free shipping",
         jp: "以上無料"
@@ -165,10 +165,10 @@ var dictionary = {
         en: "Registration Successful",
         jp: "登録に成功"
     }, "google-login": {
-        en: "",
+        en: "Login with google",
         jp: "Googleでサインイン"
     }, "facebook-login": {
-        en: "",
+        en: "Login with facebook",
         jp: "Facebookでサインイン"
     }, "wrong-details": {
         en: "Incorrect email or password",
@@ -238,7 +238,7 @@ var dictionary = {
         jp: "成功"
     }, "cart-added": {
         en: "Product added to cart",
-        jp: "  カートに商品が追加されました"
+        jp: "カートに商品が追加されました"
     }, "error-occured": {
         en: "Error Occured",
         jp: "エラーが発生しました"
@@ -265,7 +265,7 @@ var dictionary = {
         jp: "配達時間が無効"
     }, "invalid-credit-card-name": {
         en: "Input card name",
-        jp: " カード名を入力してください"
+        jp: "カード名を入力してください"
     }, "unsucessful-payment": {
         en: "Payment was unsuccessful",
         jp: "支払いに失敗しました"
@@ -323,6 +323,168 @@ var dictionary = {
     }, "order-sent": {
         en: "Your order has been sent",
         jp: "ご注文は送信されました"
+    }, "note": {
+        en: "Note",
+        jp: "注意"
+    }, "tax": {
+        en: "Tax",
+        jp: "税金"
+    }, "checkout": {
+        en: "Check Out",
+        jp: "チェックアウト"
+    }, "delivery-type": {
+        en: "Delivery Type",
+        jp: "配信方法"
+    }, "choose-home-takeout": {
+        en: "Choose between home delivery and take out",
+        jp: "宅配とテイクアウトのどちらかをお選びください"
+    }, "home-or-office": {
+        en: "Home or office delivery",
+        jp: "宅配またはオフィス配達"
+    }, "fill-in-address": {
+        en: "Fill in delivery address",
+        jp: "配送先住所を入力してください"
+    }, "reservation": {
+        en: "Reservation",
+        jp: "予約"
+    }, "date": {
+        en: "Date",
+        jp: "日付"
+    }, "time": {
+        en: "Time",
+        jp: "時間"
+    }, "takeout": {
+        en: "Takeout",
+        jp: "テイクアウト"
+    }, "enter-info": {
+        en: "Enter in your information",
+        jp: "お客様の情報を入力してください"
+    }, "schedule-pickup": {
+        en: "Schedule a convenient time for pickup",
+        jp: "集荷に都合の良い時間をスケジュールしてください。"
+    }, "address-location": {
+        en: "Address Location",
+        jp: "住所の場所"
+    }, "ordered-branch": {
+        en: "Here is the locations of the branch you ordered from",
+        jp: "注文した支店の場所は次のとおりです"
+    }, "pickup-address": {
+        en: "Pickup Address",
+        jp: "ピックアップの住所"
+    }, "use-different-info": {
+        en: "Use Different Information",
+        jp: "異なる情報を使用する"
+    }, "amount": {
+        en: "Amount",
+        jp: "金額"
+    }, "payment-details": {
+        en: "Payment details",
+        jp: "支払詳細"
+    }, "pay-with-cash": {
+        en: "Pay with cash",
+        jp: "現金で支払う"
+    }, "pay-on-delivery": {
+        en: "You will be paying on delivery",
+        jp: "お客様は配達で支払います"
+    }, "pay-with-card": {
+        en: "Pay with credit card",
+        jp: "クレジットカードで支払う"
+    }, "use-different-card": {
+        en: "Use Different Card",
+        jp: "別のカードを使用する"
+    }, "place-order": {
+        en: "Place Order",
+        jp: "注文する"
+    }, "to-save-info": {
+        en: "to save Address & billing information",
+        jp: "住所と請求情報を保存するには"
+    }, "order-successful": {
+        en: "Order Successful",
+        jp: "注文成功"
+    }, "order-details-below": {
+        en: "Below are the details of your order",
+        jp: "以下はご注文の詳細です"
+    }, "order": {
+        en: "Order",
+        jp: "注文"
+    }, "rate-food": {
+        en: "Rate Food",
+        jp: "食べ物を評価する"
+    }, "order-again": {
+        en: "Order again",
+        jp: "もう一度注文する"
+    }, "did-you-enjoy": {
+        en: "Did you enjoy the meal?",
+        jp: "食事は楽しかったですか？"
+    }, "leave-comment": {
+        en: "Leave a comment",
+        jp: "コメントを追加"
+    }, "rate": {
+        en: "Rate",
+        jp: "割合"
+    }, "options": {
+        en: "Options",
+        jp: "オプション"
+    }, "additional-note": {
+        en: "Additional Notes",
+        jp: "その他の注意事項"
+    }, "total": {
+        en: "Total",
+        jp: "合計"
+    }, "order-now": {
+        en: "Order now",
+        jp: "今すぐ注文"
+    }, "search": {
+        en: "Search...",
+        jp: "探す..."
+    }, "select-branch": {
+        en: "Select Branch",
+        jp: "ブランチを選択"
+    }, "track-delivery": {
+        en: "Track Delivery",
+        jp: "配達の追跡"
+    }, "no-favorites": {
+        en: "You do not have any favourites yet",
+        jp: "まだお気に入りはありません"
+    }, "add-favorite-instruct": {
+        en: 'You can add your favorite menu by clicking on the <i class="ri-heart-line"></i> icon at the top right corner of the food card',
+        jp: 'フードカードの右上にある<i class="ri-heart-line"></i>アイコンをクリックすると、お気に入りのメニューを追加できます'
+    }, "no-history": {
+        en: "You have no order history",
+        jp: "注文履歴がありません"
+    }, "add-history-instruct": {
+        en: "You can make an order from the home page",
+        jp: "ホームページからご注文いただけます"
+    }, "save-payment": {
+        en: "Save your payment information for faster future transactions.",
+        jp: "より速い将来の取引のためにあなたの支払い情報を保存してください。"
+    }, "save": {
+        en: "Save",
+        jp: "セーブ"
+    }, "no-promotion": {
+        en: "No Promotion at the moment",
+        jp: "現在、プロモーションはありません"
+    }, "fname": {
+        en: "First name",
+        jp: "名前"
+    }, "lname": {
+        en: "Last name",
+        jp: "苗字"
+    }, "phone-nuumber": {
+        en: "Phone Number",
+        jp: "電話番号"
+    }, "branch-selected": {
+        en: "Branch selected",
+        jp: "選択したブランチ"
+    }, "extra-note": {
+        en: "Add a note (e.g extra pepper, salty etc.)",
+        jp: "メモを追加します（例：余分なコショウ、塩辛いなど）"
+    }, "": {
+        en: "",
+        jp: ""
+    }, "": {
+        en: "",
+        jp: ""
     }, "": {
         en: "",
         jp: ""

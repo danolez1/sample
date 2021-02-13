@@ -1,7 +1,7 @@
  <!-- PAYMENT -->
  <div id="#payment" style="display:none">
      <div class="row col-12 mb-3">
-         <h5 class="col-lg-8 col-sm-12 text-left">Save your payment information for faster future transactions.</h5>
+         <h5 class="col-lg-8 col-sm-12 text-left" trn="save-payment">Save your payment information for faster future transactions.</h5>
      </div>
      <div class="row col-12">
          <?php for ($i = 0; $i < count($this->payment); $i++) {
@@ -58,7 +58,7 @@
                      <div class="row col-12 mt-2 mb-5">
                          <div class="col-4"></div>
                          <div class="col-sm-4 col-8 text-sm-center justify-content-center text-lg-left mt-5 mb-5" style="margin-left: -10px;">
-                             <button type="submit" name="save-card" class="btn btn-demae-success col-12">Save</button>
+                             <button type="submit" name="save-card" class="btn btn-demae-success col-12" trn="save">Save</button>
                          </div>
                          <div class="col-lg-4 col-md-0  col-0"></div>
                      </div>

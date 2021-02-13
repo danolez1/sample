@@ -56,9 +56,9 @@ class Ratings extends Model
     public function get($productId = null, $orderId = null, $userId = null)
     {
         $ratings = [];
-        if ($productId == null)
-            $query = (array) $this->table->get();
-        else {
+        if ($productId == null) {
+            $query = (array) $this->table->get() ?? [];
+        } else {
             if ($orderId == null && $userId == null) {
                 $query = (array) $this->table->get(
                     null,
@@ -76,7 +76,7 @@ class Ratings extends Model
         }
         foreach ($query as $rating) {
             $rating = $this->setData($rating);
-            if ($rating->getOrderId() == $orderId && $rating->getProductId() == $productId && $rating->getUserId() == $userId)
+            // if ($rating->getOrderId() == $orderId && $rating->getProductId() == $productId && $rating->getUserId() == $userId)
                 $ratings[] = $rating;
         }
         return $ratings;

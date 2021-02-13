@@ -6,11 +6,11 @@ use Demae\Auth\Models\Shop\Product;
 <main class="content-wrapper" id="products-main">
     <div class="row col-12">
         <div class="col-lg-8 col-md-8 col-sm-6">
-            <h3>Products</h3>
-            <p class="mb-4">You can create, edit, delete and change availability status of your products here</p>
+            <h3 trn="products">Products</h3>
+            <p class="mb-4" trn="products-instruct">You can create, edit, delete and change availability status of your products here</p>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-6 text-center pt-lg-3 pt-sm-3 pt-0">
-            <a href="add-product"> <button id="add-staff" type="button" class="btn btn-danger ml-2 h6"> <i class='bx bx-plus'></i> Create New Product </button></a>
+            <a href="add-product"> <button id="add-staff" type="button" class="btn btn-danger ml-2 h6"> <i class='bx bx-plus'></i> <span trn="create-new-product">Create New Product</span> </button></a>
         </div>
     </div>
 
@@ -23,19 +23,19 @@ use Demae\Auth\Models\Shop\Product;
                     <div class="mdc-notched-outline">
                         <div class="mdc-notched-outline__leading"></div>
                         <div class="mdc-notched-outline__notch">
-                            <label for="text-field-hero-input" class="mdc-floating-label">Search..</label>
+                            <label for="text-field-hero-input" trn="search" class="mdc-floating-label">Search..</label>
                         </div>
                         <div class="mdc-notched-outline__trailing"></div>
                     </div>
                 </div>
             </div>
             <div class="col-6 text-right">
-                <span>Sort by :</span>
+                <span trn="sort-by">Sort by</span>:
                 <button class="btn btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Category</button>
                 <div class="dropdown-menu">
-                    <a class="dropdown-item" href="#">Branch</a>
-                    <a class="dropdown-item" href="#">Price</a>
-                    <a class="dropdown-item" href="#">Date Created</a>
+                    <a class="dropdown-item" href="#" trn="branch">Branch</a>
+                    <a class="dropdown-item" href="#" trn="price">Price</a>
+                    <a class="dropdown-item" href="#" trn="date-cleared">Date Created</a>
                 </div>
             </div>
         </div>
@@ -50,7 +50,7 @@ use Demae\Auth\Models\Shop\Product;
                         // $product->setAvailability(0);
                         // $product->setRatings(3.0);
                         $branches = fromDbJson($product->getBranchId());
-                        if (in_array($this->admin->getBranchId(), $branches) || $this->admin->getRole() == 1)
+                        if (in_array($this->admin->getBranchId(), $branches ?? []) || $this->admin->getRole() == 1)
                             include 'app/Views/admin/pages/product-grid.php';
                     }
                     ?>

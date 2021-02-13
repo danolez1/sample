@@ -3,21 +3,21 @@
     <div class="modal-dialog">
         <div class="modal-content p-1">
             <div class="modal-header p-1">
-                <h5 class="modal-title position-absolute" trn="" id="staticBackdropLabel">Add New Category</h5>
+                <h5 class="modal-title position-absolute" trn="add-category" id="staticBackdropLabel">Add New Category</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="alert alert-danger mb-3 text-center" id="error-alert-add" style="display:none" role="alert">
-                    <strong> Enter category name</strong>
+                    <strong trn="enter-category-name">Enter category name</strong>
                 </div>
                 <div class="mb-3">
-                    <label for="category-name" class="col-form-label">Category Name:</label>
+                    <label for="category-name" class="col-form-label" trn="category-name">Category Name</label>:
                     <input type="text" class="form-control" id="category-name">
                 </div>
                 <div class="mb-3">
-                    <label for="category-description" class="col-form-label">Short Description:</label>
+                    <label for="category-description" class="col-form-label" trn="short-description">Short Description</label>:
                     <textarea class="form-control" id="category-description"></textarea>
                 </div>
             </div>

@@ -36,7 +36,7 @@ use Demae\Auth\Models\Shop\Setting; ?>
             <h6 class="pl-3 pt-2 pb-2"><?php echo  stripslashes(unicode2html($item->productDetails)); ?> </h6>
             <div class="row col-12">
                 <div class="col-lg-2 col-md-6 col-sm-6 h5 font-weight-bold d-lg-block d-none">
-                    <?php asort($categories, SORT_STRING);
+                    <?php //asort($categories, SORT_STRING);
                     foreach ($categories as $key => $category) {
                         $category =  (object)$category; ?>
                         <div style="margin-bottom: <?php echo count($category->children) + 1; ?>em;"><?php echo unicode2html($category->name) . "&nbsp;"; ?></div>
@@ -77,7 +77,7 @@ use Demae\Auth\Models\Shop\Setting; ?>
         <hr class="dropdown-divider">
         <div class="row col-12">
             <div class="col-6">
-                <h5>Tax</h5>
+                <h5 trn="tax">Tax</h5>
             </div>
             <div class="col-6 text-right">
                 <span class="order-title" trn=""><?php echo Setting::getInstance()->getCurrency() . number_format(intval($order->getAmount()) * Product::TAX); ?></span>
@@ -86,7 +86,7 @@ use Demae\Auth\Models\Shop\Setting; ?>
         <hr class="dropdown-divider">
         <div class="row col-12">
             <div class="col-6">
-                <h3>Total</h3>
+                <h3 trn="total">Total</h3>
             </div>
             <div class="col-6 text-right">
                 <span class="h4 font-weight-bold order-title" trn=""> <?php echo Setting::getInstance()->getCurrency() . number_format($order->getAmount()); ?></span>
@@ -97,30 +97,30 @@ use Demae\Auth\Models\Shop\Setting; ?>
             <div class="card-body" style="padding:20px 5px;">
                 <div class="row col-12" style="margin: 0;padding:0">
                     <div class="col-lg-3 col-md-3 col-sm-6 col-6 mb-4 mt-2">
-                        <h6 class="card-subtitle mb-2 tx-13 order-foot-h">Receiver</h6>
+                        <h6 class="card-subtitle mb-2 tx-13 order-foot-h" trn="customer">Receiver</h6>
                         <h6 class="card-title font-weight-bold"><?php echo unicode2html($address->firstName . " " . $address->lastName); ?></h6>
                         <h6 class="card-text tx-12 order-foot"><?php echo $address->email; ?></h6>
                         <h6 class="card-text tx-12 order-foot"><?php echo $address->phoneNumber; ?></h6>
-                        <h6 class="card-text tx-13 mt-4 text-uppercase font-weight-bold text-danger">Tokyo Branch</h6>
+                        <!-- <h6 class="card-text tx-13 mt-4 text-uppercase font-weight-bold text-danger">Tokyo Branch</h6> -->
                     </div>
                     <div class="col-lg-2 col-md-3 col-sm-6 col-6 mb-4 mt-2">
-                        <h6 class="card-subtitle mb-1 tx-13 order-foot-h">Delivery Type</h6>
+                        <h6 class="card-subtitle mb-1 tx-13 order-foot-h" trn="delivery-type">Delivery Type</h6>
                         <span class="badge bg-plain text-primary pl-0"><?php echo $order->getDeliveryMethodText()[$_COOKIE['lingo']]; ?></span>
-                        <h6 class="card-subtitle mb-1 mt-3 tx-13 order-foot-h">Municipality</h6>
+                        <h6 class="card-subtitle mb-1 mt-3 tx-13 order-foot-h" trn="state">Municipality</h6>
                         <span class="badge bg-plain pl-0"><?php echo (unicode2html(str_replace('u', '\u', $address->state))); ?></span>
                     </div>
                     <div class="col-lg-2 col-md-3 col-sm-6 col-6 mb-4 mt-2">
-                        <h6 class="card-subtitle mb-1 tx-13 order-foot-h">Payment Method</h6>
+                        <h6 class="card-subtitle mb-1 tx-13 order-foot-h" trn="payment-method">Payment Method</h6>
                         <span class="badge bg-plain text-success pl-0"><?php echo $order->getPaymentMethodText()[$_COOKIE['lingo']]; ?></span>
-                        <h6 class="card-subtitle mb-1 mt-3 tx-13 order-foot-h">Zip code</h6>
+                        <h6 class="card-subtitle mb-1 mt-3 tx-13 order-foot-h" trn="zip-code">Zip code</h6>
                         <span class="badge bg-plain pl-0"><?php echo $address->zip; ?></span>
                     </div>
                     <div class="col-lg-5 col-md-3  col-sm-6 col-6 mb-4 mt-2">
-                        <h6 class="card-subtitle mb-2 tx-13 order-foot-h">Delivery Location</h6>
+                        <h6 class="card-subtitle mb-2 tx-13 order-foot-h" trn="delivery-location">Delivery Location</h6>
                         <h6 class="card-title tx-13 font-weight-bold"><?php echo (unicode2html(str_replace('u', '\u', substr($address->address, 9, strlen($address->address))))) . " " . $address->street . " " . $address->building; ?></h6>
-                        <span class="badge bg-plain pl-0 text-danger">Search on map</span>
+                        <span class="badge bg-plain pl-0 text-danger" trn="search-map">Search on map</span>
                         <h6 class="card-text tx-12 order-foot mt-1">
-                            Delivered by: <button class="btn btn-sm btn-outline-primary tx-12 ml-2">Daniel</button>
+                            <span trn="delivered-by">Delivered by</span> <button class="btn btn-sm btn-outline-primary tx-12 ml-2"><?php echo ''; ?></button>
                         </h6>
                     </div>
                 </div>

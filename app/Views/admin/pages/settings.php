@@ -30,12 +30,12 @@ if (!is_null($dashboardController_error)) { ?>
 }
 include 'app/Views/admin/pages/add_card.php'; ?>
 <main class="content-wrapper">
-    <h3>Settings</h3>
+    <h3 trn="settings">Settings</h3>
     <div class="row col-12 mt-3">
         <div class="col-lg-8 col-md-12 col-sm-12 col-12">
 
             <form enctype="multipart/form-data" method="POST" action="">
-                <h4 class="mt-5">Banner Image</h4>
+                <h4 class="mt-5" trn="banner-image">Banner Image</h4>
                 <div class="card mt-2 col-12 p-0 m-0 upload-image text-center" style="background-color:#E0E0E0;border:#E0E0E0;" type="button">
                     <label for="browse">
                         <input type="hidden" value="" name="banner" />
@@ -44,7 +44,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                 </div>
                 <input type="file" id="browse" name="browse" accept="image/*" style="display: none">
                 <div class="card card-footer justify-content-right p-2" style="background-color:#FFF; margin-top:-2px; ">
-                    <button type="submit" name="upload-banner" class="btn btn-sm tx-14 btn-danger col-4 ">Upload</button>
+                    <button type="submit" name="upload-banner" class="btn btn-sm tx-14 btn-danger col-4" trn="upload">Upload</button>
                 </div>
             </form>
             <form method="POST" action="">
@@ -52,18 +52,18 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                     <div class="mdc-layout-grid__inner">
                         <div class="mdc-layout-grid__cell--span-12">
                             <div class="mdc-card">
-                                <h6 class="card-title">Header Information</h6>
+                                <h6 class="card-title" trn="header-info">Header Information</h6>
                                 <div class="template-demo">
                                     <div class="mdc-layout-grid__inner">
                                         <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12-desktop">
                                             <div class="mdc-text-field">
                                                 <input class="mdc-text-field__input" value="<?php echo !isEmpty($this->settings->getTitle()) ? $this->settings->getTitle() : ''; ?>" name="store-title" trn="seo-title-placeholder" id="text-field-hero-input">
                                                 <div class="mdc-line-ripple"></div>
-                                                <label for="text-field-hero-input" class="mdc-floating-label">Title</label>
+                                                <label for="text-field-hero-input" class="mdc-floating-label" trn="title">Title</label>
                                             </div>
                                         </div>
                                         <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
-                                            <label class="mr-3 ml-2" style="margin-top: .18em;">Use name as Logo</label>
+                                            <label class="mr-3 ml-2" style="margin-top: .18em;" trn="use-name-as-logo">Use name as Logo</label>
                                             <div class="mdc-switch mt-2" data-mdc-auto-init="MDCSwitch">
                                                 <div class="mdc-switch__track"></div>
                                                 <div class="mdc-switch__thumb-underlay">
@@ -77,7 +77,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                             <div class="mdc-text-field">
                                                 <input class="mdc-text-field__input" value="<?php echo !isEmpty($this->settings->getStoreName()) ? $this->settings->getStoreName() : ''; ?>" name="store-name" trn="seo-store-placeholder" id="text-field-hero-input">
                                                 <div class="mdc-line-ripple"></div>
-                                                <label for="text-field-hero-input" class="mdc-floating-label">Store Name</label>
+                                                <label for="text-field-hero-input" class="mdc-floating-label" trn="store-name">Store Name</label>
                                             </div>
                                         </div>
                                         <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12-desktop">
@@ -87,7 +87,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                                 <div class="mdc-notched-outline">
                                                     <div class="mdc-notched-outline__leading"></div>
                                                     <div class="mdc-notched-outline__notch">
-                                                        <label for="text-field-hero-input" class="mdc-floating-label">Website Url</label>
+                                                        <label for="text-field-hero-input" class="mdc-floating-label" trn="website">Website Url</label>
                                                     </div>
                                                     <div class="mdc-notched-outline__trailing"></div>
                                                 </div>
@@ -99,7 +99,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                                 <div class="mdc-notched-outline">
                                                     <div class="mdc-notched-outline__leading"></div>
                                                     <div class="mdc-notched-outline__notch">
-                                                        <label for="text-field-hero-input" class="mdc-floating-label">Tags</label>
+                                                        <label for="text-field-hero-input" class="mdc-floating-label" trn="tags">Tags</label>
                                                     </div>
                                                     <div class="mdc-notched-outline__trailing"></div>
                                                 </div>
@@ -111,7 +111,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                                 <div class="mdc-notched-outline">
                                                     <div class="mdc-notched-outline__leading"></div>
                                                     <div class="mdc-notched-outline__notch">
-                                                        <label for="text-field-hero-input" class="mdc-floating-label">Description</label>
+                                                        <label for="text-field-hero-input" class="mdc-floating-label" trn="descr">Description</label>
                                                     </div>
                                                     <div class="mdc-notched-outline__trailing"></div>
                                                 </div>
@@ -124,11 +124,11 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                     </div>
                 </div>
                 <div class="card-footer p-2 save-changes">
-                    <button type="submit" name="save-header-info" class="btn btn-danger btn-sm tx-14">Save changes</button>
+                    <button type="submit" name="save-header-info" class="btn btn-danger btn-sm tx-14" trn="save-changes">Save changes</button>
                 </div>
             </form>
             <form enctype="multipart/form-data" method="POST" action="">
-                <h5 class="mt-5">Logo</h5>
+                <h5 class="mt-5" trn="logo">Logo</h5>
                 <div class="card mt-4 col-lg-6 col-md-6 col-12 p-0 setting-card text-center" style="background-color:#E0E0E0;border:#E0E0E0;">
                     <label for="browse1">
                         <input type="hidden" value="" name="logo" />
@@ -137,7 +137,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                 </div>
                 <input type="file" id="browse1" name="browse1" accept="image/*" style="display:none">
                 <div class="card card-footer col-lg-6 col-md-6 col-12 p-2" style="background-color:#FFF;margin-top:-2px;">
-                    <button type="submit" name="upload-logo" class="btn btn-danger btn-sm tx-14">Save changes</button>
+                    <button type="submit" name="upload-logo" class="btn btn-danger btn-sm tx-14" trn="save-changes">Save changes</button>
                 </div>
             </form>
             <form method="POST" action="">
@@ -145,7 +145,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                     <div class="mdc-layout-grid__inner">
                         <div class="mdc-layout-grid__cell--span-12">
                             <div class="mdc-card">
-                                <h6 class="card-title">Website Design</h6>
+                                <h6 class="card-title" trn="web-design">Website Design</h6>
                                 <div class="template-demo">
                                     <div class="mdc-layout-grid__inner">
                                         <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-12-desktop">
@@ -161,7 +161,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                                 <div class="mdc-notched-outline">
                                                     <div class="mdc-notched-outline__leading"></div>
                                                     <div class="mdc-notched-outline__notch">
-                                                        <label for="text-field-hero-input" class="mdc-floating-label">Banner Content</label>
+                                                        <label for="text-field-hero-input" class="mdc-floating-label" trn="banner-content">Banner Content</label>
                                                     </div>
                                                     <div class="mdc-notched-outline__trailing"></div>
                                                 </div>
@@ -175,20 +175,21 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                                 <div class="mdc-select__menu mdc-menu-surface demo-width-class">
                                                     <ul class="mdc-list" style="width: 15em;">
                                                         <li class="mdc-list-item mdc-list-item--selected" data-value="<?php echo !isEmpty($this->settings->getSliderType() + 1) ? $this->settings->getSliderType() + 1 : '1'; ?>" aria-selected="true">
-                                                            Slider <?php echo !isEmpty($this->settings->getSliderType() + 1) ? $this->settings->getSliderType() + 1 : '1'; ?> </li>
+                                                            <span trn='slidder-ride'>Slider</span> <?php echo !isEmpty($this->settings->getSliderType() + 1) ? $this->settings->getSliderType() + 1 : '1'; ?>
+                                                        </li>
                                                         <?php for ($i = 1; $i < 5; $i++) {
                                                             if ($i == intval($this->settings->getSliderType() + 1));
                                                             else if (isEmpty($this->settings->getSliderType() + 1) && $i == 1);
                                                             else { ?>
                                                                 <li class="mdc-list-item" data-value="<?php echo $i; ?>">
-                                                                    Slider <?php echo $i; ?>
+                                                                    <span trn='slidder-ride'>Slider</span><?php echo $i; ?>
                                                                 </li>
 
                                                         <?php }
                                                         } ?>
                                                     </ul>
                                                 </div>
-                                                <span class="mdc-floating-label">Slider Type</span>
+                                                <span class="mdc-floating-label" trn="slider-type">Slider Type</span>
                                                 <div class="mdc-line-ripple"></div>
                                             </div>
                                         </div>
@@ -213,7 +214,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
 
                                                     </ul>
                                                 </div>
-                                                <span class="mdc-floating-label">Footer Type</span>
+                                                <span class="mdc-floating-label" tr="footer">Footer Type</span>
                                                 <div class="mdc-line-ripple"></div>
                                             </div>
                                         </div>
@@ -232,7 +233,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
 
                                                     </ul>
                                                 </div>
-                                                <span class="mdc-floating-label">Menu Display</span>
+                                                <span class="mdc-floating-label" trn="menu-display">Menu Display</span>
                                                 <div class="mdc-line-ripple"></div>
                                             </div>
                                         </div>
@@ -250,7 +251,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                                         </li>
                                                     </ul>
                                                 </div>
-                                                <span class="mdc-floating-label">Information Display</span>
+                                                <span class="mdc-floating-label" trn="info-display">Information Display</span>
                                                 <div class="mdc-line-ripple"></div>
                                             </div>
                                         </div>
@@ -280,7 +281,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                                 <div class="mdc-notched-outline">
                                                     <div class="mdc-notched-outline__leading"></div>
                                                     <div class="mdc-notched-outline__notch">
-                                                        <label for="text-field-hero-input pb-3" class="mdc-floating-label">Theme Color</label>
+                                                        <label for="text-field-hero-input pb-3" class="mdc-floating-label" trn="theme-color">Theme Color</label>
                                                     </div>
                                                     <div class="mdc-notched-outline__trailing"></div>
                                                 </div>
@@ -293,7 +294,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                     </div>
                 </div>
                 <div class="card-footer p-2 save-changes">
-                    <button type="submit" name="save-website-design" class="btn btn-danger btn-sm tx-14">Save changes</button>
+                    <button type="submit" name="save-website-design" class="btn btn-danger btn-sm tx-14" trn="save-changes">Save changes</button>
                 </div>
             </form>
 
@@ -302,7 +303,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                     <div class="mdc-layout-grid__inner">
                         <div class="mdc-layout-grid__cell--span-12">
                             <div class="mdc-card">
-                                <h6 class="card-title">Website Information</h6>
+                                <h6 class="card-title" trn="web-info">Website Information</h6>
                                 <div class="template-demo">
                                     <div class="mdc-layout-grid__inner">
                                         <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
@@ -311,7 +312,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                                 <div class="mdc-notched-outline">
                                                     <div class="mdc-notched-outline__leading"></div>
                                                     <div class="mdc-notched-outline__notch">
-                                                        <label for="text-field-hero-input" class="mdc-floating-label">Phone Number</label>
+                                                        <label for="text-field-hero-input" class="mdc-floating-label" trn="number">Phone Number</label>
                                                     </div>
                                                     <div class="mdc-notched-outline__trailing"></div>
                                                 </div>
@@ -323,7 +324,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                                 <div class="mdc-notched-outline">
                                                     <div class="mdc-notched-outline__leading"></div>
                                                     <div class="mdc-notched-outline__notch">
-                                                        <label for="text-field-hero-input" class="mdc-floating-label">Email</label>
+                                                        <label for="text-field-hero-input" class="mdc-floating-label" trn="email">Email</label>
                                                     </div>
                                                     <div class="mdc-notched-outline__trailing"></div>
                                                 </div>
@@ -332,11 +333,11 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                         <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
                                             <div class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
                                                 <i class="material-icons mdc-text-field__icon icofont-facebook"></i>
-                                                <input class="mdc-text-field__input" value="<?php echo !isEmpty($this->settings->getSocials()->facebook) ? $this->settings->getSocials()->facebook : ''; ?>" name="fb" id="text-field-hero-input">
+                                                <input class="mdc-text-field__input" value="<?php echo isset($this->settings->getSocials()->facebook) ? $this->settings->getSocials()->facebook : ''; ?>" name="fb" id="text-field-hero-input">
                                                 <div class="mdc-notched-outline">
                                                     <div class="mdc-notched-outline__leading"></div>
                                                     <div class="mdc-notched-outline__notch">
-                                                        <label for="text-field-hero-input" class="mdc-floating-label">Facebook Url</label>
+                                                        <label for="text-field-hero-input" class="mdc-floating-label" trn="fb-url">Facebook Url</label>
                                                     </div>
                                                     <div class="mdc-notched-outline__trailing"></div>
                                                 </div>
@@ -345,11 +346,11 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                         <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
                                             <div class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
                                                 <i class="material-icons mdc-text-field__icon icofont-twitter"></i>
-                                                <input class="mdc-text-field__input" value="<?php echo !isEmpty($this->settings->getSocials()->twitter) ? $this->settings->getSocials()->twitter : ''; ?>" name="twitter" id="text-field-hero-input">
+                                                <input class="mdc-text-field__input" value="<?php echo isset($this->settings->getSocials()->twitter) ? $this->settings->getSocials()->twitter : ''; ?>" name="twitter" id="text-field-hero-input">
                                                 <div class="mdc-notched-outline">
                                                     <div class="mdc-notched-outline__leading"></div>
                                                     <div class="mdc-notched-outline__notch">
-                                                        <label for="text-field-hero-input" class="mdc-floating-label">Twitter Url</label>
+                                                        <label for="text-field-hero-input" class="mdc-floating-label" trn="tw-url">Twitter Url</label>
                                                     </div>
                                                     <div class="mdc-notched-outline__trailing"></div>
                                                 </div>
@@ -358,11 +359,11 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                         <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
                                             <div class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
                                                 <i class="material-icons mdc-text-field__icon icofont-instagram"></i>
-                                                <input class="mdc-text-field__input" value="<?php echo !isEmpty($this->settings->getSocials()->instagram) ? $this->settings->getSocials()->instagram : ''; ?>" name="ig" id="text-field-hero-input">
+                                                <input class="mdc-text-field__input" value="<?php echo isset($this->settings->getSocials()->instagram) ? $this->settings->getSocials()->instagram : ''; ?>" name="ig" id="text-field-hero-input">
                                                 <div class="mdc-notched-outline">
                                                     <div class="mdc-notched-outline__leading"></div>
                                                     <div class="mdc-notched-outline__notch">
-                                                        <label for="text-field-hero-input" class="mdc-floating-label">Instagram Url</label>
+                                                        <label for="text-field-hero-input" class="mdc-floating-label" trn="ig-url">Instagram Url</label>
                                                     </div>
                                                     <div class="mdc-notched-outline__trailing"></div>
                                                 </div>
@@ -375,24 +376,26 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                     </div>
                 </div>
                 <div class="card-footer p-2 save-changes">
-                    <button type="submit" name="website-info" class="btn btn-danger btn-sm tx-14">Save changes</button>
+                    <button type="submit" name="website-info" class="btn btn-danger btn-sm tx-14" trn="save-changes">Save changes</button>
                 </div>
             </form>
 
-            <?php $printers = new PrintNodeApi($this->settings->getPrintNodeApi());
+            <?php
+
             try {
+                $printers = new PrintNodeApi($this->settings->getPrintNodeApi());
                 $printers = $printers->getPrinters();
             } catch (Exception $e) {
-                $printer = array();
+                $printers = array();
             }
-            // var_dump((array_values($printers))) 
+            $printers = $printers ?? [];
             ?>
             <form method="POST" action="">
                 <div class="mdc-layout-grid m-0 mt-4 p-0">
                     <div class="mdc-layout-grid__inner">
                         <div class="mdc-layout-grid__cell--span-12">
                             <div class="mdc-card">
-                                <h6 class="card-title">Printer Information</h6>
+                                <h6 class="card-title" trn="printer-info">Printer Information</h6>
                                 <div class="template-demo">
                                     <div class="mdc-layout-grid__inner">
                                         <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
@@ -415,7 +418,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                                 <div class="mdc-select__selected-text"></div>
                                                 <div class="mdc-select__menu mdc-menu-surface demo-width-class">
                                                     <ul class="mdc-list" style="width: 15em;">
-                                                        <?php foreach ($printers as $printer) {
+                                                        <?php foreach ($printers ?? [] as $printer) {
                                                             if ($printer->getId() == $this->settings->getDefaultPrinter()) { ?>
                                                                 <li class="mdc-list-item mdc-list-item--selected" data-value="<?php echo $printer->getId(); ?>" aria-selected="true">
                                                                     <?php echo $printer->getName(); ?> </li>
@@ -445,7 +448,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                                         </li>
                                                     </ul>
                                                 </div>
-                                                <span class="mdc-floating-label">Print Language</span>
+                                                <span class="mdc-floating-label" trn="print-lang">Print Language</span>
                                                 <div class="mdc-line-ripple"></div>
                                             </div>
                                         </div>
@@ -456,7 +459,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                     </div>
                 </div>
                 <div class="card-footer p-2 save-changes">
-                    <button type="submit" name="printer-info" class="btn btn-danger btn-sm tx-14">Save changes</button>
+                    <button type="submit" name="printer-info" class="btn btn-danger btn-sm tx-14" trn="save-changes">Save changes</button>
                     <!-- <button class="btn btn-danger btn-sm tx-14 float-right">Test Print</button> -->
                 </div>
             </form>
@@ -469,7 +472,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
             <form method="POST" action="">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Delivery Information</h5>
+                        <h5 class="card-title" trn="delivery-info">Delivery Information</h5>
 
                         <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
                             <div class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
@@ -478,7 +481,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <label for="text-field-hero-input" class="mdc-floating-label">Shipping Fee</label>
+                                        <label for="text-field-hero-input" class="mdc-floating-label" trn="shipping-fee">Shipping Fee</label>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -492,7 +495,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <label for="text-field-hero-input" class="mdc-floating-label tx-14">Free Shipping Price</label>
+                                        <label for="text-field-hero-input" class="mdc-floating-label tx-14" trn="free-shipping-price">Free Shipping Price</label>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -505,7 +508,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <label for="text-field-hero-input" class="mdc-floating-label">Delivery Time</label>
+                                        <label for="text-field-hero-input" class="mdc-floating-label" trm="time-updated him">Delivery Time</label>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -518,7 +521,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <label for="text-field-hero-input" class="mdc-floating-label">Time Range</label>
+                                        <label for="text-field-hero-input" class="mdc-floating-label" trn="time-ranges">Time Range</label>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -531,7 +534,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <label for="text-field-hero-input" class="mdc-floating-label">Address Name</label>
+                                        <label for="text-field-hero-input" class="mdc-floating-label" trn="address-name">Address Name</label>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -544,7 +547,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <label for="text-field-hero-input" class="mdc-floating-label">Store Address</label>
+                                        <label for="text-field-hero-input" class="mdc-floating-label" address="store-name">Store Address</label>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -557,7 +560,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <label for="text-field-hero-input" class="mdc-floating-label">Delivery Distance</label>
+                                        <label for="text-field-hero-input" class="mdc-floating-label" trn="delivery-distance">Delivery Distance</label>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -578,7 +581,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                     </div>
                 </div>
                 <div class="card-footer p-2 save-changes">
-                    <button type="submit" name="delivery-options" class="btn btn-danger btn-sm tx-14">Save changes</button>
+                    <button type="submit" name="delivery-options" class="btn btn-danger btn-sm tx-14" trn="save-changes">Save changes</button>
                 </div>
             </form>
             <form method="POST" action="">
@@ -592,7 +595,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <label for="text-field-hero-input" class="mdc-floating-label">Minimum Order</label>
+                                        <label for="text-field-hero-input" class="mdc-floating-label" trn="min-order">Minimum Order</label>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -623,7 +626,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                     <div class="mdc-checkbox__mixedmark"></div>
                                 </div>
                             </div>
-                            <label for="basic-disabled-checkbox" id="basic-disabled-checkbox-label">Display Ratings</label>
+                            <label for="basic-disabled-checkbox" id="basic-disabled-checkbox-label" trn="display-rating">Display Ratings</label>
                         </div>
                         <div class="mdc-form-field">
                             <div class="mdc-checkbox mdc-checkbox--info">
@@ -635,7 +638,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                     <div class="mdc-checkbox__mixedmark"></div>
                                 </div>
                             </div>
-                            <label for="basic-disabled-checkbox" id="basic-disabled-checkbox-label">Display Order Count</label>
+                            <label for="basic-disabled-checkbox" id="basic-disabled-checkbox-label" trn="display-order-count">Display Order Count</label>
                         </div>
                         <div class="mdc-form-field">
                             <div class="mdc-checkbox mdc-checkbox--info">
@@ -647,12 +650,12 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                     <div class="mdc-checkbox__mixedmark"></div>
                                 </div>
                             </div>
-                            <label for="basic-disabled-checkbox" id="basic-disabled-checkbox-label">Display Tax</label>
+                            <label for="basic-disabled-checkbox" id="basic-disabled-checkbox-label" trn="display-taxes">Display Tax</label>
                         </div>
                     </div>
                 </div>
                 <div class="card-footer p-2 save-changes">
-                    <button type="submit" name="save-product-info" class="btn btn-danger btn-sm tx-14">Save changes</button>
+                    <button type="submit" name="save-product-info" class="btn btn-danger btn-sm tx-14" trn="save-changes">Save changes</button>
                 </div>
             </form>
             <form enctype="multipart/form-data" method="POST" action="">
@@ -665,7 +668,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                 </div>
                 <input type="file" id="browse2" name="browse2" accept="image/*" style="display: none">
                 <div class="card card-footer col-12 p-2" style="background-color:#FFF;margin-top:-2px;">
-                    <button type="submit" name="upload-placeholder" class="btn btn-danger btn-sm tx-14">Save changes</button>
+                    <button type="submit" name="upload-placeholder" class="btn btn-danger btn-sm tx-14" trn="save-changes">Save changes</button>
                 </div>
             </form>
             <form method="POST" action="">
@@ -673,7 +676,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                     <div class="mdc-layout-grid__inner">
                         <div class="mdc-layout-grid__cell--span-12">
                             <div class="mdc-card">
-                                <h6 class="card-title">Payment</h6>
+                                <h6 class="card-title" trn="payment">Payment</h6>
                                 <div class="template-demo">
                                     <div class="mdc-form-field">
                                         <div class="mdc-checkbox">
@@ -685,7 +688,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                                 <div class="mdc-checkbox__mixedmark"></div>
                                             </div>
                                         </div>
-                                        <label for="checkbox-1">Cash</label>
+                                        <label for="checkbox-1" trn="cash">Cash</label>
                                     </div>
                                     <div class="mdc-form-field">
                                         <div class="mdc-checkbox">
@@ -697,7 +700,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                                 <div class="mdc-checkbox__mixedmark"></div>
                                             </div>
                                         </div>
-                                        <label for="checkbox-1">Card</label>
+                                        <label for="checkbox-1" trn="card">Card</label>
                                     </div>
                                     <div class="mdc-form-field">
                                         <div class="mdc-checkbox mdc-checkbox--disabled">
@@ -717,7 +720,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                     </div>
                 </div>
                 <div class="card-footer p-2 save-changes">
-                    <button type="submit" name="payment-method" class="btn btn-danger btn-sm tx-14">Save changes</button>
+                    <button type="submit" name="payment-method" class="btn btn-danger btn-sm tx-14" trn="save-changes">Save changes</button>
                 </div>
             </form>
 
@@ -726,7 +729,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                     <div class="mdc-layout-grid__inner">
                         <div class="mdc-layout-grid__cell--span-12">
                             <div class="mdc-card">
-                                <h6 class="card-title">Delivery Service</h6>
+                                <h6 class="card-title" trn="delivery-service">Delivery Service</h6>
                                 <div class="template-demo">
                                     <div class="mdc-form-field">
                                         <div class="mdc-checkbox">
@@ -738,7 +741,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                                 <div class="mdc-checkbox__mixedmark"></div>
                                             </div>
                                         </div>
-                                        <label for="checkbox-1">Delivery</label>
+                                        <label for="checkbox-1" trn="delivery">Delivery</label>
                                     </div>
                                     <div class="mdc-form-field">
                                         <div class="mdc-checkbox">
@@ -750,7 +753,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                                 <div class="mdc-checkbox__mixedmark"></div>
                                             </div>
                                         </div>
-                                        <label for="checkbox-1">Takeout</label>
+                                        <label for="checkbox-1" trn="takeout">Takeout</label>
                                     </div>
                                     <div class="mdc-form-field">
                                         <div class="mdc-checkbox mdc-checkbox--disabled">
@@ -762,7 +765,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                                 <div class="mdc-checkbox__mixedmark"></div>
                                             </div>
                                         </div>
-                                        <label for="basic-disabled-checkbox" id="basic-disabled-checkbox-label">Reservation</label>
+                                        <label for="basic-disabled-checkbox" id="basic-disabled-checkbox-label" trn="reservations">Reservation</label>
                                     </div>
                                 </div>
                             </div>
@@ -770,7 +773,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                     </div>
                 </div>
                 <div class="card-footer p-2 save-changes">
-                    <button type="submit" name="delivery-method" class="btn btn-danger btn-sm tx-14">Save changes</button>
+                    <button type="submit" name="delivery-method" class="btn btn-danger btn-sm tx-14" trn="save-changes">Save changes</button>
                 </div>
             </form>
 
@@ -779,9 +782,10 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                     <div class="mdc-layout-grid__inner">
                         <div class="mdc-layout-grid__cell--span-12">
                             <div class="mdc-card">
-                                <h6 class="card-title">Operation Time</h6>
+                                <h6 class="card-title" trn="operational-time">Operation Time</h6>
                                 <div class="template-demo">
                                     <div class="accordion" id="accordionTime">
+                                        <?php  ?>
                                         <?php for ($i = 0; $i < count(daysOfWeek()); $i++) { ?>
                                             <div class="card">
                                                 <div class="card-header p-0" id="headingOne">
@@ -791,11 +795,10 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                                         </button>
                                                     </h5>
                                                 </div>
-
                                                 <div id="collapse<?php echo daysOfWeek()[$i]; ?>" class="collapse" aria-labelledby="headingOne" data-parent="#accordionTime">
                                                     <div class="card-body p-2">
                                                         <div class="row col-12 m-0 p-0 ">
-                                                            <span class="col-4 m-0 p-0 pt-2"> Open:</span>
+                                                            <span class="col-4 m-0 p-0 pt-2" trn="open">Open</span>:
                                                             <div class="input-group mb-3 m-0 p-0 col-7">
                                                                 <input type="text" name="shop-open['<?php echo daysOfWeek()[$i]; ?>']" value="<?php echo !isEmpty($this->settings->getOperationalTime()[$i]) ? $this->settings->getOperationalTime()[$i]->open : ''; ?>" class="form-control m-0 p-0 timepicker" style="background-color: #eee;">
                                                                 <div class="input-group-append d-sm-block d-none">
@@ -804,7 +807,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                                             </div>
                                                         </div>
                                                         <div class="row col-12 m-0 p-0 ">
-                                                            <span class="col-4 m-0 p-0 pt-2"> Break:</span>
+                                                            <span class="col-4 m-0 p-0 pt-2" trn="break"> Break:</span>
                                                             <div class="input-group mb-3 m-0 p-0 col-7">
                                                                 <input type="text" name="shop-break-start['<?php echo daysOfWeek()[$i]; ?>']" value="<?php echo !isEmpty($this->settings->getOperationalTime()[$i]) ? $this->settings->getOperationalTime()[$i]->breakStart : ''; ?>" class="form-control m-0 p-0 timepicker" style="background-color: #eee;">
                                                                 <div class="input-group-append d-sm-block d-none">
@@ -822,7 +825,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                                             </div>
                                                         </div>
                                                         <div class="row col-12 m-0 p-0 ">
-                                                            <span class="col-4 m-0 p-0 pt-2"> Close:</span>
+                                                            <span class="col-4 m-0 p-0 pt-2" trn="close"> Close</span>:
                                                             <div class="input-group mb-3 m-0 p-0 col-7">
                                                                 <input type="text" name="shop-close['<?php echo daysOfWeek()[$i]; ?>']" value="<?php echo !isEmpty($this->settings->getOperationalTime()[$i]) ? $this->settings->getOperationalTime()[$i]->close : ''; ?>" class="form-control m-0 p-0 timepicker" style="background-color: #eee;">
                                                                 <div class="input-group-append d-sm-block d-none">
@@ -841,7 +844,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                     </div>
                 </div>
                 <div class="card-footer p-2 save-changes">
-                    <button type="submit" name="operational-time" class="btn btn-danger btn-sm tx-14">Save changes</button>
+                    <button type="submit" name="operational-time" class="btn btn-danger btn-sm tx-14" trn="save-changes">Save changes</button>
                 </div>
             </form>
             <form method="POST" action="">
@@ -849,29 +852,29 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                     <div class="mdc-layout-grid__inner">
                         <div class="mdc-layout-grid__cell--span-12">
                             <div class="mdc-card">
-                                <h6 class="card-title">Subscription</h6>
+                                <h6 class="card-title" trn="subscription">Subscription</h6>
                                 <div class="template-demo">
                                     <div class="row col-12 p-0 m-0 mb-1">
-                                        <h6 class="col-6 p-0 m-0">Plan :</h6>
-                                        <div class="col-6 p-0 m-0">Monthly<?php ?></h6>
+                                        <h6 class="col-6 p-0 m-0" trn="plan">Plan</h6>:
+                                        <div class="col-6 p-0 m-0" trn="monthly">Monthly<?php ?></h6>:
                                         </div>
                                     </div>
                                     <div class="row col-12 p-0 m-0 mb-1">
-                                        <h6 class="col-6 p-0 m-0">Branches :</h6>
+                                        <h6 class="col-6 p-0 m-0" trn="branches">Branches</h6>:
                                         <div class="col-6 p-0 m-0"><?php echo count($this->branches); ?></h6>
                                         </div>
                                     </div>
                                     <div class="row col-12 p-0 m-0 mb-1">
-                                        <h6 class="col-6 p-0 m-0">Due Date :</h6>
+                                        <h6 class="col-6 p-0 m-0" trn="due-date">Due Date</h6>:
                                         <div class="col-6 p-0 m-0"><?php echo date('j M,Y', intval($this->settings->getTImeCreated()) + (30 * 24 * 3600)) ?></h6>
                                         </div>
                                     </div>
                                     <div class="row col-12 p-0 m-0 mb-1">
-                                        <h6 class="col-6 p-0 m-0">Amount :</h6>
+                                        <h6 class="col-6 p-0 m-0" trn="amount">Amount</h6>:
                                         <div class="col-6 p-0 m-0"> <?php echo $this->settings->getCurrency() . number_format($this->settings->calculateSubscription(count($this->branches))); ?></h6>
                                         </div>
                                     </div><br>
-                                    <h6>Credit Card <i class="icofont-credit-card"></i></h6>
+                                    <h6><span trn="credit-card">Credit Card</span> <i class="icofont-credit-card"></i></h6>
                                     <?php foreach ($this->paymentDetails as $creditCard) { ?>
                                         <div class="alert alert-info p-1 pl-2" role="alert">
                                             <i class="icofont-ui-delete float-right option-right hover click" id="delete-card" data-id="<?php echo Encoding::encode(json_encode(array($this->settings->getSubscriptions(), $creditCard->getId()))); ?>"></i>
@@ -881,7 +884,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                         </div>
                                     <?php }
                                     if (empty($this->paymentDetails)) { ?>
-                                        <span class="tx-13 btn-sm btn btn-success" data-toggle="modal" data-target="#addCardModal"><i class="icofont-ui-add txt-10 mr-2"></i>Add Card</span>
+                                        <span class="tx-13 btn-sm btn btn-success" data-toggle="modal" data-target="#addCardModal"><i class="icofont-ui-add txt-10 mr-2"></i><span trn="add-card">Add Card</span></span>
                                     <?php } ?>
                                 </div>
                             </div>
