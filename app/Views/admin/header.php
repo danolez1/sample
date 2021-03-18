@@ -1,6 +1,9 @@
 <?php
 
-use danolez\lib\Security\Encoding; ?>
+use danolez\lib\Security\Encoding;
+use Demae\Auth\Models\Shop\Administrator;
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -66,27 +69,28 @@ use danolez\lib\Security\Encoding; ?>
   <script src="assets/js/preloader.js"></script>
   <script src="assets/js/webToast.min.js"></script>
   <script src="assets/js/first_load.js"></script>
-  <script src="assets/js/admin_dictionary.js"></script>
+  <script src="assets/js/admin_dictionary-min.js"></script>
   <div class="body-wrapper">
 
     <?php
-
-    if (!$this->includesOnly) {
-      if (!is_null($this->admin) && (intval($this->admin->getRole()) == 1 || intval($this->admin->getRole()) == 2)) { ?>
-        <button class="hover" id="delivery-time-fab" type="button" data-toggle="modal" data-target="#delivery-time">
-          <img src="assets/images/dashboard/timer.svg" alt="cart" width="46" height="46">
-        </button>
-      <?php } ?>
-      <!-- partial:partials/_sidebar.html -->
-      <?php include 'app/Views/admin/sidebar.php'; ?>
-      <!-- partial -->
-      <div class="main-wrapper mdc-drawer-app-content">
-        <!-- partial:partials/_navbar.html -->
-        <?php include 'app/Views/admin/navbar.php'; ?>
+    if (!is_null($this->admin)) {
+      if (!$this->includesOnly) {
+        if (!is_null($this->admin) && (intval($this->admin->getRole()) == 1 || intval($this->admin->getRole()) == 2)) { ?>
+          <button class="hover" id="delivery-time-fab" type="button" data-toggle="modal" data-target="#delivery-time">
+            <img src="assets/images/dashboard/timer.svg" alt="cart" width="46" height="46">
+          </button>
+        <?php }       ?>
+        <!-- partial:partials/_sidebar.html -->
+        <?php include 'app/Views/admin/sidebar.php'; ?>
         <!-- partial -->
-      <?php   } ?>
+        <div class="main-wrapper mdc-drawer-app-content">
+          <!-- partial:partials/_navbar.html -->
+          <?php include 'app/Views/admin/navbar.php'; ?>
+          <!-- partial -->
+      <?php }
+    } ?>
       <div class="page-wrapper mdc-toolbar-fixed-adjust">
-        <?php if (!is_null($this->session->get(self::ADMIN_ID))) { ?>
+        <?php if (!is_null($this->session->get(self::ADMIN_ID)) && !is_null($this->admin) && intval($this->admin->getRole()) != Administrator::OWNER) { ?>
           <input type="hidden" value="<?php echo Encoding::encode(json_encode(array($this->branchOrder, $this->admin->getBranchId(), $this->admin->getRole()))); ?>" name="order-count" />
           <input type="hidden" value="<?php echo $this->branchOrder ?>" name="noc" />
           <audio id="notification" src="assets/audio/notification.mp3"></audio>

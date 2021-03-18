@@ -136,6 +136,7 @@ class BranchColumn extends Column
     const DEFAULT_PRINTER = "defaultPrinter";
     const PRINT_LANGUAGE = "printLanguage";
     const PRINTNODE_API = "printNodeApi";
+    const PRODUCT_DISPLAY = "productDisplay";
 }
 
 class CartColumn extends Column
@@ -301,4 +302,13 @@ class SettingsColumn extends Column
     const SCRIPTS = "scripts";
     const BRANCHES = "branches";
     const SUBSCRIPTIONS = "subscriptions";
+
+
+    const PRICE_ASCENDING = 1;
+    const PRICE_DESCENDING = 6;
+    const NAME_ASCENDING = 2;
+    const NAME_DESCENDING  = 3;
+    const CATEGORY = 4;
+    const DATE_ASCENDING = 5;
+    const DATE_DESCENDING  = 7;
 }

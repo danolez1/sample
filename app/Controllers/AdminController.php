@@ -17,6 +17,7 @@ use Demae\Auth\Models\Shop\Product\Category;
 use Demae\Auth\Models\Shop\Product;
 use Demae\Auth\Models\Shop\Setting;
 use Demae\Auth\Models\Shop\User;
+use Exception;
 use OrderColumn;
 use TrafficLogger;
 use UserController;
@@ -86,6 +87,7 @@ class AdminController extends Controller
         $userController = new UserController($_POST);
         $userController->setAdmin($this->admin);
         $userController = $userController->adminAuth();
+        $resetPassword = isset($_POST['reset']);
         if ($userController != null) {
             $userController_error = (json_decode($userController)->{Model::ERROR});
             $userController_result = isset(json_decode($userController)->{Model::RESULT});
@@ -103,19 +105,21 @@ class AdminController extends Controller
             }
         }
 
+        $dashboardController_error = null;
+        $dashboardController_result = null;
+        $showDashboardController_result = false;
+        
+        $totalEarnings = 0;
 
         if ($this->admin != null) {
             $dashboardController = new DashboardController($_POST);
             $dashboardController->setAdmin($this->admin);
             $dashboardController->setEditProduct($this->editProduct);
 
-            $dashboardController_error = null;
-            $dashboardController_result = null;
-            $showDashboardController_result = false;
             if (!is_null($this->session->get(self::ADMIN_ID))) {
+                $this->branches = new Branch();
+                $this->branches = $this->branches->get($this->admin);
                 if (intval($this->admin->getRole()) == 1 || intval($this->admin->getRole()) == 2) {
-                    $this->branches = new Branch();
-                    $this->branches = $this->branches->get($this->admin);
                     $this->staff = new Administrator();
                     $this->staff = $this->staff->getStaffs($this->admin);
                     $this->customers = new User();
@@ -132,12 +136,22 @@ class AdminController extends Controller
             }
             $this->orders = new Order();
             $this->orders = $this->orders->get();
-            $totalEarnings = 0;
             foreach ($this->orders as $order) {
                 $totalEarnings = $totalEarnings + intval($order->getAmount());
             }
+
+            $this->settings = new Setting();
+            $this->settings->setOperationalTime(fromDbJson($this->settings->getOperationalTime()));
+
+            $opb = null;
+            if (intval($this->admin->getRole()) == Administrator::OWNER) $opb = $this->settings->getProductDisplay();
+            else {
+                if (!empty($this->branches) && isEmpty($this->branches[0]->getProductDisplay())) {
+                    $opb = $this->branches[0]->getProductDisplay() ?? $this->settings->getProductDisplay();
+                }
+            }
             $this->products = new Product();
-            $this->products = $this->products->get();
+            $this->products = $this->products->get(null, $opb);
             $productCategories = new Category();
             $productCategories->setType(Category::TYPE_PRODUCT);
             $productCategories = $productCategories->get();
@@ -146,8 +160,7 @@ class AdminController extends Controller
             $optionsCategories->setType(Category::TYPE_OPTION);
             $optionsCategories = $optionsCategories->get();
 
-            $this->settings = new Setting();
-            $this->settings->setOperationalTime(fromDbJson($this->settings->getOperationalTime()));
+
             $pendingOrder = 0;
             $completedOrder = 0;
 
@@ -176,8 +189,11 @@ class AdminController extends Controller
 
             if ($this->page == "app/Views/admin/home.php") {
 
-                $this->traffic = new TrafficLogger();
-                $this->traffic = $this->traffic->get();
+                try {
+                    $this->traffic = new TrafficLogger();
+                    $this->traffic = $this->traffic->get();
+                } catch (\Exception $e) {
+                }
                 $weeklyTraffic = 0;
 
                 $dates = array_keys($data);
@@ -195,7 +211,9 @@ class AdminController extends Controller
                 }
                 for ($i = 6; $i > -1; $i--) {
                     if (in_array(date('j F Y', strtotime("-" . $i . "days")), $dates)) {
-                        $script .= "'" . $visitData[date('j F Y', strtotime("-" . $i . "days"))] . "',";
+                        if (isset($visitData[date('j F Y', strtotime("-" . $i . "days"))])) {
+                            $script .= "'" . $visitData[date('j F Y', strtotime("-" . $i . "days"))] . "',";
+                        }
                     } else {
                         $script .= "'0',";
                     }
@@ -366,6 +384,7 @@ class AdminController extends Controller
                 $this->page = "app/Views/admin/pages/settings.php";
                 break;
             case 'admin-logout':
+                $this->page = "app/Views/admin/auth.php";
                 $this->session->destroy();
                 header('location:' . 'admin-auth');
                 break;

@@ -68,7 +68,6 @@ class Delivery extends Model
             $this->setFrom($branch->getLocation());
             $this->setLocation($branch->getLocation()); //
         }
-
         if (isEmpty(fromDbJson($this->to))) {
             $error = Error::InvalidOrder;
         } else if (isEmpty($this->courierId)) {
@@ -79,9 +78,8 @@ class Delivery extends Model
             $error = Error::InvalidDetails;
         } else if (isEmpty($this->status)) {
             $error = Error::InvalidDetails;
-        } else {
-            return json_encode(array(parent::ERROR => $error));
         }
+        return json_encode(array(parent::ERROR => $error));
     }
 
     public function start()

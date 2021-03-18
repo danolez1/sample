@@ -30,6 +30,7 @@ class ApiRoute extends Router
         'post/deleteStaff', 'post/addCategory', 'post/deleteProduct', 'post/updateCartQuantity', 'post/deleteCartItem', 'get/cartItems',
         'post/updateOrderStatus', 'post/updateProductStatus', 'post/updateBranchStatus', 'post/updateStaffLevel', 'post/removeFavorite',
         'post/updateDeliveryTime', 'post/addRatings', 'post/deleteOrder', 'post/updateDelivery', 'post/deleteSubscription', 'get/orderNotification',
+        'post/productDisplayOrder', 'post/deleteCategory'
     ];
 
     const POSTAL_GEOCODE_URL = "https://dev.virtualearth.net/REST/v1/Locations?";
@@ -45,7 +46,7 @@ class ApiRoute extends Router
         parent::__construct($query);
         // Could be more flexible
         // check in_array() and change case factor
-        if (isset($_POST['id'])) {
+        if (isset($_POST['id']) || isset($_GET['zip'])) {
             switch ($this->getPath()) {
                 case $this->endPoint[0]:
                     echo $this->postalGeoCode(($this->getParams()["zip"]));
@@ -126,10 +127,8 @@ class ApiRoute extends Router
                     echo $this->deleteOrder($data);
                     break;
                 case $this->endPoint[20]:
-                    if (isset($_POST['id'])) {
-                        $data = base64_decode($_POST['id']);
-                        echo $this->updateDelivery($data);
-                    }
+                    $data = base64_decode($_POST['id']);
+                    echo $this->updateDelivery($data);
                     break;
                 case $this->endPoint[21]:
                     $data = json_decode(Encoding::decode($_POST['id']));
@@ -142,6 +141,13 @@ class ApiRoute extends Router
                     $adminRole = $data[2];
                     echo $this->orderNotification($count, $branchId, $adminRole);
                     break;
+                case $this->endPoint[23]:
+                    $id = json_decode(Encoding::decode($_POST['id']));
+                    echo $this->productOrderDisplay($_POST['status'], $id);
+                    break;
+                case $this->endPoint[24]:
+                    echo $this->deleteCategory($_POST['id']);
+                    break;
 
                 default:
                     echo "Error 404: Page not found";
@@ -151,8 +157,32 @@ class ApiRoute extends Router
         }
     }
 
+    private function deleteCategory($id)
+    {
+        $category = new Category;
+        return $category->delete($id);
+    }
 
-    public function orderNotification($count, $branchId, $adminRole)
+    private function productOrderDisplay($status, $id)
+    {
+        // var_dump($data, $id);
+        if (intval($id[0]) == Administrator::OWNER) {
+            $settings =  new Setting();
+            $settings->setProductDisplay($status);
+            return $settings->update();
+        } else {
+            $branch = new Branch;
+            $branch = $branch->get('', $id[1]);
+            if (!empty($branch)) {
+                $branch = $branch[0];
+                $branch->setProductDisplay($status);
+                return $branch->update();
+            } else
+                return json_encode(array(Model::ERROR => Error::Unauthorised, Model::RESULT => false));
+        }
+    }
+
+    private function orderNotification($count, $branchId, $adminRole)
     {
         $return = [];
         $order = new Order();

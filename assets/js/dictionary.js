@@ -17,6 +17,9 @@ var dictionary = {
     }, "minutes": {
         en: "min.",
         jp: "分"
+    }, "all": {
+        en: "All",
+        jp: "全て"
     }, "min-order": {
         en: "Min. order",
         jp: "最小注文額"
@@ -32,6 +35,9 @@ var dictionary = {
     }, "cart": {
         en: "Cart",
         jp: "カート"
+    }, "cart2": {
+        en: "Cart",
+        jp: "カート"
     }, "home": {
         en: "Home",
         jp: "ホーム"
@@ -41,9 +47,6 @@ var dictionary = {
     }, "login": {
         en: "Login",
         jp: "ログイン"
-    }, "opening-hours": {
-        en: "Opening Hours",
-        jp: "営業時間"
     }, "delivery-areas": {
         en: "Delivery Areas",
         jp: "配達エリア"
@@ -61,7 +64,7 @@ var dictionary = {
         jp: "送料 :"
     }, "we-accept": {
         en: "We Accept",
-        jp: "受け入れる"
+        jp: "支払方法"
     }, "sold-out": {
         en: "Sold Out",
         jp: "完売"
@@ -76,16 +79,16 @@ var dictionary = {
         jp: "ご氏名"
     }, "first-name": {
         en: "First name",
-        jp: "名前"
+        jp: "名"
     }, "last-name": {
         en: "Last name",
-        jp: "苗字"
+        jp: "性"
     }, "zip": {
         en: "Zip",
         jp: "郵便番号"
     }, "city": {
         en: "City",
-        jp: "町田"
+        jp: "市"
     }, "state": {
         en: "Prefecture",
         jp: "都道府県"
@@ -151,16 +154,16 @@ var dictionary = {
         jp: "クレジットカード名義人氏名"
     }, "proceed": {
         en: "Confirm",
-        jp: "確認"
+        jp: "削除"
     }, "cancel": {
         en: "Cancel",
-        jp: "取消"
+        jp: "キャンセル"
     }, "are-you-sure": {
         en: "Are you sure?",
-        jp: "よろしいですか?"
+        jp: "削除しますか?"
     }, "sign-up": {
         en: "Sign Up",
-        jp: "お申し込み"
+        jp: "会員登録をする"
     }, "reg-successful": {
         en: "Registration Successful",
         jp: "登録に成功"
@@ -200,6 +203,30 @@ var dictionary = {
     }, "address-info": {
         en: "Address & Info.",
         jp: "住所と情報"
+    }, "sunday": {
+        en: "Sunday",
+        jp: "日曜日"
+    }, "monday": {
+        en: "Monday",
+        jp: "月曜日",
+    }, "tuesday": {
+        en: "Tuesday",
+        jp: "火曜日",
+    }, "wednesday": {
+        en: "Wednesday",
+        jp: "水曜日",
+    }, "thursday": {
+        en: "Thursday",
+        jp: "木曜日",
+    }, "friday": {
+        en: "Friday",
+        jp: "金曜日",
+    }, "saturday": {
+        en: "Saturday",
+        jp: "土曜日"
+    }, "opening-hours": {
+        en: "Opening Hours",
+        jp: "営業時間"
     }, "payment": {
         en: "Payment",
         jp: "支払い"
@@ -235,7 +262,7 @@ var dictionary = {
         jp: "カートに商品を追加できませんでした"
     }, "successful": {
         en: "Successful",
-        jp: "成功"
+        jp: "完了"
     }, "cart-added": {
         en: "Product added to cart",
         jp: "カートに商品が追加されました"
@@ -331,22 +358,22 @@ var dictionary = {
         jp: "税金"
     }, "checkout": {
         en: "Check Out",
-        jp: "チェックアウト"
+        jp: "購入手続き"
     }, "delivery-type": {
         en: "Delivery Type",
-        jp: "配信方法"
+        jp: "注文方法"
     }, "choose-home-takeout": {
         en: "Choose between home delivery and take out",
-        jp: "宅配とテイクアウトのどちらかをお選びください"
+        jp: "配達とテイクアウトのどちらかをお選びください"
     }, "home-or-office": {
         en: "Home or office delivery",
-        jp: "宅配またはオフィス配達"
+        jp: "宅配またはオフィスに配達"
     }, "fill-in-address": {
         en: "Fill in delivery address",
         jp: "配送先住所を入力してください"
     }, "reservation": {
         en: "Reservation",
-        jp: "予約"
+        jp: "事前予約"
     }, "date": {
         en: "Date",
         jp: "日付"
@@ -361,16 +388,16 @@ var dictionary = {
         jp: "お客様の情報を入力してください"
     }, "schedule-pickup": {
         en: "Schedule a convenient time for pickup",
-        jp: "集荷に都合の良い時間をスケジュールしてください。"
+        jp: "予約希望日と時間を選択してください。"
     }, "address-location": {
         en: "Address Location",
-        jp: "住所の場所"
+        jp: "配達先住所"
     }, "ordered-branch": {
         en: "Here is the locations of the branch you ordered from",
         jp: "注文した支店の場所は次のとおりです"
     }, "pickup-address": {
         en: "Pickup Address",
-        jp: "ピックアップの住所"
+        jp: "受け取りの住所"
     }, "use-different-info": {
         en: "Use Different Information",
         jp: "異なる情報を使用する"
@@ -379,13 +406,13 @@ var dictionary = {
         jp: "金額"
     }, "payment-details": {
         en: "Payment details",
-        jp: "支払詳細"
+        jp: "支払方法"
     }, "pay-with-cash": {
         en: "Pay with cash",
         jp: "現金で支払う"
     }, "pay-on-delivery": {
         en: "You will be paying on delivery",
-        jp: "お客様は配達で支払います"
+        jp: "お客様は配達時に現金で支払います。"
     }, "pay-with-card": {
         en: "Pay with credit card",
         jp: "クレジットカードで支払う"
@@ -397,7 +424,7 @@ var dictionary = {
         jp: "注文する"
     }, "to-save-info": {
         en: "to save Address & billing information",
-        jp: "住所と請求情報を保存するには"
+        jp: "住所と注文履歴を保存できます。"
     }, "order-successful": {
         en: "Order Successful",
         jp: "注文成功"
@@ -436,10 +463,10 @@ var dictionary = {
         jp: "今すぐ注文"
     }, "search": {
         en: "Search...",
-        jp: "探す..."
+        jp: "検索..."
     }, "select-branch": {
-        en: "Select Branch",
-        jp: "ブランチを選択"
+        en: "Select a store near you",
+        jp: "近くの店舗を選択"
     }, "track-delivery": {
         en: "Track Delivery",
         jp: "配達の追跡"
@@ -479,15 +506,30 @@ var dictionary = {
     }, "extra-note": {
         en: "Add a note (e.g extra pepper, salty etc.)",
         jp: "メモを追加します（例：余分なコショウ、塩辛いなど）"
-    }, "": {
-        en: "",
-        jp: ""
-    }, "": {
-        en: "",
-        jp: ""
-    }, "": {
-        en: "",
-        jp: ""
+    }, "reset": {
+        en: "Reset",
+        jp: "リセット"
+    }, "user-no-exist": {
+        en: "User does not exist",
+        jp: "ユーザーは存在しません"
+    }, "password-reset": {
+        en: "Password reset successful",
+        jp: "パスワードのリセットに成功"
+    }, "reset-password": {
+        en: "Reset Password",
+        jp: "パスワードを再設定する"
+    }, "confirm-password": {
+        en: "Confirm Password",
+        jp: "パスワードを認証する"
+    }, "check-mail-code": {
+        en: "Check your email for recovery code",
+        jp: "リカバリコードについてはメールを確認してください"
+    }, "password-mismatch": {
+        en: "Password Mismatch",
+        jp: "パスワードが一致しません"
+    }, "invalid-r-code": {
+        en: "Incorrect Recovery Code",
+        jp: "不正なリカバリコード"
     }, "": {
         en: "",
         jp: ""

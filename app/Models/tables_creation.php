@@ -57,17 +57,18 @@ try {
     ->addColumn(ProductColumn::QUANTITY, DataType::TEXT)
     ->addColumn(ProductColumn::AVAILABILITY, DataType::TEXT)
     ->addColumn(ProductColumn::RATINGS, DataType::TEXT)
-    ->addColumn(ProductColumn::PRICE, DataType::TEXT)
+    ->addColumn(ProductColumn::PRICE, DataType::INTEGER)
     ->addColumn(ProductColumn::NAME, DataType::TEXT)
     ->addColumn(ProductColumn::DESCRIPTION, DataType::TEXT)
     ->addColumn(ProductColumn::IMAGES, DataType::TEXT)
     ->addColumn(ProductColumn::DISPLAYIMAGE, DataType::TEXT)
     ->addColumn(ProductColumn::CATEGORY, DataType::TEXT)
     ->addColumn(ProductColumn::PRODUCTOPTIONS, DataType::TEXT)
-    ->addColumn(ProductColumn::TIMECREATED, DataType::TEXT)
+    ->addColumn(ProductColumn::TIMECREATED, DataType::INTEGER)
     ->addColumn(ProductColumn::AUTHOR, DataType::TEXT)
     ->addColumn(ProductColumn::TAX, DataType::TEXT)
     ->addColumn(ProductColumn::BRANCHID, DataType::TEXT)
+    // ->alter()
     ->create();
 
 
@@ -111,6 +112,8 @@ try {
     ->addColumn(BranchColumn::PRINT_LANGUAGE, DataType::TEXT)
     ->addColumn(BranchColumn::PRINTNODE_API, DataType::TEXT)
     ->addColumn(BranchColumn::DEFAULT_PRINTER, DataType::TEXT)
+    ->addColumn(BranchColumn::PRODUCT_DISPLAY, DataType::TEXT)
+    // ->alter()
     ->create();
 
   $cartTb = $db->Table(Credential::CARTS_TBL);

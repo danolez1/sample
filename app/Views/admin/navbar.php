@@ -20,7 +20,7 @@
         <button class="mdc-button mdc-menu-button">
           <span class="d-flex align-items-center">
             <span class="figure">
-              <img src="assets/images/faces/face1.jpg" alt="user" class="user">
+              <img src="assets/images/shop/profile.svg" alt="user" class="user">
             </span>
             <span class="user-name"><?php echo $this->admin->getName(); ?></span>
           </span>
@@ -75,9 +75,12 @@
       <div class="menu-button-container">
         <button class="mdc-button mdc-menu-button">
           <i class="mdi mdi-bell"></i>
+          <span class="count-indicator">
+            <span class="count">3</span>
+          </span>
         </button>
         <div class="mdc-menu mdc-menu-surface" tabindex="-1">
-          <h6 class="title"> <i class="mdi mdi-bell-outline mr-2 tx-16"></i> <span trn="notifications">Notifications</span></h6>
+          <h6 class="title"> <i class="mdi mdi-bell-outline mr-2 tx-16"></i> <span trn="notification">Notifications</span></h6>
           <ul class="mdc-list" role="menu" aria-hidden="true" aria-orientation="vertical">
             <!-- <li class="mdc-list-item" role="menuitem">
               <div class="item-thumbnail item-thumbnail-icon">
@@ -121,9 +124,9 @@
       <div class="menu-button-container">
         <button class="mdc-button mdc-menu-button">
           <i class="mdi mdi-email"></i>
-          <span class="count-indicator">
-            <span class="count">3</span>
-          </span>
+          <!-- <span class="count-indicator">
+            <span class="count"></span>
+          </span> -->
         </button>
         <!-- <div class="mdc-menu mdc-menu-surface" tabindex="-1">
           <h6 class="title"><i class="mdi mdi-email-outline mr-2 tx-16"></i> Messages</h6>

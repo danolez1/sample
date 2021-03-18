@@ -1,3 +1,6 @@
+<?php
+
+use Demae\Auth\Models\Shop\Order; ?>
 <main class="content-wrapper">
     <h3 trn="customers">Customers</h3>
     <p class="mb-4" trn="customers-instruct">You can get information on your registered users here. Tap each row to send a mail to your customers </p>
@@ -21,12 +24,11 @@
                                 </div>
                             </div>
                             <div class="col-6 text-right">
-                                <span>Sort by :</span>
-                                <button class="btn btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">New Customer</button>
+                                <span trn="sort-by">Sort by :</span>
+                                <button class="btn btn-outline-primary dropdown-toggle" data-async="sort-customers" type="button" data-toggle="dropdown" aria-haspopup="true" data="created" aria-expanded="true" trn="old-customer">Old Customer</button>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="#" trn="old-customer">Old Customer</a>
-                                    <a class="dropdown-item" href="#" trn="total-order">Total Order</a>
-                                    <a class="dropdown-item" href="#" trn="name">Name</a>
+                                    <a class="dropdown-item" data="orders" trn="total-order">Total Order</a>
+                                    <a class="dropdown-item" data="name" trn="name">Name</a>
                                 </div>
                             </div>
                         </div>
@@ -42,20 +44,27 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php for ($i = 0; $i < count($this->customers); $i++) {
+                        <?php
+
+                        for ($i = 0; $i < count($this->customers); $i++) {
                             $user = $this->customers[$i];
-                            $orders = 0;
+                            $orders = new Order;
+                            $orders = $orders->get(null, $user->getId()) ?? [];
+                            $totalOrder = 0;
+                            foreach ($orders as $order) {
+                                $totalOrder = $totalOrder + $order->getAmount();
+                            }
                         ?>
-                            <tr>
-                                <td>
-                                    <input type="checkbox" class="mr-2" /><?php echo $user->getName(); ?>
+                            <tr class="table-data">
+                                <td data-id="name" data-value="<?php echo $user->getName(); ?>">
+                                   <input type="checkbox" class="mr-2"/><?php echo $user->getName(); ?>
                                 </td>
-                                <td><?php echo $user->getEmail(); ?></td>
-                                <td> <?php echo $user->getPhoneNumber(); ?></td>
-                                <td>
-                                    <?php echo $orders; ?>
+                                <td data-id="email" data-value="<?php echo $user->getEmail(); ?>"><?php echo $user->getEmail(); ?></td>
+                                <td data-id="phone" data-value="<?php echo $user->getPhoneNumber(); ?>"> <?php echo $user->getPhoneNumber(); ?></td>
+                                <td data-id="orders" data-value="<?php echo $totalOrder; ?>">
+                                    <?php echo $this->settings->getCurrency() . number_format($totalOrder); ?>
                                 </td>
-                                <td>
+                                <td data-id="created" data-value="<?php echo $user->getTimeCreated(); ?>">
                                     <?php echo date("m-d-Y", $user->getTimeCreated()); ?>
                                 </td>
                             </tr>

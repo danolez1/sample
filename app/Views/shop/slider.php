@@ -67,7 +67,7 @@ if ($slider == 0) { ?>
                     <h6 class="text-white font-weight-bold"><?php echo $this->available ? '<span trn="opened">Opened</span>' : '<span trn="closed">Closed</span>'; ?></h6>
                 </div>
                 <div class="col-lg-4  col-md-4 col-sm-6 text-center">
-                    <span class="text-white" style="font-size: 15px;"><span trn="min-order"> Min. order</span> <b class="ml-3 mr-3"> <?php echo $settings->getCurrency() . number_format($settings->getMinOrder()); ?></b></span>
+                    <span class="text-white" style="font-size: 15px;"><span trn="min-order"> Min. order</span> <b class="ml-3 mr-3"> <?php echo $settings->getCurrency() . number_format(intval($settings->getMinOrder() ?? 0)); ?></b></span>
                     <a data-toggle="modal" data-target="#cart"> <img src="assets/images/shop/cart.svg" alt="cart" width="40"></a>
                 </div>
             </div>

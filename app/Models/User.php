@@ -54,19 +54,19 @@ class User extends Model
     {
         $error = null;
         if ($type == self::REGISTRATION) {
-            if (is_null($this->getName()) || $this->getName() == "") {
+            if (isEmpty($this->name)) {
                 $error = Error::NullName;
             } else if (!validateEmail($this->email)) {
                 $error = Error::InvalidEmail;
-            } else if (!validatePhone($this->getPhoneNumber())) {
+            } else if (!validatePhone($this->phoneNumber)) {
                 $error = Error::NullPhone;
-            } else if (is_null($this->getPassword()) || $this->getPassword() == "" ||  strlen($this->password) < 4) {
+            } else if (isEmpty($this->password)  ||  strlen($this->password) < 4) {
                 $error = Error::InvalidPassword;
             }
         } else if ($type == self::AUTHENTICATION) {
             if (!validateEmail($this->email)) {
                 $error = Error::InvalidEmail;
-            } else if (is_null($this->getPassword()) || $this->getPassword() == "" ||  strlen($this->password) < 4) {
+            } else if (isEmpty($this->password) ||  strlen($this->password) < 4) {
                 $error = Error::InvalidPassword;
             }
         }
@@ -80,9 +80,11 @@ class User extends Model
         $EN = $_COOKIE['lingo'] == 'en';
         $name = Setting::getInstance()->getStoreName();
         $mail->setSubject($EN ? "【 $name 】- Registration" : "【 $name 】- 会員登録の手続きについて");
-        $link = "";
-        $message['en'] = 'Thank you very much for using ' . $name . '!<br>We have received your membership registration application!<br>▼Please confirm your email address by clicking the link below<br><a href="' . $link . '" >"' . $link . '"</a>';
-        $message['jp'] = $name . ' をご利用頂きましてありがとうございます。会員登録の申込みを受付けました。<br>下記よりお手続きをお願い致します。<br>▼以下のURLよりご登録を完了してください。<br><a href="' . $link . '" >"' . $link . '"</a>※URL有効期限：メール受信から24時間。有効期限を過ぎると無効となります。<br>※本メールは自動送信です。このメールに返信頂いてもお答えできません。ご了承ください。<br>';
+        //  $link = "";
+        $message['en'] = 'Thank you very much for using ' . $name . '!<br>We have received your membership registration application!<br>';
+        //▼Please confirm your email address by clicking the link below<br><a href="' . $link . '" >"' . $link . '"</a>'
+        $message['jp'] = $name . ' をご利用頂きましてありがとうございます。会員登録の申込みを受付けました。<br>下記よりお手続きをお願い致します。<br>';
+        //▼以下のURLよりご登録を完了してください。<br><a href="' . $link . '" >"' . $link . '"</a>※URL有効期限：メール受信から24時間。有効期限を過ぎると無効となります。<br>※本メールは自動送信です。このメールに返信頂いてもお答えできません。ご了承ください。<br>
         $body = file_get_contents('app/Views/email/contact.php');
         $body = str_replace("{name}", $EN ? "Dear  $this->name ," : $this->name . '様,', $body);
         $body = str_replace("{message['en']}", $message["en"], $body);
@@ -104,9 +106,70 @@ class User extends Model
         $mail->sendWithHostSTMP();
     }
 
-    public function update()
+    public function generateReset($length)
     {
-        # code...
+        $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+        $pass = array(); //remember to declare $pass as an array
+        $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+        for ($i = 0; $i < $length; $i++) {
+            $n = rand(0, $alphaLength);
+            $pass[] = $alphabet[$n];
+        }
+        return implode($pass); //turn the array into a st
+    }
+
+    public function sendResetMail($password)
+    {
+        $mail = new Email();
+        $mail->setTo($this->email, $this->name);
+        $EN = $_COOKIE['lingo'] == 'en';
+        $name = Setting::getInstance()->getStoreName();
+        $mail->setSubject($EN ? "【 $name 】- Password Reset" : "【 $name 】- パスワードを再設定する");
+        $link = "";
+        $message['en'] = 'You requested for a password change <br> Here is your reset code ' . $password;
+        $message['jp'] = 'パスワードの変更をリクエストしました<br>これがリセットコードです' . $password;
+        $body = file_get_contents('app/Views/email/contact.php');
+        $body = str_replace("{name}", $EN ? "Dear  $this->name ," : $this->name . '様,', $body);
+        $body = str_replace("{message['en']}", $message["en"], $body);
+        $body = str_replace("{message['jp']}", $message["jp"], $body);
+        $body = str_replace("{{SOCIALS}}", "", $body);
+        $settings = HomeController::getSettings();
+        if (!$settings->getUseTitleAsLogo()) {
+            $mail->setAttachment($settings->getMetaContent());
+            $mail->setAttachmentName("logo-img");
+        }
+        $logo = '<img align="center" border="0" class="center autowidth" src="cid:logo-img" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; width: 100%; max-width: 140px; display: block;"  width="140" />';
+        $body = str_replace("{{LOGO}}", $settings->getUseTitleAsLogo() ? $settings->getLogo() : $logo, $body);
+        $mail->setBody($message['en'] . "\r\n \r\n" . $message['jp']);
+        $mail->setHtml($body);
+        $mail->sendWithHostSTMP();
+    }
+
+    public function resetPassword($reset = false)
+    {
+        $return = array();
+        if ($reset) {
+            $obj = $this->object(false);
+            $stmt = $this->table->update(array(UserColumn::PASSWORD), array($obj[UserColumn::PASSWORD]), array(UserColumn::ID => $this->id));
+            $return[parent::RESULT] = (bool) $stmt->affected_rows;
+            if ($return[parent::RESULT]) {
+                $return[parent::RESULT] = Error::PasswordReset;
+            }
+            $return[parent::ERROR] = null;
+        } else {
+            $password = $this->generateReset(rand(6, 9));
+            $this->setPassword($password);
+            $obj = $this->object(false);
+            $stmt = $this->table->update(array(UserColumn::PASSWORD), array($obj[UserColumn::PASSWORD]), array(UserColumn::ID => $this->id));
+            $return[parent::RESULT] = (bool) $stmt->affected_rows;
+            if ($return[parent::RESULT]) {
+                $this->sendResetMail($password);
+                $return[parent::RESULT] = Error::RecoveryEmailSent;
+            }
+            $return[parent::ERROR] = null;
+        }
+
+        return json_encode($return);
     }
 
     public function authenticate()
@@ -170,18 +233,21 @@ class User extends Model
 
     public function get()
     {
-        if ((!is_null($this->email) && $this->email != "") && (!is_null($this->id) && $this->id != "")) {
+        if (!isEmpty($this->email) || !isEmpty($this->id)) {
             $obj = $this->object(false);
-            $query = $this->table->get(
+            $query = (array)$this->table->get(
                 null,
                 Condition::WHERE,
                 array(
                     UserColumn::EMAIL => $obj[UserColumn::EMAIL],
                     UserColumn::ID => $obj[UserColumn::ID],
                 ),
-                array("AND")
-            )[0];
-            return $this->setData($query);
+                array("OR")
+            );
+            if (!empty($query)) {
+                $query = $query[0];
+                return $this->setData($query);
+            } else return null;
         } else return null;
     }
 

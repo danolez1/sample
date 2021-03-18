@@ -25,17 +25,15 @@
                             <p><span trn="llogin">Login</span></p>
                         </a>
                     <?php } ?>
-
-
-                    <a href="contact-us">
-                        <p trn="contact-us">Contact Us</p>
-                    </a>
+                    <a href="track">
+                            <p><span trn="track-order">Track Order</span></p>
+                        </a>
                 </div>
             </div>
             <footer class="border-top">
                 <div class="row">
                     <p class="col-lg-10 col-sm-6  text-start pt-4">© 2020 <a href="<?php echo $settings->getWebsiteUrl(); ?>"><?php echo $settings->getStoreName(); ?></a> by <a href="https://demae-system.com">CLB Solutions.</a> All rights reserved.</p>
-                    <div class="col-2  pt-4 sd-fnm" id="contact-details-section">
+                    <div class="col-lg-2 col-sm-6 pt-4 sd-fnm" id="contact-details-section">
                         <?php if (isset($settings->getSocials()->facebook)) { ?>
                             <a href="<?php echo $settings->getSocials()->facebook; ?>"><span class="mdi mdi-facebook"></span></a>
                         <?php } ?>
@@ -76,8 +74,8 @@
                                 <p><span trn="llogin">Login</span></p>
                             </a>
                         <?php } ?>
-                        <a href="contact-us">
-                            <p><span trn="contact-us">Contact Us</span></p>
+                        <a href="track">
+                            <p><span trn="track-order">Track Order</span></p>
                         </a>
                     </div>
                     <div class="col-sm-12 col-md-6 mt-md-5 mt-sm-0 mt-lg-0 col-lg-3">

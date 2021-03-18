@@ -279,7 +279,7 @@ class DashboardController extends Controller
         if ($this->admin->getRole() == '1') {
             $product->setBranchId(json_encode($this->data['product-branch'] ?? null));
         } else {
-            $product->setBranchId(!isEmpty($this->data['product-branch']) ? $this->data['product-branch'] : json_encode([$this->admin->getBranchId()]));
+            $product->setBranchId(isset($this->data['product-branch']) ? $this->data['product-branch'] : json_encode([$this->admin->getBranchId()]));
         }
         return $product;
     }

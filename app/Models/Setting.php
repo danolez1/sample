@@ -74,6 +74,7 @@ class Setting extends Model
     private $takeOut;
     private $homeDelivery;
     private $printNodeApi;
+    private $productDisplay;
 
     const KEY_ENCODE_ITERTATION = -1;
     const VALUE_ENCODE_ITERTATION = 2;
@@ -239,6 +240,36 @@ class Setting extends Model
             return $temp;
         } else {
             return Credential::encrypt($data); //,$key
+        }
+    }
+
+    public function productDisplayOptions($selected)
+    {
+        $category = array('Category', 'data' => SettingsColumn::CATEGORY, 'trn' => 'category');
+        $dateAsc = array('Date Created (Ascending)', 'data' => SettingsColumn::DATE_ASCENDING, 'trn' => 'date-created-ascending');
+        $dateDes = array('Date (Descending)', 'data' => SettingsColumn::DATE_DESCENDING, 'trn' => 'date-created-descending');
+        $nameAsc = array('Name (Ascending)', 'data' => SettingsColumn::NAME_ASCENDING, 'trn' => 'product-name-ascending');
+        $nameDes = array('Name (Descending)', 'data' => SettingsColumn::NAME_DESCENDING, 'trn' => 'product-name-descending');
+        $priceAsc = array('Price (Ascending)', 'data' => SettingsColumn::PRICE_ASCENDING, 'trn' => 'price-ascending');
+        $priceDes = array('Price (Descending)', 'data' => SettingsColumn::PRICE_DESCENDING, 'trn' => 'price-descending');
+
+        switch ($selected) {
+            case SettingsColumn::CATEGORY:
+                return array($category, $dateAsc, $dateDes, $nameAsc, $nameDes, $priceAsc, $priceDes);
+            case SettingsColumn::DATE_ASCENDING:
+                return array($dateAsc, $dateDes, $nameAsc, $nameDes, $priceAsc, $priceDes, $category,);
+            case SettingsColumn::DATE_DESCENDING:
+                return array($dateDes, $nameAsc, $nameDes, $priceAsc, $priceDes, $category, $dateAsc,);
+            case SettingsColumn::NAME_ASCENDING:
+                return array($nameAsc, $nameDes, $priceAsc, $priceDes, $category, $dateAsc, $dateDes,);
+            case SettingsColumn::NAME_DESCENDING:
+                return array($nameDes, $priceAsc, $priceDes, $category, $dateAsc, $dateDes, $nameAsc,);
+            case SettingsColumn::PRICE_ASCENDING:
+                return array($priceAsc, $priceDes, $category, $dateAsc, $dateDes, $nameAsc, $nameDes,);
+            case SettingsColumn::PRICE_DESCENDING:
+                return array($priceDes, $category, $dateAsc, $dateDes, $nameAsc, $nameDes, $priceAsc,);
+            default:
+                return array($dateDes, $nameAsc, $nameDes, $priceAsc, $priceDes, $category, $dateAsc,);
         }
     }
 
@@ -1248,6 +1279,26 @@ class Setting extends Model
     public function setTimeCreated($timeCreated)
     {
         $this->timeCreated = $timeCreated;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of productDisplay
+     */
+    public function getProductDisplay()
+    {
+        return $this->productDisplay;
+    }
+
+    /**
+     * Set the value of productDisplay
+     *
+     * @return  self
+     */
+    public function setProductDisplay($productDisplay)
+    {
+        $this->productDisplay = $productDisplay;
 
         return $this;
     }

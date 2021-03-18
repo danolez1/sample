@@ -7,7 +7,7 @@ use Demae\Auth\Models\Shop\Order;
         <div class="card-body">
             <i class="mdi mdi-delete delete-order delete-btn" data-id="<?php echo Encoding::encode(json_encode(array($order->getId(), $this->user->getId()))); ?>"></i>
             <div class="row col-12">
-                <h3 class="order-title"><span trn="order">Order</span>?php echo $order->getDisplayId(); ?></h3>
+                <h3 class="order-title"><span trn="order">Order </span><?php echo $order->getDisplayId(); ?></h3>
                 <h5 class="order-sub-title ml-5 mt-1 mb-4">
                     <?php echo date('M j Y ', intval($order->getTimeCreated())) . date('G:i', intval($order->getTimeCreated())); ?>
                 </h5>

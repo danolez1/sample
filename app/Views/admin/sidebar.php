@@ -1,3 +1,6 @@
+<?php
+
+use Demae\Auth\Models\Shop\Administrator; ?>
 <aside class="mdc-drawer mdc-drawer--dismissible mdc-drawer--open">
     <div class="mdc-drawer__header">
         <a href="admin" class="brand-logo">
@@ -7,8 +10,8 @@
     <div class="mdc-drawer__content">
         <div class="mdc-list-group">
             <nav class="mdc-list mdc-drawer-menu">
-
-                <?php if (intval($this->admin->getRole()) == 1 || intval($this->admin->getRole()) == 2) { ?>
+                <?php
+                if (intval($this->admin->getRole()) == 1 || intval($this->admin->getRole()) == 2) { ?>
                     <div class="mdc-list-item mdc-drawer-item">
                         <a class="mdc-drawer-link" href="dashboard">
                             <i class="material-icons mdc-list-item__start-detail mdc-drawer-item-icon mdi mdi-view-dashboard" aria-hidden="true"></i>
@@ -98,7 +101,8 @@
                     <p class="mt-0 mb-0 ml-2 tx-10" trn="<?php echo $this->admin->getRoleName()[0]["trn"]; ?>"><?php echo $this->admin->getRoleName()[0][0]; ?></p>
                 </div>
             </div>
-            <p class="tx-10 mt-3 mb-1"><span trn="branch">Branch</span>: <br><span trn="info">Info</span> : </p>
+            <?php $br = $this->admin->getRole() == Administrator::OWNER ? "<span trn='main-branch'>Main Branch</span>" : $this->branches[0]->getName(); ?>
+            <p class="tx-10 mt-3 mb-1"><span trn="branch">Branch</span>: <?php echo empty($this->branches) ? '' : $br ?><br><span trn="info">Info</span> : </p>
             <div class="text-center mt-2">
                 <a href="admin-logout">
                     <span class="mdc-button mdc-button--raised mdc-button--white p-1 col-6" trn="logout">Logout</span>

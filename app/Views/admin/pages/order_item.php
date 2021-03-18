@@ -1,6 +1,9 @@
 <?php
 
 use danolez\lib\Security\Encoding;
+use Demae\Auth\Models\Shop\Administrator;
+use Demae\Auth\Models\Shop\Branch;
+use Demae\Auth\Models\Shop\Delivery;
 use Demae\Auth\Models\Shop\Order;
 use Demae\Auth\Models\Shop\Product;
 use Demae\Auth\Models\Shop\Setting; ?>
@@ -23,7 +26,7 @@ use Demae\Auth\Models\Shop\Setting; ?>
             </div>
         </div>
         <?php $cart = fromDbJson($order->getCart());
-        foreach ($cart as $item) {
+        foreach ($cart??[] as $item) {
             $categories = [];
             foreach ($item->productOptions as $option) {
                 $category = [];
@@ -56,7 +59,7 @@ use Demae\Auth\Models\Shop\Setting; ?>
                                     <h6 class="text-danger ">x <?php echo $option->quantity; ?></h6>
                                 </div>
                                 <div class="col-lg-3 col-md-3 col-sm-4 col-4 text-right">
-                                    <span class="order-sub-title font-weight-bold ml-2 h6"> <?php echo Setting::getInstance()->getCurrency() . number_format(isEmpty($option->price) ? 0 : $option->price); ?></span>
+                                    <span class="order-sub-title font-weight-bold ml-2 h6"> <?php echo $this->settings->getCurrency() . number_format(isEmpty($option->price) ? 0 : $option->price); ?></span>
                                 </div>
                             </div>
                         <?php } ?>
@@ -70,7 +73,7 @@ use Demae\Auth\Models\Shop\Setting; ?>
                     <h5 class="span-circle" style="background-color:#05C776;">x<?php echo $item->quantity; ?></h5>
                 </div>
                 <div class="col-lg-2 col-md-6 col-sm-6 col-6 text-right">
-                    <span class="order-sub-title font-weight-bold ml-2"><?php echo Setting::getInstance()->getCurrency() . number_format(intval($item->amount) - intval($item->amount) * Product::TAX); ?></span>
+                    <span class="order-sub-title font-weight-bold ml-2"><?php echo $this->settings->getCurrency() . number_format(intval($item->amount) - intval($item->amount) * Product::TAX); ?></span>
                 </div>
             </div>
         <?php } ?>
@@ -80,7 +83,25 @@ use Demae\Auth\Models\Shop\Setting; ?>
                 <h5 trn="tax">Tax</h5>
             </div>
             <div class="col-6 text-right">
-                <span class="order-title" trn=""><?php echo Setting::getInstance()->getCurrency() . number_format(intval($order->getAmount()) * Product::TAX); ?></span>
+                <span class="order-title" trn=""><?php echo $this->settings->getCurrency() . number_format(intval($order->getAmount()) * Product::TAX); ?></span>
+            </div>
+        </div>
+        <hr class="dropdown-divider">
+        <div class="row col-12">
+            <div class="col-6">
+                <h5 trn="shipping-fee">Shipping</h5>
+            </div>
+            <div class="col-6 text-right">
+                <span class="order-title" trn=""><?php echo $this->settings->getCurrency() . number_format(intval($order->getDeliveryFee())); ?></span>
+            </div>
+        </div>
+        <hr class="dropdown-divider">
+        <div class="row col-12">
+            <div class="col-6">
+                <h5 trn="total-order">Order</h5>
+            </div>
+            <div class="col-6 text-right">
+                <span class="order-title" trn=""><?php echo $this->settings->getCurrency() . number_format(intval($order->getAmount())); ?></span>
             </div>
         </div>
         <hr class="dropdown-divider">
@@ -89,7 +110,7 @@ use Demae\Auth\Models\Shop\Setting; ?>
                 <h3 trn="total">Total</h3>
             </div>
             <div class="col-6 text-right">
-                <span class="h4 font-weight-bold order-title" trn=""> <?php echo Setting::getInstance()->getCurrency() . number_format($order->getAmount()); ?></span>
+                <span class="h4 font-weight-bold order-title" trn=""> <?php echo $this->settings->getCurrency() . number_format(intval($order->getAmount()) + intval($order->getDeliveryFee())); ?></span>
             </div>
         </div>
         <?php $address = fromDbJson($order->getAddress()); ?>
@@ -101,7 +122,12 @@ use Demae\Auth\Models\Shop\Setting; ?>
                         <h6 class="card-title font-weight-bold"><?php echo unicode2html($address->firstName . " " . $address->lastName); ?></h6>
                         <h6 class="card-text tx-12 order-foot"><?php echo $address->email; ?></h6>
                         <h6 class="card-text tx-12 order-foot"><?php echo $address->phoneNumber; ?></h6>
-                        <!-- <h6 class="card-text tx-13 mt-4 text-uppercase font-weight-bold text-danger">Tokyo Branch</h6> -->
+                        <?php $branch = new Branch();
+                        $branch = $branch->get(null, $order->getBranch());
+                        if (!empty($branch))
+                            $branch = $branch[0];
+                        else $branch = new Branch(); ?>
+                        <h6 class="card-text tx-13 mt-4 text-uppercase font-weight-bold text-danger"><?php echo $branch->getName() ?> <span trn="branch"> Branch</span></h6>
                     </div>
                     <div class="col-lg-2 col-md-3 col-sm-6 col-6 mb-4 mt-2">
                         <h6 class="card-subtitle mb-1 tx-13 order-foot-h" trn="delivery-type">Delivery Type</h6>
@@ -120,7 +146,13 @@ use Demae\Auth\Models\Shop\Setting; ?>
                         <h6 class="card-title tx-13 font-weight-bold"><?php echo (unicode2html(str_replace('u', '\u', substr($address->address, 9, strlen($address->address))))) . " " . $address->street . " " . $address->building; ?></h6>
                         <span class="badge bg-plain pl-0 text-danger" trn="search-map">Search on map</span>
                         <h6 class="card-text tx-12 order-foot mt-1">
-                            <span trn="delivered-by">Delivered by</span> <button class="btn btn-sm btn-outline-primary tx-12 ml-2"><?php echo ''; ?></button>
+                            <?php $delivery = new Delivery;
+                            $delivery = $delivery->get(null, $order->getId()) ?? new Delivery;
+                            $admin = new Administrator();
+                            $admin->setId($delivery->getCourierId());
+                            $admin = $admin->get() ?? new Administrator();
+                            ?>
+                            <span trn="delivered-by">Delivered by</span> <button class="btn btn-sm btn-outline-primary tx-12 ml-2"><?php echo $admin->getName(); ?></button>
                         </h6>
                     </div>
                 </div>

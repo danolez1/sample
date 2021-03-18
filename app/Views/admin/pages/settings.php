@@ -798,7 +798,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                                 <div id="collapse<?php echo daysOfWeek()[$i]; ?>" class="collapse" aria-labelledby="headingOne" data-parent="#accordionTime">
                                                     <div class="card-body p-2">
                                                         <div class="row col-12 m-0 p-0 ">
-                                                            <span class="col-4 m-0 p-0 pt-2" trn="open">Open</span>:
+                                                            <span class="col-4 m-0 p-0 pt-2" trn="open">Open</span>
                                                             <div class="input-group mb-3 m-0 p-0 col-7">
                                                                 <input type="text" name="shop-open['<?php echo daysOfWeek()[$i]; ?>']" value="<?php echo !isEmpty($this->settings->getOperationalTime()[$i]) ? $this->settings->getOperationalTime()[$i]->open : ''; ?>" class="form-control m-0 p-0 timepicker" style="background-color: #eee;">
                                                                 <div class="input-group-append d-sm-block d-none">
@@ -807,7 +807,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                                             </div>
                                                         </div>
                                                         <div class="row col-12 m-0 p-0 ">
-                                                            <span class="col-4 m-0 p-0 pt-2" trn="break"> Break:</span>
+                                                            <span class="col-4 m-0 p-0 pt-2" trn="break">Break</span>
                                                             <div class="input-group mb-3 m-0 p-0 col-7">
                                                                 <input type="text" name="shop-break-start['<?php echo daysOfWeek()[$i]; ?>']" value="<?php echo !isEmpty($this->settings->getOperationalTime()[$i]) ? $this->settings->getOperationalTime()[$i]->breakStart : ''; ?>" class="form-control m-0 p-0 timepicker" style="background-color: #eee;">
                                                                 <div class="input-group-append d-sm-block d-none">
@@ -825,7 +825,7 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                                             </div>
                                                         </div>
                                                         <div class="row col-12 m-0 p-0 ">
-                                                            <span class="col-4 m-0 p-0 pt-2" trn="close"> Close</span>:
+                                                            <span class="col-4 m-0 p-0 pt-2" trn="close"> Close</span>
                                                             <div class="input-group mb-3 m-0 p-0 col-7">
                                                                 <input type="text" name="shop-close['<?php echo daysOfWeek()[$i]; ?>']" value="<?php echo !isEmpty($this->settings->getOperationalTime()[$i]) ? $this->settings->getOperationalTime()[$i]->close : ''; ?>" class="form-control m-0 p-0 timepicker" style="background-color: #eee;">
                                                                 <div class="input-group-append d-sm-block d-none">
@@ -855,24 +855,20 @@ include 'app/Views/admin/pages/add_card.php'; ?>
                                 <h6 class="card-title" trn="subscription">Subscription</h6>
                                 <div class="template-demo">
                                     <div class="row col-12 p-0 m-0 mb-1">
-                                        <h6 class="col-6 p-0 m-0" trn="plan">Plan</h6>:
-                                        <div class="col-6 p-0 m-0" trn="monthly">Monthly<?php ?></h6>:
-                                        </div>
+                                        <h6 class="col-4 p-0 pt-1 m-0" trn="plan">Plan</h6>:&nbsp;
+                                        <div class="col-6 p-0 m-0" trn="monthly">Monthly<?php ?> </div>
                                     </div>
                                     <div class="row col-12 p-0 m-0 mb-1">
-                                        <h6 class="col-6 p-0 m-0" trn="branches">Branches</h6>:
-                                        <div class="col-6 p-0 m-0"><?php echo count($this->branches); ?></h6>
-                                        </div>
+                                        <h6 class="col-4 p-0 pt-1 m-0" trn="branches2">Branches</h6>:&nbsp;
+                                        <div class="col-6 p-0 m-0"><?php echo count($this->branches); ?> </div>
                                     </div>
                                     <div class="row col-12 p-0 m-0 mb-1">
-                                        <h6 class="col-6 p-0 m-0" trn="due-date">Due Date</h6>:
-                                        <div class="col-6 p-0 m-0"><?php echo date('j M,Y', intval($this->settings->getTImeCreated()) + (30 * 24 * 3600)) ?></h6>
-                                        </div>
+                                        <h6 class="col-4 pt-1 p-0 m-0" trn="due-date">Due Date</h6>:&nbsp;
+                                        <div class="col-6 p-0 m-0"><?php echo date('j M, Y', intval($this->settings->getTImeCreated()) + (30 * 24 * 3600)) ?> </div>
                                     </div>
                                     <div class="row col-12 p-0 m-0 mb-1">
-                                        <h6 class="col-6 p-0 m-0" trn="amount">Amount</h6>:
-                                        <div class="col-6 p-0 m-0"> <?php echo $this->settings->getCurrency() . number_format($this->settings->calculateSubscription(count($this->branches))); ?></h6>
-                                        </div>
+                                        <h6 class="col-4 pt-1 p-0 m-0" trn="amount">Amount</h6>:&nbsp;
+                                        <div class="col-6 p-0 m-0"> <?php echo $this->settings->getCurrency() . number_format($this->settings->calculateSubscription(count($this->branches))); ?> </div>
                                     </div><br>
                                     <h6><span trn="credit-card">Credit Card</span> <i class="icofont-credit-card"></i></h6>
                                     <?php foreach ($this->paymentDetails as $creditCard) { ?>

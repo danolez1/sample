@@ -1,4 +1,13 @@
 <?php
+//clear error log
+//comment all required in print node
+//comment all ini in autoloader
+//comment all index.php
+//comment zip()
+//remove time() aftter asset import
+//Routes
+//->COKE, SODA
+
 
 function zip($dir, $name, $windows = true)
 {
@@ -62,6 +71,7 @@ function delete_directory($dirname)
 
 function deleteAll()
 {
+    // rmdir($dirname);
     $folder_path = __DIR__;
     $files = glob($folder_path . '/*');
 
@@ -71,13 +81,38 @@ function deleteAll()
     }
 }
 
+function changePermission($path, $permission)
+{
+    exec("find $path -type d -exec chmod $permission {} +");
+}
+
+function chmod_r($dir, $dirPermissions, $filePermissions)
+{
+    $dp = opendir($dir);
+    while ($file = readdir($dp)) {
+        if (($file == ".") || ($file == ".."))
+            continue;
+
+        $fullPath = $dir . "/" . $file;
+
+        if (is_dir($fullPath)) {
+            echo ('DIR:' . $fullPath . "\n");
+            chmod($fullPath, $dirPermissions);
+            chmod_r($fullPath, $dirPermissions, $filePermissions);
+        } else {
+            echo ('FILE:' . $fullPath . "\n");
+            chmod($fullPath, $filePermissions);
+        }
+    }
+    closedir($dp);
+}
 
 
 
 // GET FILE
 $file = 'demae-system.zip';
 $dir = realpath('C:\xampp\htdocs\demae-sample');
-zip($dir, $file, false);
+// zip($dir, $file, false);
 
 $PATH = basename(__DIR__ . DIRECTORY_SEPARATOR);
 
@@ -152,5 +187,6 @@ if (isset($_POST['install'])) {
 
     replace("//", "", 'index.php');
     replace("//", "", 'autoloader.php');
+    // replace("set_error_handler('errorHandler', E_ALL);", "", 'autoloader.php');
     replace("//", "", RESOURCES . 'PrintNodeApi.php');
 }

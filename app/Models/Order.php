@@ -47,7 +47,7 @@ class Order extends Model
     private $log;
     private $branch;
     public $deliveryTime;
-
+    public $settings;
 
     const KEY_ENCODE_ITERTATION = -1;
     const VALUE_ENCODE_ITERTATION = 2;
@@ -55,6 +55,7 @@ class Order extends Model
     public function __construct()
     {
         parent::__construct();
+        $this->settings = HomeController::getSettings();
     }
 
 
@@ -67,7 +68,7 @@ class Order extends Model
         $this->dbName = Credential::SHOP_DB;
     }
 
-    public function get($id = null, $userId = null, $branchId = null)
+    public function get($id = null, $userId = null, $branchId = null, $status = null, $orderBy = "")
     {
         if ($id != null) {
             $query = (array) $this->table->get(
@@ -85,9 +86,12 @@ class Order extends Model
             $query = (array) $this->table->get(
                 null,
                 Condition::WHERE,
-                array(
+                !is_null($status) ? array(
                     OrderColumn::USERDETAILS => $userId,
-                )
+                    OrderColumn::STATUS => $status
+                ) : [OrderColumn::USERDETAILS => $userId,],
+                !is_null($status) ? ['AND'] : [],
+                $orderBy
             );
             foreach ($query as $order) {
                 $orders[] = $this->setData($order);
@@ -98,9 +102,7 @@ class Order extends Model
             $query = (array) $this->table->get(
                 null,
                 Condition::WHERE,
-                array(
-                    OrderColumn::BRANCH => $branchId,
-                )
+                [OrderColumn::BRANCH => $branchId]
             );
             foreach ($query as $order) {
                 $orders[] = $this->setData($order);
@@ -108,7 +110,7 @@ class Order extends Model
             return $orders;
         } else {
             $orders = [];
-            $query = (array) $this->table->get();
+            $query = (array) $this->table->get(null, "", null, [], $orderBy);
             foreach ($query as $order) {
                 $orders[] = $this->setData($order);
             }
@@ -127,15 +129,20 @@ class Order extends Model
         $del = $delivery->get(null, $id);
         $stats = [];
         $stat = 0;
+
         if (!isEmpty($del)) {
             $stats = (array) fromDbJson($del->getStatus());
             $stat = (int) json_decode($stats[count($stats) - 1])->status;
         }
+        // var_dump($stats,$stat, intval($status));
         if ($stat < intval($status)) {
             array_push($stats, json_encode(array('status' => $status, 'time' => time())));
             $delivery->setStatus(json_encode($stats));
-            if (json_decode($delivery->update())->{Model::RESULT}) {
+            $updateDelivery = json_decode($delivery->update());
+            // var_dump($updateDelivery);
+            if ($updateDelivery->{Model::RESULT}) {
                 $stmt = $this->table->update(array(OrderColumn::STATUS), array($status), array(OrderColumn::ID => $id));
+                var_dump($stmt);
                 $return[parent::RESULT] = (bool) $stmt->affected_rows;
             } else {
                 $error = Error::ErrorOccured;
@@ -163,6 +170,7 @@ class Order extends Model
         $this->setDisplayId($id);
         if ($this->getPaymentMethod() == PaymentDetailsColumn::CARD) {
             $payment = json_decode($this->payWithStripe());
+            // var_dump($payment);
             if ($payment->{Model::RESULT} != true) {
                 $return[parent::ERROR] = Error::PaymentUnsuccessful;
                 return $return;
@@ -181,7 +189,11 @@ class Order extends Model
                 $cart->setUserId($item->userId);
                 $cart->delete();
             }
-            $this->printWithPrintNode();
+            try {
+                $this->printWithPrintNode();
+            } catch (\Exception $e) {
+                // var_dump($e);
+            }
         }
         $return[Model::ERROR] = $error;
         return ($return);
@@ -190,21 +202,22 @@ class Order extends Model
 
     private function payWithStripe()
     {
+        $address = fromDbJson($this->address);
         $payment = new StripeApi();
         $payment->setPrice(intval($this->amount) + intval($this->deliveryFee));
         $payment->setCurrency(Setting::getInstance()->getCurrencyLocale());
         $creditCard = $this->paymentDetails['creditCard'];
         $payment->setCreditCard($creditCard);
-        //cookie based(lang), store name, payment
-        $payment->setDescription("Payment");
+        $payment->setEmail($address->email ?? "");
+        $payment->setDescription("Order #" . $this->displayId . " from " . strtoupper($this->settings->getStoreName()) . ' by ' . $address->email);
         return $payment->charge();
     }
 
 
-    public function generateEmailTemplate($EN = false)
+    public function generateEmailTemplate($EN = false, $printout = false)
     {
         $body = file_get_contents('app/Views/email/order.php');
-        $settings = HomeController::getSettings();
+        $settings = $this->settings;
         $address = json_decode($this->address);
         $logo = '<img align="center" border="0" class="center autowidth" src="cid:logo-img" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; width: 100%; max-width: 140px; display: block;"  width="140" />';
         $body = str_replace("{{logo}}", $settings->getUseTitleAsLogo() ? $settings->getLogo() : $logo, $body);
@@ -248,7 +261,11 @@ class Order extends Model
             $product = file_get_contents('app/Views/email/product-item.php');
             $cid = str_replace(" ", "_", $item->productImage);
             $attachments[$cid] = $item->productImage;
-            $product = str_replace("{{PRODUCT_IMAGE}}", "cid:$cid", $product);
+            if ($printout) {
+                $product = str_replace("{{PRODUCT_IMAGE}}", encodeImage($item->productImage), $product);
+            } else {
+                $product = str_replace("{{PRODUCT_IMAGE}}", "cid:$cid", $product);
+            }
             $product = str_replace("{{PRODUCT_NAME}}", $item->productDetails . ' <b>(X' . $item->quantity . ")</b>", $product);
             $options = "";
             $item->productOptions = fromDbJson($item->productOptions);
@@ -288,7 +305,7 @@ class Order extends Model
     public function generateTemplate($EN = false)
     {
         $body = file_get_contents('app/Views/email/order-print.php');
-        $settings = HomeController::getSettings();
+        $settings = $this->settings;
         $address = json_decode($this->address);
         $logo = '<img align="center" border="0" class="center autowidth" src="cid:logo-img" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; width: 100%; max-width: 140px; display: block;"  width="140" />';
         $body = str_replace("{{logo}}", $settings->getUseTitleAsLogo() ? $settings->getLogo() : $logo, $body);
@@ -372,23 +389,27 @@ class Order extends Model
         $pdf = $dompdf->output();
 
         $branch = new Branch();
-        $branch = $branch->get('', $this->branch) ?? new Branch();
-        $printNode = new PrintNodeApi();
-        $printNode->setDefaultPrinter($branch[0]->getDefaultPrinter() ?? Setting::getInstance()->getDefaultPrinter());
-        $printNode->setApi($branch[0]->getPrintNodeApi() ?? Setting::getInstance()->getPrintNodeApi());
+        $branch = $branch->get(null, $this->branch);
+        if (!empty($branch)) {
+            $branch = $branch[0];
+        } else {
+            $branch = new Branch();
+        }
+        $printer = ($branch->getDefaultPrinter() ?? Setting::getInstance()->getDefaultPrinter());
+        $api = $branch->getPrintNodeApi() ?? Setting::getInstance()->getPrintNodeApi();
+        $printNode = new PrintNodeApi($api, $printer);
         $printNode->setContent($pdf);
         $printNode->setSrc('Demae System');
         $printNode->setTitle('New Order');
         $print = $printNode->print();
-        // var_dump($print);
-        if (!$print) {
-            // $statusCode = json_decode($print)->statusCode;
-            // var_dump($print);
-            // if ($statusCode != 201) {
-            //     // $this->printWithPrintNode();
-            //     //Add to mail message
-            // }
-        }
+        //   var_dump($print);
+        // if (!$print) {
+        //     // $statusCode = json_decode($print)->statusCode;
+        //     // if ($statusCode != 201) {
+        //     //     // $this->printWithPrintNode();
+        //     //     //Add to mail message
+        //     // }
+        // }
         $this->sendNotificationMail();
     }
 
@@ -396,17 +417,42 @@ class Order extends Model
     public function sendNotificationMail()
     {
         $mail = new Email();
-        $settings = HomeController::getSettings();
+        $settings = $this->settings;
         $address = fromDbJson($this->address);
+
         if (!$settings->getUseTitleAsLogo()) {
             $mail->setAttachment($settings->getMetaContent());
             $mail->setAttachmentName("logo-img");
         }
+
         $mail->setTo(Email::DEFAULT_FROM_EMAIL, Email::DEFAULT_FROM);
-        $EN = Setting::getInstance()->getPrintLanguage() == 'en';
+        $branch = new Branch();
+        $branch = $branch->get(null, $this->getBranch());
+
+        if (!empty($branch)) {
+            $branch = $branch[0];
+            if ($branch->getPrintLanguage()) {
+                $EN = $branch->getPrintLanguage() == 'en';
+            } else
+                $EN = Setting::getInstance()->getPrintLanguage() == 'en';
+        } else
+            $EN = Setting::getInstance()->getPrintLanguage() == 'en';
+
+
         $mail->setSubject($EN ? $settings->getStoreName() . ': New Order. Order No:[' . $this->getDisplayId() . ']' : $settings->getStoreName() . ": 新しい注文 番号[" . $this->getDisplayId() . ']');
         $mail->setHtml($this->generateTemplate($EN));
         $mail->sendWithHostSTMP();
+
+
+        $admin = new Administrator();
+        $admin = $admin->get($this->getBranch());
+
+        foreach ($admin ?? [] as $adm) {
+            if ($adm->getRole() == Administrator::MANAGER) {
+                $mail->setTo($adm->getEmail(), Email::DEFAULT_FROM);
+                $mail->sendWithHostSTMP();
+            }
+        }
 
 
         $mail->setTo($address->email,  $address->firstName . " " . $address->lastName);
@@ -415,18 +461,19 @@ class Order extends Model
         $template = $this->generateEmailTemplate($EN);
         $mail->setHtml($template->body);
         $mail->setAttachments($template->attachments);
-        // $mail->sendWithHostSTMP();
+        $mail->sendWithHostSTMP();
 
-        $dompdf = new Dompdf();
-        $dompdf->loadHtml($template->body);
-        $customPaper =  'A4'; //array(0, 0, 950, 950);
-        $dompdf->setPaper($customPaper, 'portrait');
-        $dompdf->render();
         if ($this->deliveryOption == OrderColumn::TAKE_OUT) {
-            var_dump("DANIEL");
+            $dompdf = new Dompdf();
+            $template = $this->generateEmailTemplate($EN, true);
+            $dompdf->loadHtml($template->body);
+            $customPaper =  'A4'; //array(0, 0, 950, 950);
+            $dompdf->setPaper($customPaper, 'portrait');
+            $dompdf->render();
             $name = $_COOKIE['lingo'] == 'en' ? "Order " . $this->getDisplayId() : '注文' . $this->getDisplayId();
-            $dompdf->stream("$name.pdf", array("Attachment" => 1));
+            $dompdf->stream("$name.pdf", array("Attachment" => 0));
         }
+
         return;
     }
 

@@ -130,6 +130,13 @@ function decode(str) {
     }
 }
 
+function pad(num) {
+    num = parseInt(num);
+    if (num < 10) {
+        return "0" + num;
+    } else return num;
+}
+
 function listToArray(list) {
     var nodes = [];
     for (var i = 0; i < list.length; i++) {

@@ -1,16 +1,23 @@
 <?php
 
+use danolez\lib\Security\Encoding;
+use Demae\Auth\Models\Shop\Administrator;
 use Demae\Auth\Models\Shop\Product;
+
+include 'app/Views/admin/pages/all_categories.php';
+include 'app/Views/admin/pages/add_category.php';
+
 
 ?>
 <main class="content-wrapper" id="products-main">
-    <div class="row col-12">
+    <div class="row col-12 m-0">
         <div class="col-lg-8 col-md-8 col-sm-6">
             <h3 trn="products">Products</h3>
             <p class="mb-4" trn="products-instruct">You can create, edit, delete and change availability status of your products here</p>
         </div>
-        <div class="col-lg-4 col-md-4 col-sm-6 text-center pt-lg-3 pt-sm-3 pt-0">
-            <a href="add-product"> <button id="add-staff" type="button" class="btn btn-danger ml-2 h6"> <i class='bx bx-plus'></i> <span trn="create-new-product">Create New Product</span> </button></a>
+        <div class="col-lg-4 col-md-4 col-sm-6 text-sm-center text-md-right pt-lg-3 pt-sm-3 pt-0 p-0 m-0">
+            <a href="add-product"> <button type="button" class="btn btn-danger ml-2 h6"> <i class='bx bx-plus'></i> <span trn="create-new-product">Create New Product</span> </button></a>
+            <button type="button" data-toggle="modal" data-target="#categoriesModal" class="btn btn-danger ml-2 h6"><i class="icofont-site-map"></i></button>
         </div>
     </div>
 
@@ -31,11 +38,14 @@ use Demae\Auth\Models\Shop\Product;
             </div>
             <div class="col-6 text-right">
                 <span trn="sort-by">Sort by</span>:
-                <button class="btn btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Category</button>
+
+                <?php
+                $sortBy = $this->settings->productDisplayOptions(intval($this->admin->getRole()) == Administrator::OWNER ? $this->settings->getProductDisplay() : $this->branches[0]->getProductDisplay()); ?>
+                <button class="btn btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" data-id="<?php echo Encoding::encode(json_encode(array($this->admin->getRole(), !empty($this->branches[0]) ? $this->branches[0]->getId() : ''))); ?>" data-async="product-display" data="<?php echo $sortBy[0]['data']; ?>" trn="<?php echo $sortBy[0]['trn']; ?>"><?php echo $sortBy[0][0]; ?></button>
                 <div class="dropdown-menu">
-                    <a class="dropdown-item" href="#" trn="branch">Branch</a>
-                    <a class="dropdown-item" href="#" trn="price">Price</a>
-                    <a class="dropdown-item" href="#" trn="date-cleared">Date Created</a>
+                    <?php for ($i = 1; $i < count($sortBy); $i++) { ?>
+                        <a class="dropdown-item" data="<?php echo $sortBy[$i]['data']; ?>" trn="<?php echo $sortBy[$i]['trn']; ?>"><?php echo $sortBy[$i][0]; ?></a>
+                    <?php } ?>
                 </div>
             </div>
         </div>

@@ -30,7 +30,7 @@
                 </div>
             </div>
             <div class="col-6 text-right">
-                <span>Sort by :</span>
+                <span trn="sort-by">Sort by :</span>
                 <button class="btn btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">Date</button>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" href="#">Time</a>

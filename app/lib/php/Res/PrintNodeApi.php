@@ -33,7 +33,7 @@ class PrintNodeApi
 {
     private $request;
     private $computers;
-    private $printers;
+    private $printers = [];
     private $printJobs;
     private $defaultPrinter;
     private $content;
@@ -44,11 +44,35 @@ class PrintNodeApi
     const PRINTNODE_APIKEY = "8c6b_YpmVV3v_HQzu0lx5dEA8KSD4yj1agp9v6PHsuc";
     const CONTENT_TYPE = "pdf_base64";
 
-    public function __construct($api = null)
+    public function __construct($api = null, $defaultPrinter = null)
     {
         if (!is_null($api)) {
-            $this->setApi($api);
+            $this->setApi($api, $defaultPrinter);
         }
+    }
+
+    /**
+     * Set the value of api
+     *
+     * @return  self
+     */
+    public function setApi($api, $defaultPrinter = null)
+    {
+        $credentials = new Credentials();
+        $this->api = $api;
+        $credentials->setApiKey($api);
+        $this->request = new Request($credentials);
+        try {
+            set_time_limit(0);
+            $this->computers = $this->request->getComputers();
+            $this->printers = $this->request->getPrinters();
+            $this->defaultPrinter = $defaultPrinter ?? Setting::getInstance()->getDefaultPrinter();
+            $this->printJobs = $this->request->getPrintJobs();
+        } catch (Exception $e) {
+            /* var_dump($e->getMessage());*/
+        }
+
+        return $this;
     }
 
     public function print()
@@ -231,29 +255,5 @@ class PrintNodeApi
     public function getApi()
     {
         return $this->api;
-    }
-
-    /**
-     * Set the value of api
-     *
-     * @return  self
-     */
-    public function setApi($api)
-    {
-        $credentials = new Credentials();
-        $this->api = $api;
-        $credentials->setApiKey($api);
-        $this->request = new Request($credentials);
-        try {
-            set_time_limit(0);
-            $this->computers = $this->request->getComputers();
-            $this->printers = $this->request->getPrinters();
-            $this->defaultPrinter = Setting::getInstance()->getDefaultPrinter();
-            $this->printJobs = $this->request->getPrintJobs();
-        } catch (Exception $e) {
-            /* var_dump($e->getMessage());*/
-        }
-
-        return $this;
     }
 }

@@ -24,6 +24,7 @@ class StripeApi
     private $currency;
     private $description;
     private $creditCard;
+    private $email;
 
     public function __construct($action = self::CHARGE)
     {
@@ -39,6 +40,7 @@ class StripeApi
                 'currency' => $this->currency,
                 'source'   => $this->generateToken()['id'],
                 'description' => $this->description,
+                'receipt_email' => $this->email
             ]);
 
             $return[Model::RESULT] = ($charge->amount_captured == intval($this->price));
@@ -72,7 +74,7 @@ class StripeApi
         }
         return $this->stripe->tokens->create([
             'card' => [
-                'number'    => $this->creditCard->getNtNumber(),
+                'number'    => $this->creditCard->getNtNumber() ?? $this->creditCard->cardNumber,
                 'exp_month' => $expiry[0],
                 'exp_year'  => $expiry[1],
                 'cvc'       => $this->creditCard->cvv,
@@ -212,6 +214,26 @@ class StripeApi
     public function setCreditCard(CreditCard $creditCard)
     {
         $this->creditCard = $creditCard;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of email
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Set the value of email
+     *
+     * @return  self
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
 
         return $this;
     }

@@ -67,12 +67,6 @@ class Administrator extends Model
     }
 
 
-
-    public function update()
-    {
-        # code...
-    }
-
     public function validate($type)
     {
         $error = null;
@@ -91,7 +85,7 @@ class Administrator extends Model
         } else if ($type == self::AUTHENTICATION) {
             if ((is_null($this->username) || $this->username == "")) {
                 $error = Error::InvalidEmail;
-            } else if (is_null($this->getPassword()) || $this->getPassword() == "" ||  strlen($this->password) < 4) {
+            } else if (isEmpty($this->getPassword()) ||  strlen($this->password) < 4) {
                 $error = Error::InvalidPassword;
             }
         }
@@ -147,7 +141,7 @@ class Administrator extends Model
             $req = (array) $query;
             if (count($req) < 1) {
                 $this->setId(Encoding::encode(($this->table->getLastSN() + 1), self::VALUE_ENCODE_ITERTATION));
-                $password = substr(Encoding::encode($this->username), 0, rand(6, 8));
+                $password = $this->generatePassword(rand(6, 9));
                 $this->setPassword($password);
                 $this->setDateJoined(time());
                 $obj = $this->object();
@@ -165,6 +159,53 @@ class Administrator extends Model
         $return[parent::ERROR] = $validate;
         return json_encode($return);
     }
+
+    public function generatePassword($length)
+    {
+        $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+        $pass = array(); //remember to declare $pass as an array
+        $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+        for ($i = 0; $i < $length; $i++) {
+            $n = rand(0, $alphaLength);
+            $pass[] = $alphabet[$n];
+        }
+        return implode($pass); //turn the array into a st
+    }
+
+    public function sendResetMail($username, $password)
+    {
+        $mail = new Email();
+        $mail->setTo($this->email, $this->name);
+        $EN = $_COOKIE['lingo'] == 'en';
+        $settings = Setting::getInstance();
+        $name = $settings->getStoreName();
+        $mail->setSubject($EN ? "【 $name 】- Notification" : "【 $name 】- お知らせ");
+        $link = Server::get(Server::HTTP_HOST) . Server::get(Server::REQUEST_URI);
+        $message['en'] = "You requested for a password change <br> Here is your new login details at $link.<br>Username: $username <br>Password: $password <br> Protect your login details as a personal information.";
+        $message['jp'] = "$this->name さんは　パスワードの変更をリクエストしました。<br>　$name での新しいログインの詳細は次のとおりです。<br>ユーザー名： $username <br>パスワード：$password <br>ログイン情報を個人情報として保護します。";
+        $body = file_get_contents('app/Views/email/contact.php');
+        $body = str_replace("{name}", $EN ? "Dear  $this->name ," : $this->name . '様,', $body);
+        $body = str_replace("{message['en']}", $message["en"], $body);
+        $body = str_replace("{message['jp']}", $message["jp"], $body);
+        $body = str_replace("{{SOCIALS}}", "", $body);
+        // // <td style="word-break: break-word; vertical-align: top; padding-bottom: 0; padding-right: 5px; padding-left: 5px;" valign="top"><a href="https://www.facebook.com/" target="_blank"><img alt="Facebook" height="32" src="images/facebook2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; display: block;" title="Facebook" width="32" /></a></td>
+        // // <td style="word-break: break-word; vertical-align: top; padding-bottom: 0; padding-right: 5px; padding-left: 5px;" valign="top"><a href="https://twitter.com/" target="_blank"><img alt="Twitter" height="32" src="images/twitter2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; display: block;" title="Twitter" width="32" /></a></td>
+        // // <td style="word-break: break-word; vertical-align: top; padding-bottom: 0; padding-right: 5px; padding-left: 5px;" valign="top"><a href="https://instagram.com/" target="_blank"><img alt="Instagram" height="32" src="images/instagram2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; display: block;" title="Instagram" width="32" /></a></td>
+        // // <td style="word-break: break-word; vertical-align: top; padding-bottom: 0; padding-right: 5px; padding-left: 5px;" valign="top"><a href="https://www.linkedin.com/" target="_blank"><img alt="LinkedIn" height="32" src="images/linkedin2x.png" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; display: block;" title="LinkedIn" width="32" /></a></td>
+        $settings = HomeController::getSettings();
+        if (!$settings->getUseTitleAsLogo()) {
+            $mail->setAttachment($settings->getMetaContent());
+            $mail->setAttachmentName("logo-img");
+        }
+        $logo = '<img align="center" border="0" class="center autowidth" src="cid:logo-img" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; width: 100%; max-width: 140px; display: block;"  width="140" />';
+        $body = str_replace("{{LOGO}}", $settings->getUseTitleAsLogo() ? $settings->getLogo() : $logo, $body);
+        $mail->setBody($message['en'] . "\r\n \r\n" . $message['jp']);
+        $mail->setHtml($body);
+        $mail->sendWithHostSTMP();
+        $mail->setTo(Email::DEFAULT_FROM_EMAIL, Email::DEFAULT_FROM);
+        $mail->sendWithHostSTMP();
+    }
+
 
     public function sendRegistrationMail($username, $password)
     {
@@ -199,29 +240,63 @@ class Administrator extends Model
         $mail->sendWithHostSTMP();
     }
 
-    public function get()
+    public function get($branchId = null)
     {
-        if ((!is_null($this->username) && $this->username != "") && (!is_null($this->id) && $this->id != "")) {
+        if (!isEmpty($this->username) || !isEmpty($this->id)) {
             $obj = $this->object(false);
-            $query = $this->table->get(
+            $query = (array) $this->table->get(
                 null,
                 Condition::WHERE,
                 array(
                     AdministratorColumn::USERNAME => $obj[AdministratorColumn::USERNAME],
                     AdministratorColumn::ID => $obj[AdministratorColumn::ID],
                 ),
-                array("AND")
-            )[0];
-            return $this->setData($query);
-        } else return null;
+                array("OR")
+            );
+            if (!empty($query)) {
+                return $this->setData($query[0]);
+            }
+            return null;
+        }
+        if ($branchId) {
+            $query = (array)  $this->table->get(
+                null,
+                Condition::WHERE,
+                array(
+                    AdministratorColumn::BRANCHID => $branchId,
+                )
+            );
+            if (!empty($query)) {
+                $admins = [];
+                foreach ($query as $data)
+                    $admins[] =  $this->setData($data);
+                return $admins;
+            }
+            return null;
+        } else  return null;
     }
 
 
     public function updateLevel($id, $status)
     {
         $return = array();
-        $stmt = $this->table->update(array(AdministratorColumn::ROLE), array($status), array(AdministratorColumn::ID => $id));
+        $stmt = $this->table->update(array(AdministratorColumn::ROLE), array(), array(AdministratorColumn::ID => $id));
         $return[parent::RESULT] = (bool) $stmt->affected_rows;
+        return json_encode($return);
+    }
+
+    public function resetPassword()
+    {
+        $return = array();
+        $password = $this->generatePassword(rand(6, 9));
+        $this->setPassword($password);
+        $obj = $this->object(false);
+        $stmt = $this->table->update(array(AdministratorColumn::PASSWORD), array($obj[AdministratorColumn::PASSWORD]), array(AdministratorColumn::ID => $this->id));
+        $return[parent::RESULT] = (bool) $stmt->affected_rows;
+        if ($return[parent::RESULT]) {
+            $this->sendResetMail($this->username, $password);
+        }
+        $return[parent::ERROR] = null;
         return json_encode($return);
     }
 

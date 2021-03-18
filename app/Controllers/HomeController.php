@@ -27,6 +27,7 @@ use Demae\Auth\Models\Shop\Setting;
 use Demae\Auth\Models\Shop\User\Administrator;
 use Demae\Auth\Models\Shop\User;
 use OperationalTime;
+use OrderColumn;
 use Ratings;
 use TrafficLogger;
 use UserController;
@@ -50,6 +51,7 @@ class HomeController extends Controller
     private $available;
     private $traffic;
     private $track;
+    private $openingHours = "";
     private static $q;
 
     const GUEST = "a0283fef1780f643a0639b0621eeeeeeee40ee40";
@@ -137,24 +139,23 @@ class HomeController extends Controller
         }
 
         $this->categories = [];
-        $this->branches = new Branch();
-        $this->branches = $this->branches->get();
-        $this->products = new Product();
-        $this->products = $this->products->get();
         $this->pageSwitch($pages);
     }
 
     public function pageSwitch(array $pages)
     {
-        $traffic = new TrafficLogger();
-        $traffic = $traffic->get($this->traffic->getSession());
-        $traffic = count($traffic) > 0 ? $traffic[count($traffic) == 0 ? 0 : count($traffic) - 1] : new TrafficLogger();
+        try {
+            $traffic = new TrafficLogger();
+            $traffic = $traffic->get($this->traffic->getSession());
+            $traffic = count($traffic) > 0 ? $traffic[count($traffic) == 0 ? 0 : count($traffic) - 1] : new TrafficLogger();
 
-        $trafficPage = is_null($traffic->getPagesViewed()) ? array() : (array) fromDbJson($traffic->getPagesViewed());
-        $trafficPage[$pages[0]] = intval($trafficPage[$pages[0]] ?? 0) + 1;
+            $trafficPage = is_null($traffic->getPagesViewed()) ? array() : (array) fromDbJson($traffic->getPagesViewed());
+            $trafficPage[$pages[0]] = intval($trafficPage[$pages[0]] ?? 0) + 1;
 
-        $this->traffic->setPagesViewed(json_encode($trafficPage));
-        $this->traffic->update();
+            $this->traffic->setPagesViewed(json_encode($trafficPage));
+            $this->traffic->update();
+        } catch (\Exception $e) {
+        }
 
         switch ($pages[0]) {
             case 'profile':
@@ -184,18 +185,20 @@ class HomeController extends Controller
                             $cart = array($cart->verifyItem());
                             $this->cart = $cart;
                         } catch (\Exception $e) {
+                            header('location:home');
                         }
                     }
                 }
                 $this->getTracking();
                 $this->orderData = new Order();
 
-                foreach ($this->cart as $cartItem) {
-                    if (is_null($cartItem)) {
-                        header('location:home');
-                        //display error page
-                    } else
-                        $this->orderData->setAmount(intval($this->orderData->getAmount()) + (intval($cartItem->getAmount()) * intval($cartItem->getQuantity())));
+                if (empty($this->cart)) {
+                    header('location:home');
+                }
+
+                foreach ($this->cart ?? [] as $cartItem) {
+
+                    $this->orderData->setAmount(intval($this->orderData->getAmount()) + (intval($cartItem->getAmount()) * intval($cartItem->getQuantity())));
                 }
                 $this->orderData->setCart($this->cart);
                 $this->page = "app/Views/shop/checkout.php";
@@ -229,6 +232,28 @@ class HomeController extends Controller
     public function getTracking()
     {
         $this->track = (object)[];
+        if (!is_null($this->session->get(self::USER_ID))) {
+            $this->track->orders  = new Order();
+            $this->track->orders  = $this->track->orders->get(null, $this->user->getId());
+        } else {
+            if (!is_null($this->session->get(self::GUEST)) || isset($_COOKIE[self::GUEST])) {
+                $this->track->orders = new Order();
+                $this->track->orders = $this->track->orders->get(null, $_COOKIE[self::GUEST]);
+            }
+        }
+
+        $save = $this->track->orders;
+        $this->track->orders = [];
+        $this->track->whole = [];
+        foreach ($save as $i => $order) {
+            if (intval($order->getStatus()) != OrderColumn::ORDER_DELIVERED && intval($order->getDeliveryOption() != OrderColumn::TAKE_OUT)) {
+                $this->track->orders[] = $order;
+                $this->track->whole[$i]['order'] = $order;
+                $delivery = new Delivery();
+                $this->track->whole[$i]['delivery'] = $delivery->get(null, $order->getId());
+            }
+        }
+
         if (isset($_COOKIE["cmVjZW50LW9yZGVy"]) && !isEmpty($_COOKIE["cmVjZW50LW9yZGVy"])) {
             $id = base64_decode($_COOKIE["cmVjZW50LW9yZGVy"]);
             $order = new Order();
@@ -247,6 +272,7 @@ class HomeController extends Controller
     {
         return new Session(Session::USER_SESSION);
     }
+
     public function renderPage()
     {
         $userController = new UserController($_POST);
@@ -256,10 +282,13 @@ class HomeController extends Controller
         $settings = self::getSettings();
         $script = '<script> setCookie("currency","' . $settings->getCurrencyLocale() . '",20);';
 
-        if (count($this->branches) == 1) {
+        $this->branches = new Branch();
+        $this->branches = $this->branches->get();
+
+        if (!empty($this->branches) && count($this->branches) == 1) {
             $this->branch = $this->branches[0];
         } else {
-            if (isset($_COOKIE["YnJhbmNo"])) {
+            if (isset($_COOKIE["YnJhbmNo"]) && $_COOKIE["YnJhbmNo"] != "undefined") {
                 $this->session->set(self::BRANCH, $_COOKIE["YnJhbmNo"]);
                 $this->branch = new Branch();
                 $this->branch = $this->branch->get(null, $this->session->get(self::BRANCH));
@@ -302,6 +331,7 @@ class HomeController extends Controller
 
         $this->setOperationalTime($settings->getOperationalTime());
         $this->available = self::getAvailability($this->operationalTime[0] ?? new OperationalTime());
+        $this->openingHours = $this->getOpeningHours($settings->getOperationalTime());
 
         $script .= '</script>';
         $settings->setScripts($script);
@@ -325,10 +355,12 @@ class HomeController extends Controller
         $userController_result = null;
         $userController_error = null;
         $showUserController_result = false;
+        $resetPassword = isset($_POST['reset']);
+
         if ($userController != null) {
             $showUserController_result = true;
             $userController_error = (json_decode($userController)->{Model::ERROR});
-            $userController_result = isset(json_decode($userController)->{Model::RESULT});
+            $userController_result = isset(json_decode($userController)->{Model::RESULT}) ? json_decode($userController)->{Model::RESULT} : false;
             if (isset(json_decode($userController)->{Model::DATA})) {
                 $data = (json_decode($userController)->{Model::DATA});
                 $this->session->set(
@@ -343,13 +375,90 @@ class HomeController extends Controller
             }
         }
 
+        if ($this->branch) $opb =  isEmpty($this->branch->getProductDisplay()) ? $settings->getProductDisplay() : $this->branch->getProductDisplay();
+        else $opb =  $settings->getProductDisplay();
+
+        $this->products = new Product();
+        $this->products = $this->products->get(null, $opb);
+
         $productCategories = new Category();
         $productCategories->setType(Category::TYPE_PRODUCT);
         $productCategories = $productCategories->get();
 
+        $this->branch = $this->branch ?? new Branch();
         include 'app/Views/header.php';
-        if (@include($this->page));
+        if (!isEmpty($this->page))
+            if (@include($this->page));
         include 'app/Views/footer.php';
+    }
+
+    public function getOpeningHours($operationalTime)
+    {
+        if (is_null($operationalTime)) {
+            $this->openingHours = "";
+            return;
+        }
+        //   ['Sunday', "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].forEach(function (day) {
+        //
+        $openingHours =  "";
+        $same = [];
+        $days = [];
+        $sameBreaks = [];
+        $breakDays = [];
+        foreach ($operationalTime ?? [] as $day) {
+            if ($day->open && $day->close) {
+                //     $openingHours .= '<span trn="' . strtolower($day->day) . '">' . $day->day . "</span> " . $day->open . " - " . $day->close . "<br>";
+                $same[] = "(" . $day->open . " ~ " . $day->close . ")";
+                $days[] = $day->day;
+                $sameBreaks[] = "(" . $day->breakStart . " ~ " . $day->breakEnd . ")";
+                $breakDays[] = $day->day;
+            }
+        }
+
+        // for ($i = 0; $i < count($sameBreaks ?? []); $i++) {
+        //     if (isset($sameBreaks[$i + 1])  && $sameBreaks[$i] == $sameBreaks[$i + 1]) {
+        //         unset($sameBreaks[$i + 1]);
+        //         $sameBreaks = array_values($sameBreaks);
+        //         $breakDays[$i] = $breakDays[$i] . ", " . $breakDays[$i + 1];
+        //         unset($breakDays[$i + 1]);
+        //         $breakDays = array_values($breakDays);
+        //     }
+        //     if (isset($sameBreaks[$i - 1])  && $sameBreaks[$i] == $sameBreaks[$i - 1]) {
+        //         unset($sameBreaks[$i]);
+        //         $sameBreaks = array_values($sameBreaks);
+        //         $breakDays[$i - 1] = $breakDays[$i - 1] . ", " . $breakDays[$i];
+        //         unset($breakDays[$i]);
+        //         $breakDays = array_values($breakDays);
+        //     }
+        // }
+
+        for ($i = 0; $i < count($same ?? []); $i++) {
+            if (isset($same[$i + 1])  && $same[$i] == $same[$i + 1]) {
+                unset($same[$i + 1]);
+                $same = array_values($same);
+                $days[$i] = $days[$i] . ", " . $days[$i + 1];
+                unset($days[$i + 1]);
+                $days = array_values($days);
+            }
+            if (isset($same[$i - 1])  && $same[$i] == $same[$i - 1]) {
+                unset($same[$i]);
+                $same = array_values($same);
+                $days[$i - 1] = $days[$i - 1] . ", " . $days[$i];
+                unset($days[$i]);
+                $days = array_values($days);
+            }
+        }
+
+        for ($i = 0; $i < count($days ?? []); $i++) {
+            $d = explode(",", $days[$i]);
+            if (count($d) > 1) {
+                $openingHours .= '<span trn="' . strtolower($d[0]) . '">' . $d[0] . "</span> ~ <span trn='" . trim(strtolower($d[count($d) - 1])) . "'> " . $d[count($d) - 1] . "</span> " . $same[$i] . "<br>";
+            } else {
+                $openingHours .= '<span trn="' . strtolower($d[0]) . '">' . $d[0] . "</span> " . $same[$i] . "<br>";
+            }
+        }
+
+        return $openingHours;
     }
 
     public function setOperationalTime($settingsTime)
@@ -390,14 +499,16 @@ class HomeController extends Controller
     public function getOperationalTime()
     {
         $days = [];
-        for ($i = 0; $i < count(($this->operationalTime)); $i++) {
-            $day = $this->operationalTime[$i];
-            $nday = (object)[];
-            $nday->open = $day->getOpen();
-            $nday->close = $day->getClose();
-            $nday->breakStart = $day->getBreakStart();
-            $nday->breakEnd = $day->getBreakEnd();
-            $days[$i] = $nday;
+        if (!empty($this->operationalTime)) {
+            for ($i = 0; $i < count($this->operationalTime); $i++) {
+                $day = $this->operationalTime[$i];
+                $nday = (object)[];
+                $nday->open = $day->getOpen();
+                $nday->close = $day->getClose();
+                $nday->breakStart = $day->getBreakStart();
+                $nday->breakEnd = $day->getBreakEnd();
+                $days[$i] = $nday;
+            }
         }
         return $days;
     }

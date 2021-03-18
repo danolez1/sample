@@ -10,7 +10,7 @@
                         <!--<![endif]-->
                         <div align="center" class="img-container center autowidth" style="padding-right: 20px;padding-left: 20px;">
                             <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr style="line-height:0px"><td style="padding-right: 20px;padding-left: 20px;" align="center"><![endif]-->
-                            <div style="font-size:1px;line-height:20px"> </div><img align="center" alt="Alternate text" border="0" class="center autowidth" src="{{PRODUCT_IMAGE}}" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; width: 100%; max-width: 125px; display: block;" title="Alternate text" width="125" />
+                            <div style="font-size:1px;line-height:20px"> </div><img align="center" border="0" class="center autowidth" src="{{PRODUCT_IMAGE}}" style="text-decoration: none; -ms-interpolation-mode: bicubic; height: auto; border: 0; width: 100%; max-width: 125px; display: block;" width="125" />
                             <div style="font-size:1px;line-height:20px"> </div>
                             <!--[if mso]></td></tr></table><![endif]-->
                         </div>

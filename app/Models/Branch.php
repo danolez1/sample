@@ -37,6 +37,7 @@ class Branch extends Model
     private $defaultPrinter;
     private $printLanguage;
     private $printNodeApi;
+    private $productDisplay;
 
     const KEY_ENCODE_ITERTATION = -1;
     const VALUE_ENCODE_ITERTATION = 2;
@@ -593,6 +594,26 @@ class Branch extends Model
     public function setPrintNodeApi($printNodeApi)
     {
         $this->printNodeApi = $printNodeApi;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of productDisplay
+     */
+    public function getProductDisplay()
+    {
+        return $this->productDisplay;
+    }
+
+    /**
+     * Set the value of productDisplay
+     *
+     * @return  self
+     */
+    public function setProductDisplay($productDisplay)
+    {
+        $this->productDisplay = $productDisplay;
 
         return $this;
     }

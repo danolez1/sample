@@ -1,6 +1,7 @@
 <?php
 
 use danolez\lib\Security\Encoding;
+use Demae\Auth\Models\Shop\Order;
 
 $ordered = false;
 $shippingFee = (intval($this->orderData->getAmount()) >= intval($settings->getFreeDeliveryPrice()) ? 0 : intval($settings->getShippingFee()));
@@ -32,7 +33,10 @@ $shippingFee = (intval($this->orderData->getAmount()) >= intval($settings->getFr
                 ?><script>
                     window.location.href = 'track';
                 </script>
-            <?php } ?>
+            <?php } else {
+                $order = !empty($this->track->orders) ? $this->track->orders[count($this->track->orders) - 1] : new Order();
+                include 'app/Views/shop/order.php';
+            } ?>
             <?php
         }
         if (!$ordered) {
@@ -128,28 +132,13 @@ $shippingFee = (intval($this->orderData->getAmount()) >= intval($settings->getFr
                                 <?php } ?>
 
                                 <div class="alert alert-dark col-12 ml-2 take-out-info" style="background-color: white; display:<?php echo (isEmpty($settings->getHomeDelivery())) ? 'block' : 'none' ?>" role="alert">
-                                    <span class="ml-2" trn="pickup-address">Pickup Address<br>
-                                        <?php echo $this->branch->getAddress(); ?>
-                                    </span>
+                                    <span class="ml-2" trn="pickup-address">Pickup Address</span><br>
+                                    <?php echo $this->branch->getLocation(); ?><br>
+                                    <?php echo $this->branch->getAddress(); ?>
                                 </div>
                                 <div class="mt-5" id="new-checkout-address" style="display: <?php echo (!is_null($this->session->get(self::USER_ID))) ? 'none' : 'block' ?>;">
                                     <div class="col-lg-12 col-sm-12">
-                                        <div class="form-row">
-                                            <div class="col col-sm-6">
-                                                <input type="text" name="fname" trn="fname" required class="form-control" placeholder="First name">
-                                            </div>
-                                            <div class="col col-sm-6">
-                                                <input type="text" name="lname" trn="lname" required class="form-control" placeholder="Last name">
-                                            </div>
-                                        </div>
-                                        <div class="form-row mt-4">
-                                            <div class="col col-sm-6">
-                                                <input type="text" name="phone" trn="phone-nuumber" required class="form-control" placeholder="Phone Number">
-                                            </div>
-                                            <div class="col col-sm-6">
-                                                <input type="text" name="email" trn="email" required required class="form-control" placeholder="Email">
-                                            </div>
-                                        </div>
+
                                         <?php if (!isEmpty($settings->getHomeDelivery())) { ?>
                                             <div class="delivery-info">
                                                 <div class="form-row mt-4">
@@ -178,6 +167,22 @@ $shippingFee = (intval($this->orderData->getAmount()) >= intval($settings->getFr
                                                 </div>
                                             </div>
                                         <?php } ?>
+                                        <div class="form-row">
+                                            <div class="col col-sm-6">
+                                                <input type="text" name="fname" trn="fname" required class="form-control" placeholder="First name">
+                                            </div>
+                                            <div class="col col-sm-6">
+                                                <input type="text" name="lname" trn="lname" required class="form-control" placeholder="Last name">
+                                            </div>
+                                        </div>
+                                        <div class="form-row mt-4">
+                                            <div class="col col-sm-6">
+                                                <input type="text" name="phone" trn="phone-nuumber" required class="form-control" placeholder="Phone Number">
+                                            </div>
+                                            <div class="col col-sm-6">
+                                                <input type="text" name="email" trn="email" required required class="form-control" placeholder="Email">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <h3 class="mt-5" trn="payment-details">Payment details</h3>
@@ -251,16 +256,16 @@ $shippingFee = (intval($this->orderData->getAmount()) >= intval($settings->getFr
                                 <div class="m-0 p-0 row col-12 justify-content-center mt-5 mb-5">
                                     <button type="submit" name="place-order" id="checkout" class="btn btn-sm btn-danger add-to-cart col-10"><span trn="place-order">Place Order</span><span class="mdi mdi-arrow-right-bold ml-2"></span></button>
                                     <?php if (is_null($this->session->get(self::USER_ID))) { ?>
-                                        <p class="mt-3"><a href="profile"><span class="text-danger" trn="sign-up">Sign up</span></a><span trn="to-save-info">to save Address & billing information</span> </p>
+                                        <p class="mt-3"><a href="profile"><span class="text-danger" trn="sign-up">Sign up</span></a><span trn="to-save-info">&nbsp;&nbsp;&nbsp;to save Address & billing information</span> </p>
                                     <?php } ?>
                                 </div>
                             </div>
                         </div>
                     </form>
                     <?php
-                    // if (!is_null($commerceController_error)) {
-                    keepFormValues($_POST);
-                    // }
+                    if (!is_null($commerceController_error)) {
+                        keepFormValues($_POST);
+                    }
                     ?>
                 </div>
             <?php } ?>
@@ -269,7 +274,8 @@ $shippingFee = (intval($this->orderData->getAmount()) >= intval($settings->getFr
 <?php if (!isEmpty($settings->getHomeDelivery())) { ?>
     <script>
         const deliveryTimeToast = new Toasted({
-            position: "top-right",
+            position: "bottom-right",
+            // 'top-right', 'top-center', 'top-left', 'bottom-right', 'bottom-center', 'bottom-left'
             fitToScreen: true,
             // alive, material, bootstrap, colombo, venice, and bulma
             theme: "venice",
@@ -279,11 +285,8 @@ $shippingFee = (intval($this->orderData->getAmount()) >= intval($settings->getFr
                     $deliveryTimeDisplay  = intval($settings->getDeliveryTime()) . " ~ " . (intval($settings->getDeliveryTime()) + intval($settings->getDeliveryTimeRange()));
                 else $deliveryTimeDisplay  = intval($settings->getDeliveryTime());
         ?>
-        deliveryTimeToast.show('<?php echo  $deliveryTimeDisplay; ?> ' + dictionary['min'][lang]);
+        deliveryTimeToast.show('<?php echo  $deliveryTimeDisplay; ?> ' + dictionary['minutes'][lang]);
     </script>
     <data id="delivery-time-display" value="<?php echo $settings->getDeliveryTime(); ?>" hidden><?php echo  $deliveryTimeDisplay; ?><span trn="minutes"></span></data>
 <?php }
-        } else {
-            $order = $this->track->order;
-            include 'app/Views/shop/order.php';
         } ?>

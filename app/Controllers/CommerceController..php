@@ -19,6 +19,7 @@ class CommerceController extends Controller
     private $opened;
     private $minOrder;
     private $session;
+    private $branch;
 
     public function __construct($data)
     {
@@ -61,7 +62,7 @@ class CommerceController extends Controller
             }
         }
         $order->setAddress($address);
-        $error = (array)(json_decode($address->validate())->{Model::ERROR});
+        $error = (array)(json_decode($address->validate($order->getDeliveryOption() == OrderColumn::TAKE_OUT))->{Model::ERROR});
         $return[Model::ERROR] = $error;
         if ($error != null && count($error) > 0) return ($return);
 
@@ -139,9 +140,11 @@ class CommerceController extends Controller
         }
 
         $branch = new Branch();
-        $branch = $branch->get(null, $this->order->getBranch());
-        if (!isset($branch[0])) {
+        $this->branch = $branch->get(null, $this->order->getBranch());
+        if (!isset($this->branch[0])) {
             $error = Error::InvalidBranch;
+        } else {
+            $this->branch  = $this->branch[0];
         }
 
         $return[Model::ERROR] = $error;
@@ -155,7 +158,8 @@ class CommerceController extends Controller
         $validation = $this->validate();
         if (is_array($validation) && isset($validation[Model::ERROR]) && count($validation[Model::ERROR]) < 1) {
             $order = $this->orderData;
-            $shippingFee = (intval($this->getOrder()->getAmount()) >= intval(Setting::getInstance()->getFreeDeliveryPrice()) ? 0 : intval(Setting::getInstance()->getShippingFee()));
+            $settings = Setting::getInstance();
+            $shippingFee = intval($this->getOrder()->getAmount()) >= intval($settings->getFreeDeliveryPrice()) ? 0 : intval($this->branch->getShippingFee() ?? $settings->getShippingFee());
             $order->setCart($this->getOrder()->getCart());
             $order->setAmount($this->getOrder()->getAmount());
             $order->setUserDetails(is_null($this->user) ? $this->session->get(HomeController::GUEST) : $this->user->getId());

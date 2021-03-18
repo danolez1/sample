@@ -197,7 +197,7 @@ use Demae\Auth\Models\Shop\Setting;
                                                     <?php echo unicode2html($address->firstName . " " . $address->lastName); ?>
                                                 </td>
                                                 <td class=" font-weight-medium mdc-layout-grid__cell--span-3">
-                                                    <?php foreach ($cart as $item) {
+                                                    <?php foreach ($cart ?? [] as $item) {
                                                         $content = "";
                                                         foreach ($item->productOptions as $option) {
                                                             $content .= ($option->name . ' <strong>x ' . $option->amount . '</strong>・');

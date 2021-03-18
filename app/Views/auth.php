@@ -99,6 +99,8 @@
         }
     }
 </style>
+
+<data id="current" value="<?php echo $resetPassword ? 'forgot-password' : 'login' ?>"></data>
 <div class="container" id="login">
     <div class="row">
         <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
@@ -121,9 +123,8 @@
                             <input type="password" name="lpassword" trn="password" class="form-control" placeholder="Password" required>
                         </div>
 
-                        <div class="custom-control custom-checkbox mb-3 text-center">
-                            <input type="checkbox" class="custom-control-input" id="customCheck1">
-                            <label class="custom-control-label" for="customCheck1">Remember password</label>
+                        <div class="custom-control mb-3 text-center">
+                            <a href='#forgot-password' style="text-decoration: underline;">Forgot password</a>
                         </div>
                         <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" name="login" trn="login">Login</button>
                         <a href="#register" class="btn btn-lg btn-primary btn-block text-uppercase mt-2" trn="sign-up">Sign Up</a>
@@ -182,6 +183,56 @@
                         $_POST['rpassword'] = "";
                         keepFormValues($_POST);
                     }; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container" id="forgot-password" style="display: <?php echo  $resetPassword ? 'block' : 'none' ?>;">
+    <div class="row">
+        <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+            <div class="card card-signin my-5">
+                <div class="card-body">
+                    <h3 class="font-weight-bold card-title text-center mt-2" trn='reset-password'>Reset Password</h3>
+                    <form method="post" role="form" class="form-signin mt-4" action="">
+                        <div class="row col-12 justify-content-center pr-0 pl-0 ml-0 mr-0" style="margin-top: -1em;">
+                            <?php if (!is_null($userController_error)) { ?>
+                                <div class="alert alert-danger text-center col-lg-6 col-md-6 col-sm-12" role="alert">
+                                    <strong style="font-size:12px;" trn="<?php echo $userController_error->{"trn"} ?>"><?php echo $userController_error->{0}; ?></strong>
+                                </div>
+                            <?php  } else if (is_object($userController_result) || is_array($userController_result)) { ?>
+                                <div class="alert alert-success text-center col-lg-6 col-md-6 col-sm-12" role="alert">
+                                    <strong style="font-size:12px;" trn="<?php echo $userController_result->{'trn'} ?>"><?php $userController_result->{0} ?></strong>
+                                </div>
+                            <?php } ?>
+                        </div>
+                        <?php if ($userController_result &&  $resetPassword) { ?>
+                            <div class="form-label-group">
+                                <input name="reset-code" trn="reset-code" class="form-control" placeholder="Recovery Code" required autofocus>
+                            </div>
+                            <div class="form-label-group">
+                                <input type="password" name="reset-password" trn="password" class="form-control" placeholder="Password" required autofocus>
+                            </div>
+                            <div class="form-label-group">
+                                <input type="password" name="creset-password" trn="confirm-password" class="form-control" placeholder="Confirm Password" required autofocus>
+                            </div>
+                        <?php } else { ?>
+                            <div class="form-label-group">
+                                <input type="email" name="femail" trn="email" class="form-control" placeholder="Email address" required autofocus>
+                            </div>
+                        <?php } ?>
+                        <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit" name="reset" trn="reset">Reset</button>
+                        <a href="#login" class="btn btn-lg btn-primary btn-block text-uppercase mt-2" trn="login">Login</a>
+                        <!-- <hr class="my-4">
+                        <button class="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i class="bx bxl-twitter"></i> <span trn=""> Sign in with Google</span></button>
+                        <button class="btn btn-lg btn-facebook btn-block text-uppercase" type="submit"><i class='bx bxl-facebook'></i> <span trn=""> Sign in with Facebook</span> </button> -->
+                    </form>
+                    <?php if (!is_null($userController_error)) {
+                        $_POST['lpassword'] = "";
+                        keepFormValues($_POST);
+                    } ?>
                 </div>
             </div>
         </div>

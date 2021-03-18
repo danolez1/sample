@@ -44,7 +44,7 @@
     <link rel="stylesheet" href="assets/vendors/icofont/icofont.min.css">
     <link rel="stylesheet" href="assets/css/style.min.css">
     <link rel="stylesheet" href="assets/css/side_modal.css">
-    <link rel="stylesheet" href="assets/css/shop.css">
+    <link rel="stylesheet" href="assets/css/shop.css?ssdf">
     <link rel="stylesheet" href="assets/css/home.css">
     <link rel="stylesheet" href="assets/css/jquery-spinner.min.css">
     <link rel="stylesheet" href="assets/css/webToast.min.css">
@@ -54,11 +54,11 @@
     <link rel="stylesheet" href="assets/css/toasted.min.css">
     <!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
     <script src="assets/vendors/jquery/jquery.min.js"></script>
+    <!-- <script src="assets/js/jquery.sticky.elements.js"></script> -->
     <script src="assets/js/first_load.js"></script>
-    <script src="assets/js/dictionary.js"></script>
+    <script src="assets/js/dictionary-min.js"></script>
     <script src="assets/js/webToast.min.js"></script>
     <script src="assets/js/toasted.min.js"></script>
-
 </head>
 
 <body id="body" data-spy="scroll" data-target=".navbar" data-offset="100">
@@ -68,12 +68,12 @@
                 <div class="navbar-brand-wrapper d-flex w-100"><a href="shop"><?php echo $settings->getLogo(); ?></a><button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="mdi mdi-menu navbar-toggler-icon"></span></button></div>
                 <div class="collapse navbar-collapse navbar-menu-wrapper" id="navbarSupportedContent">
                     <ul class="navbar-nav align-items-lg-center align-items-start ml-auto ">
-                        <li class="d-flex align-items-center justify-content-between pl-4 pl-lg-0">
+                        <li class="d-flex align-items-center justify-content-between p-2" style="width: 100%;">
                             <div class="navbar-collapse-logo"><?php echo $settings->getMobileLogo(); ?></div>
-                            <button class="navbar-toggler close-button" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="mdi mdi-close navbar-toggler-icon pl-5"></span></button>
+                            <button class="navbar-toggler close-button" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span style="font-size: 24px;" class="mdi mdi-close navbar-toggler-icon"></span></button>
                         </li>
                         <li class="nav-item">
-                            <div class="dropdown"><a type="button" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span trn="menu">Menu</span></a>
+                            <div class="dropdown"><a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span trn="menu">Menu</span></a>
                                 <div class="dropdown-menu">
                                     <?php foreach ($productCategories as $category) { ?>
                                         <button href="#menu" class="dropdown-item category-pill" data-id="<?php echo $category->getId(); ?>" data-toggle="tab" data-id="<?php echo ""; ?>"><?php echo $category->getName(); ?></button>
@@ -83,17 +83,17 @@
                         </li>
                         <li class="nav-item"><a class="nav-link"></a></li>
                         <li class="nav-item">
-                            <div class="dropdown"><a type="button" class="nav-link dropdown-toggle" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span trn="branches">Branches</span></a>
+                            <div class="dropdown"><a class="nav-link dropdown-toggle" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span trn="branches">Branches</span></a>
                                 <div class="dropdown-menu">
-                                    <?php foreach ($this->branches as $branch) { ?>
-                                        <button class="dropdown-item select-shop" data-id="<?php echo $branch->getId(); ?>"><?php echo $branch->getName(); ?></button>
+                                    <?php
+                                    foreach ($this->branches as $branch) { ?>
+                                        <button class="dropdown-item select-shop" data-id="<?php echo $branch->getId(); ?>" <?php echo $this->branch->getId()  == $branch->getId() ? 'style="font-weight:600;color:#fa1616;text-transform: uppercase;"' : 'style="text-transform: capitalize;"' ?>><?php echo $branch->getName(); ?></button>
                                     <?php } ?>
                                 </div>
                             </div>
                         </li>
                         <li class="nav-item"><a class="nav-link"></a></li>
-                        <li class="nav-item"><a class="nav-link" href="" style="width:120px;" trn="contact-us">Contact Us</a></li>
-                        <li class="nav-item"><a class="nav-link"></a></li>
+                        <li class="nav-item"><a class="nav-link" href="track" style="width:150px;" trn="track-order">Track Order</a></li>
                         <li class="nav-item"><a class="nav-link"></a></li>
                         <li class="nav-item btn-contact-us pl-4 pl-lg-0">
                             <div class="dropdown"><button class="btn btn-sm btn-demae-success dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false value=" en" id="defaultLang">English </button>

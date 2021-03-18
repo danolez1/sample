@@ -15,6 +15,7 @@ class Error
     const InvalidPassword = array("Incorrect password", "trn" => "error-password");
     const WrongDetails = array("Incorrect email or password", "trn" => "wrong-details");
     const UserExist = array("User already exist", "trn" => "user-exist");
+    const UserNoExist = array("User does not exist", "trn" => "user-no-exist");
     const AdministratorExist = array('Email already exist', 'trn' => 'admin-exist');
     const InvalidRole = array("Select Role", "trn" => "error-role");
     const InvalidBranch = array("Select Branch", "trn" => "error-branch");
@@ -47,11 +48,11 @@ class Error
     const BelowMinOrder = array("Order Below Min. Order", "trn" => "below-minimum");
     const InvalidOrder = array("Order not found", "trn" => "invalid-order");
     const InvalidDetails = array("Invalid delivery details", "trn" => "invalid-details");
-    const ErrorOccured  = array("Error occured","trn"=>"error-occured");
-    // const  = array("","trn"=>"");
-    // const  = array("","trn"=>"");
-    // const  = array("","trn"=>"");
-    // const  = array("","trn"=>"");
+    const ErrorOccured  = array("Error occured", "trn" => "error-occured");
+    const RecoveryEmailSent = array("Check your email for recovery code", "trn" => "check-mail-code");
+    const PasswordReset = array("Password reset successful", "trn" => "password-reset");
+    const  PasswordMismatch = array("Password Mismatch", "trn" => "password-mismatch");
+    const InvalidRecoveryCode = array("Incorrect Recovery Code","trn"=>"invalid-r-code");
     // const  = array("","trn"=>"");
     // const  = array("","trn"=>"");
     // const  = array("","trn"=>"");

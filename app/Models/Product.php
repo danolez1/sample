@@ -12,6 +12,7 @@ use ProductColumn;
 use Ratings;
 use ReflectionClass;
 use ReflectionProperty;
+use SettingsColumn;
 
 class ProductOption
 {
@@ -159,14 +160,36 @@ class Product extends Model
         return json_encode($return);
     }
 
-    public function get($id = null)
+    private function orderBy($opb)
+    {
+        switch ($opb) {
+            case SettingsColumn::CATEGORY:
+                return "ORDER BY " . ProductColumn::CATEGORY;
+            case SettingsColumn::DATE_ASCENDING:
+                return "ORDER BY " . ProductColumn::TIMECREATED . " ASC;";
+            case SettingsColumn::DATE_DESCENDING:
+                return "ORDER BY " . ProductColumn::TIMECREATED . " DESC;";
+            case SettingsColumn::NAME_ASCENDING:
+                return "ORDER BY " . ProductColumn::NAME . " ASC;";
+            case SettingsColumn::NAME_DESCENDING:
+                return "ORDER BY " . ProductColumn::NAME . " DESC;";
+            case SettingsColumn::PRICE_ASCENDING:
+                return "ORDER BY " . ProductColumn::PRICE . " ASC;";
+            case SettingsColumn::PRICE_DESCENDING:
+                return "ORDER BY " . ProductColumn::PRICE . " DESC;";
+            default:
+                return "";
+        }
+    }
+
+    public function get($id = null, $orderBy = null)
     {
         $orders = new Order();
         $orders = $orders->get();
         $obj = [];
         foreach ($orders as $order) {
             $cart = fromDbJson($order->getCart());
-            foreach ($cart as $item) {
+            foreach ($cart??[] as $item) {
                 if (isset($obj[$item->productId]))
                     $obj[$item->productId] =  intval($obj[$item->productId]) + 1;
                 else
@@ -206,7 +229,7 @@ class Product extends Model
             return $product;
         } else {
             $products = [];
-            $query = (array) $this->table->get();
+            $query = (array) $this->table->get(null, '', null, [], $this->orderBy($orderBy));
             $ratings = new Ratings();
             $ratings  = $ratings->get();
             foreach ($query as $product) {

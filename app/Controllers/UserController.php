@@ -2,6 +2,8 @@
 
 use danolez\lib\DB\Controller;
 use danolez\lib\DB\Model;
+use danolez\lib\Security\Encryption;
+use Demae\Auth\Models\Error;
 use Demae\Auth\Models\Shop\Address;
 use Demae\Auth\Models\Shop\Administrator;
 use Demae\Auth\Models\Shop\Log;
@@ -13,6 +15,8 @@ class UserController extends Controller
 {
     private $user;
     private $admin;
+
+    const USER_COOKIE = '28283f281780d63ea0da0808174317f208280acf43f9eef2ee40ee40';
 
     public function __construct($data)
     {
@@ -29,6 +33,8 @@ class UserController extends Controller
             return $this->savePayment();
         } else if (isset($this->data['save-address'])) {
             return  $this->saveAddress();
+        } else if (isset($this->data['reset'])) {
+            return  $this->resetPassword();
         } else return null;
     }
 
@@ -61,6 +67,41 @@ class UserController extends Controller
             return $register;
     }
 
+
+    public function resetPassword()
+    {
+        if (isset($this->data['reset-password']) && isset($this->data['creset-password'])) {
+            if ($this->data['reset-password'] != $this->data['creset-password']) {
+                return json_encode(array(Model::ERROR => Error::PasswordMismatch));
+            }
+            $user = new User();
+            $user->setId($_COOKIE[self::USER_COOKIE]);
+            $user = $user->get();
+            if (is_null($user)) {
+                return json_encode(array(Model::ERROR => Error::UserNoExist));
+            } else {
+                $code = $this->data['reset-code'];
+                if (Encryption::verify($user->getPassword(), $code)) {
+                    $user->setPassword($this->data['reset-password']);
+                    setcookie(self::USER_COOKIE, null, time() - 3000, "/");
+                    return $user->resetPassword(true);
+                } else {
+                    return json_encode(array(Model::ERROR => Error::InvalidRecoveryCode));
+                }
+            }
+        } else {
+            $user = new User();
+            $user->setEmail($this->data['femail']);
+            $user = $user->get();
+            if (is_null($user)) {
+                return json_encode(array(Model::ERROR => Error::UserNoExist));
+            } else {
+                setcookie(self::USER_COOKIE, $user->getId(), time() + 3000, "/");
+                return $user->resetPassword();
+            }
+        }
+    }
+
     public function adminAuth()
     {
         if (isset($this->data['auth'])) {
@@ -68,6 +109,15 @@ class UserController extends Controller
             $admin->setUsername($this->data['username']);
             $admin->setPassword($this->data['password']);
             return ($admin->authenticate());
+        } else if (isset($this->data['reset'])) {
+            $admin = new Administrator();
+            $admin->setUsername($this->data['username']);
+            $admin = $admin->get();
+            if (is_null($admin)) {
+                return json_encode(array(Model::ERROR => Error::UserNoExist));
+            } else {
+                return $admin->resetPassword();
+            }
         } else return null;
     }
 

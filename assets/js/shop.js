@@ -1,17 +1,5 @@
 window.onscroll = function () { scrollFunction() };
 var element = document.getElementById("body");
-function scrollFunction() {
-    if (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) {
-        $(".navbar").addClass("fixed-top");
-        element.classList.add("header-small");
-        $("body").addClass("body-top-padding");
-
-    } else {
-        $(".navbar").removeClass("fixed-top");
-        element.classList.remove("header-small");
-        $("body").removeClass("body-top-padding");
-    }
-}
 
 $('.owl-carousel').owlCarousel({
     items: 3,
@@ -179,11 +167,33 @@ function isCardValid(cardNumber) {
         return false;
 
 }
-var cart = document.getElementById("cart-fab");
-window.onscroll = function () { if (cart != undefined) scrollFunction(cart) };
 
-function scrollFunction(e) {
-    if (document.body.scrollTop > 350 || document.documentElement.scrollTop > 350) {
+// function scrollFunction() {
+//     if (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) {
+//         $(".navbar").addClass("fixed-top");
+//         element.classList.add("header-small");
+//         $("body").addClass("body-top-padding");
+
+//     } else {
+//         $(".navbar").removeClass("fixed-top");
+//         element.classList.remove("header-small");
+//         $("body").removeClass("body-top-padding");
+//     }
+// }
+
+var cart = document.getElementById("cart-fab");
+var menu = document.getElementById("js-sticky-widget");
+var body = document.getElementsByTagName('body')[0];
+window.onscroll = function () {
+    if (cart != undefined) scrollFunction(cart)
+    // if (menu != undefined) scrollFunction(menu, menu.offsetTop)
+
+    // console.log(menu.offsetHeight, menu.offsetTop)
+    // console.log(body.offsetHeight, body.offsetTop)
+};
+
+function scrollFunction(e, distance) {
+    if ((document.body.scrollTop > (distance ?? 350)) || document.documentElement.scrollTop > (distance ?? 350)) {
         e.style.display = "block";
     } else {
         e.style.display = "none";
@@ -247,6 +257,8 @@ $(document).ready(function () {
 
     $('.select-shop').click(function () {
         setCookie("YnJhbmNo", $(this).attr('data-id'), 1);
+        // console.warn($(this).attr('data-id'));
+        // console.log(getCookie("YnJhbmNo"))
         location.reload();
     });
 
@@ -366,49 +378,41 @@ $(document).ready(function () {
         }
     }
 
-    function pad(num) {
-        num = parseInt(num);
-        if (num < 10) {
-            return "0" + num;
-        } else return num;
-    }
-
     try {
-
-        var update = setInterval(function () {
-            var lang = getCookie('lingo');
-            var track = $('input[name="track-id"]');
-            $.post('post/updateDelivery', {
-                id: track.val(),
-            }, function (data, status) {
-                data = data.stripSlashes().stripSlashes().split('"[').join('[').split('["').join('[');
-                data = (data.split(']"').join(']').split('"{').join('{').split('}"').join('}'))
-                try {
-                    data = (JSON.parse(data));
-                    var html = '<li class="row justify-content-between" id="start">' + $('#start').html() + '</li>';
-                    var timeline = $('.timeline');
-                    var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                    data.status.forEach((element) => {
-                        var d = new Date(element.time * 1000);
-                        // var cD = new Date();
-                        var id = element.status;
-                        //same year getFullYear()
-                        html += '<li class="row justify-content-between"><h5 trn="' + showDeliveryInfo(id).trn + '">' + dictionary[showDeliveryInfo(id).trn][lang] + '</h5><p class="float-right">' + months[d.getMonth()] + " " + d.getDate() + ", " + pad(d.getHours()) + ":" + pad(d.getMinutes()) + '</p></li>'
-                    });
-
-                    timeline.html(html);
-                    if (track.attr('data-id') < data.status.length)
-                        playSound('assets/audio/beep.mp3');
-                    if (data.status.length == 4)
-                        clearInterval(update);
-                    track.attr('data-id', data.status.length);
-                } catch (e) {
-
-                }
-            });
-        }, 10000)
+        var lang = getCookie('lingo');
+        var track = $('input[name="track-id"]');
+        listToArray(track).forEach(function (track) {
+            var update = setInterval(function () {
+                track = $(track);
+                $.post('post/updateDelivery', {
+                    id: track.val(),
+                }, function (data, status) {
+                    data = data.stripSlashes().stripSlashes().split('"[').join('[').split('["').join('[');
+                    data = (data.split(']"').join(']').split('"{').join('{').split('}"').join('}'))
+                    try {
+                        data = (JSON.parse(data));
+                        var html = '<li class="row justify-content-between" id="start">' + $('#start').html() + '</li>';
+                        var timeline = track.next();//$('.timeline');
+                        var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                        data.status.forEach((element) => {
+                            var d = new Date(element.time * 1000);
+                            // var cD = new Date();
+                            var id = element.status;
+                            //same year getFullYear()
+                            html += '<li class="row justify-content-between"><h5 trn="' + showDeliveryInfo(id).trn + '">' + dictionary[showDeliveryInfo(id).trn][lang] + '</h5><p class="float-right">' + months[d.getMonth()] + " " + d.getDate() + ", " + pad(d.getHours()) + ":" + pad(d.getMinutes()) + '</p></li>'
+                        });
+                        timeline.html(html);
+                        if (track.attr('data-id') < data.status.length)
+                            playSound('assets/audio/beep.mp3');
+                        if (data.status.length == 4)
+                            clearInterval(update);
+                        track.attr('data-id', data.status.length);
+                    } catch (e) {
+                    }
+                });
+            }, 10000);
+        });
     } catch (e) {
-
     }
 
     if (window.location.hash != "") {
@@ -455,20 +459,35 @@ $(document).ready(function () {
 
         }
         if (window.location.href.includes("auth")) {
-            if (window.location.hash == "#register")
-                navigateFromTo("login", "register");
+            if (window.location.hash == "#register") {
+                navigateFromTo($('#current').val(), "register");
+            }
+            else if (window.location.hash == "#forgot-password") {
+                navigateFromTo($('#current').val(), "forgot-password");
+            }
         }
     }
 
     $("a[href='#login']").click(function () {
         if ($('.alert-danger') !== undefined)
             $('.alert-danger').css("display", "none");
-        navigateFromTo("register", "login");
+
+        navigateFromTo($('#current').val(), "login");
+        $('#current').val('login');
     });
     $("a[href='#register']").click(function () {
         if ($('.alert-danger') !== undefined)
             $('.alert-danger').css("display", "none");
-        navigateFromTo("login", "register");
+
+        navigateFromTo($('#current').val(), "register");
+        $('#current').val('register');
+    });
+    $("a[href='#forgot-password']").click(function () {
+        if ($('.alert-danger') !== undefined)
+            $('.alert-danger').css("display", "none");
+
+        navigateFromTo($('#current').val(), "forgot-password");
+        $('#current').val('forgot-password');
     });
 
     $('.list-product-card').click(function () {
@@ -704,13 +723,6 @@ $(document).ready(function () {
             }
         });
     }
-    var deliveryInfo = $('#deliveryInfo');
-
-    try {
-        var date = new Date(Date.now() + 60000 * base64de(deliveryInfo.attr('data-delivery-time')));
-    } catch (e) {
-        var date = new Date(Date.now() + 3600000);
-    }
 
     $('[data-toggle="datepicker"]').datepicker({
         format: 'yyyy/mm/dd',
@@ -727,9 +739,9 @@ $(document).ready(function () {
     $('[data-toggle="datepicker"]').change(function () {
         var deliveryTime = ($('#delivery-time-display').val())
         var today = new Date();
-        today = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        today = new Date(today.getFullYear(), today.getMonth(), today.getDate(), today.getHours(), today.getMinutes());
         var dateSelected = new Date($(this).val());
-        var daySelected = ((dateSelected.getTime() - today.getTime()) / 86400000);
+        var daySelected = parseInt(((dateSelected.getTime() - today.getTime()) / 86400000) + 1);
         if (daySelected > 6) {
             if (daySelected % 7 == 0)
                 daySelected = 0;
@@ -737,29 +749,45 @@ $(document).ready(function () {
                 daySelected = daySelected - 7;
         }
         var times = (operationTimes[daySelected]);
-        try {
-            var open = times.open.split(":");
-            var hr = parseInt(open[0]);
-            var min = parseInt(open[1]) + 30;
-            if (min >= 60) { min = min - 60; hr++; }
-            times.open = hr + ":" + min;
-            if (isNaN(hr)) { times.open = "" }
-        } catch (e) {
 
-        }
+        var timesOpen = times.open;
+
+        try {
+            var hr, min;
+            var open = timesOpen.split(":");
+            hr = parseInt(open[0]);
+            min = parseInt(open[1]) + parseInt(deliveryTime ?? 30);
+
+            if (dateSelected.getDate() == today.getDate()) {
+                if (today.getHours() > hr) {
+                    hr = today.getHours();
+                    min = today.getMinutes() + parseInt(deliveryTime ?? 30);
+                }
+                var close = times.close.split(":");
+                if (parseInt(close[0]) < hr || (parseInt(close[0]) == hr && parseInt(close[1]) < min)) { hr = NaN }
+
+            }
+            if (min >= 60) { min = min - 60; hr++; }
+            timesOpen = hr + ":" + min;
+            if (isNaN(hr)) { timesOpen = "" }
+
+        } catch (e) { }
         $('[data-toggle="timepicker"]').timepicker({
             step: 15,
             show2400: true,
-            minTime: times.open,
+            minTime: timesOpen,
             maxTime: times.close,
             disableTimeRanges: [times.breakStart, times.breakEnd],
         });
+
     });
 
 
     if ($('input[name="delivery_option"]:checked').val() == 2) {
         deliveryTimeToast.clear();
-
+        $('#takeout-time').css('display', 'block');
+        $(".take-out-info").css('display', 'block');
+        $('.delivery-info').css('display', 'none');
     }
     $('input[name="delivery_option"]').change(function () {
         if ($(this).val() == 1) {
@@ -772,8 +800,8 @@ $(document).ready(function () {
             $('.delivery-info').css('display', 'none');
             $('#takeout-time').css('display', 'block');
             deliveryTimeToast.clear();
-
         }
+        $('[data-toggle="datepicker"]').val("");
     });
 
     if ($('#card-saved').val() != undefined) {
@@ -784,19 +812,20 @@ $(document).ready(function () {
         }
     }
 
-
-
-    if ($('input[name="payment_option"]:checked').val() == "card") {
-        $('#saved-cards').css('display', 'block');
-
-    } else {
-        $('#saved-cards').css('display', 'none');
-    }
-
     if ($('#use-new-card').is(':checked')) {
         $('#new-checkout-payment').css('display', 'block');
     } else {
         $('#new-checkout-payment').css('display', 'none');
+    }
+
+    if ($('input[name="payment_option"]:checked').val() == "card") {
+        $('#saved-cards').css('display', 'block');
+        if ($('#saved-cards').children().length < 1) {
+            $('#new-checkout-payment').css('display', 'block');
+        }
+
+    } else {
+        $('#saved-cards').css('display', 'none');
     }
 
     // if ($('input[name="checkout-payment"]:checked').attr('data-id') == "use-new-payment") {
@@ -856,8 +885,47 @@ $(document).ready(function () {
         });
     }
 
+    try {
+        // $(".sticky").sticksy({ topSpacing: 60, listen: true })
+        // var stickyEl = new Sticksy('.js-sticky-widget', {topSpacing: 70})
+
+    } catch (e) {
+        console.error(e)
+    }
+
+    try {
+        var objs = [];
+        listToArray($('.cat-pill')).forEach((pill) => {
+            var id = $(pill).attr('data-id');
+            var products = $('.grid-product-card-wrap');
+            var belongs = [];
+            listToArray(products).forEach(function (product) {
+                try {
+                    var categories = JSON.parse($(product).attr('data-categories'));
+                    if (categories.includes(id)) {
+                        belongs.push(product);
+                    }
+                } catch (E) {
+
+                }
+            });
+            var obj = {};
+            obj.pill = $(pill);
+            obj.belong = belongs;
+            objs.push(obj);
+        });
+        objs.forEach(function (obj) {
+            if (obj.belong.length < 1) {
+                obj.pill.css("display", "none");
+            }
+        });
+    } catch (e) {
+        // console.log(e)
+    }
+
     $('.category-pill').click(function () {
-        if ($(this).attr('href') != undefined) {
+        var pill = $(this);
+        if (pill.attr('href') !== undefined) {
             var tag = $(this).attr('href');
             scrollTo(tag.substring(1, tag.length));
         }
@@ -880,6 +948,10 @@ $(document).ready(function () {
 
                 }
             });
+
+            if (belongs.length < 1) {
+                pill.css("display", 'none');
+            }
 
             listToArray(products).forEach(function (product) {
                 if (!belongs.includes(product)) {
@@ -1023,13 +1095,7 @@ $(document).ready(function () {
             updateCartAmount($(this).attr('data-id'), $(this).next().val());
         }
     });
-    try {
-        // var conn = new WebSocket('ws://localhost:800/echo');
-        // conn.onmessage = function (e) { console.log(e.data); };
-        // conn.onopen = function (e) { conn.send('Hello Me!'); };
-    } catch (e) {
-        console.log(e);
-    }
+
     $('#cart-checkout').click(function () {
         setCookie('order', ('ZnJvbS1jYXJ0'), 20);
         window.location.href = 'checkout';

@@ -92,12 +92,18 @@ class Category extends Model
 
     public function update()
     {
-        # code...
     }
 
-    public function delete()
+    public function delete($id)
     {
-        # code...
+        $return = array();
+        $stmt = $this->table->remove(
+            array(
+                CategoryColumn::ID => $id,
+            )
+        );
+        $return[parent::RESULT] = (bool) $stmt->affected_rows;
+        return json_encode($return);
     }
 
     public function get()

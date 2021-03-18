@@ -2,6 +2,7 @@
 
 use danolez\lib\Res\PrintNodeApi;
 use danolez\lib\Security\Encoding;
+use Demae\Auth\Models\Shop\Administrator;
 
 if (!is_null($dashboardController_error)) { ?>
     <script>
@@ -291,10 +292,14 @@ if (!is_null($dashboardController_error)) { ?>
 
             <div class="col-lg-6 col-md-12 col-sm-12 col-12 m-0 pl-2 p-0">
                 <?php
-                $printers = [];
                 try {
-                    $printers = new PrintNodeApi($this->branches[0]->getPrintNodeApi());
-                    $printers = $printers->getPrinters();
+                    if (!empty($this->branches)) {
+                        $printers = new PrintNodeApi($this->branches[0]->getPrintNodeApi(), $this->branches[0]->getDefaultPrinter());
+                        $printers = $printers->getPrinters();
+                    } else {
+
+                        $printers = array();
+                    }
                 } catch (Exception $e) {
                     $printers = array();
                 }
@@ -312,7 +317,7 @@ if (!is_null($dashboardController_error)) { ?>
                                             <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
                                                 <div class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
                                                     <i class="material-icons mdc-text-field__icon icofont-key"></i>
-                                                    <input class="mdc-text-field__input" value="<?php echo !isEmpty($this->settings->getPrintNodeApi()) ? $this->settings->getPrintNodeApi() : ''; ?>" name="pnapi" id="text-field-hero-input">
+                                                    <input class="mdc-text-field__input" value="<?php echo  $this->admin->getRole() == Administrator::OWNER ? $this->settings->getPrintNodeApi()  : $this->branches[0]->getPrintNodeApi() ?? $this->settings->getPrintNodeApi();  ?>" name="pnapi" id="text-field-hero-input">
                                                     <div class="mdc-notched-outline">
                                                         <div class="mdc-notched-outline__leading"></div>
                                                         <div class="mdc-notched-outline__notch">
@@ -324,12 +329,12 @@ if (!is_null($dashboardController_error)) { ?>
                                             </div>
                                             <div class="mdc-layout-grid__cell stretch-card mdc-layout-grid__cell--span-6-desktop">
                                                 <div class="mdc-select demo-width-class mt-2 p-1" style="width: 25em;" data-mdc-auto-init="MDCSelect">
-                                                    <input required type="hidden" value="<?php echo !isEmpty($this->settings->getDefaultPrinter()) ? $this->settings->getDefaultPrinter()  : ''; ?>" name="default-printer">
+                                                    <input required type="hidden" value="<?php echo $this->admin->getRole() == Administrator::OWNER ? $this->settings->getDefaultPrinter()  : $this->branches[0]->getDefaultPrinter() ?? $this->settings->getDefaultPrinter(); ?>" name="default-printer">
                                                     <i class="mdc-select__dropdown-icon"></i>
                                                     <div class="mdc-select__selected-text"></div>
                                                     <div class="mdc-select__menu mdc-menu-surface demo-width-class">
                                                         <ul class="mdc-list" style="width: 15em;">
-                                                            <?php foreach ($printers??[] as $printer) {
+                                                            <?php foreach ($printers ?? [] as $printer) {
                                                                 if ($printer->getId() == $this->settings->getDefaultPrinter()) { ?>
                                                                     <li class="mdc-list-item mdc-list-item--selected" data-value="<?php echo $printer->getId(); ?>" aria-selected="true">
                                                                         <?php echo $printer->getName(); ?> </li>

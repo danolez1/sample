@@ -13,6 +13,7 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
 .title {
   position: absolute;
   min-width: 106px;
@@ -839,6 +840,19 @@ input[type="number"] {
 #rating-5:checked ~ .emoji-wrapper > .emoji {
   transform: translateY(-500px);
 }
+/* #js-sticky-widget {
+  display: none;
+  position: fixed;
+  top: 20px;
+  right: 0px;
+  left: 0px;
+  z-index: 99;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 0;
+  background-color: transparent;
+} */
 #cart-fab {
   display: none;
   position: fixed;

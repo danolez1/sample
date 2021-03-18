@@ -106,7 +106,10 @@ class CartItem extends Model
         try {
             $product = new Product();
             $product = $product->get($this->getProductId());
-            if ($product->getAvailability() == Product::AVAILABLE) {
+            if (is_array(($product)) && !empty($product)) {
+                $product = $product[0];
+            }
+            if ($product instanceof Product && $product->getAvailability() == Product::AVAILABLE) {
                 $basePrice = $product->getPrice();
                 $this->setProductDetails($product->getName());
                 $this->setProductDescription($product->getDescription());
@@ -160,7 +163,7 @@ class CartItem extends Model
         return (bool) $stmt->affected_rows;
     }
 
-    public function delete()
+    public function delete($id = null)
     {
         $return = array();
         $obj = $this->object(false);
@@ -171,7 +174,7 @@ class CartItem extends Model
                 CartColumn::ID => $obj[CartColumn::ID],
                 CartColumn::USERID => $obj[CartColumn::USERID],
             ),
-            array('AND')
+            array('OR')
         );
         if (count($query) > 0) {
             $stmt = $this->table->remove(

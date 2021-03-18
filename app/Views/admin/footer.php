@@ -3,7 +3,7 @@
 use danolez\lib\Security\Encoding;
 use Demae\Auth\Models\Shop\Setting;
 
-if (!$this->includesOnly) {
+if (!$this->includesOnly && !is_null($this->admin)) {
     if (intval($this->admin->getRole()) == 1 || intval($this->admin->getRole()) == 2) {
         if (intval($this->admin->getRole()) == 1) $deliveryTime = Setting::getInstance()->getDeliveryTime();
         if (intval($this->admin->getRole()) == 2) $deliveryTime = $this->branches[0]->getDeliveryTime();
@@ -70,6 +70,12 @@ if (!$this->includesOnly) {
 <?php echo $script ?? ''; ?>
 <script src="assets/js/shopadmin.js?<?php echo time() ?>"></script>
 <script src="assets/js/dashboard.js?<?php echo time() ?>"></script>
+<script>
+    $('.langauth').click(function() {
+        setCookie("lingo", $(this).attr('language'), 365);
+        translator($(this).attr('language'));
+    });
+</script>
 <!-- End custom js for this page-->
 </body>
 

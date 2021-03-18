@@ -31,16 +31,16 @@ var dictionary = {
         jp: "無許可"
     }, "branch-added": {
         en: "Branch Added",
-        jp: "枝店舗を追加されました"
+        jp: "支店舗を追加されました"
     }, "proceed": {
         en: "Confirm",
-        jp: "確認"
+        jp: "消去"
     }, "cancel": {
         en: "Cancel",
-        jp: "取消"
+        jp: "キャンセル"
     }, "are-you-sure": {
         en: "Are you sure?",
-        jp: "よろしいですか?"
+        jp: "消去しますか?"
     }, "error-category-name": {
         en: "Enter category name",
         jp: "カテゴリ名を入力してください"
@@ -55,13 +55,13 @@ var dictionary = {
         jp: "商品名を入力してください"
     }, "successful": {
         en: "Successful",
-        jp: "成功"
+        jp: "完了"
     }, "branch-deleted": {
         en: "Branch Deleted",
-        jp: "枝店舗を削除されました"
+        jp: "支店舗を削除されました"
     }, "branch-updated": {
         en: "Branch Updated",
-        jp: "枝店が更新されました"
+        jp: "支店更新されました"
     }, "staff-deleted": {
         en: "Staff Deleted",
         jp: "スタッフを削除されました"
@@ -74,6 +74,9 @@ var dictionary = {
     }, "product-deleted": {
         en: "Product Deleted",
         jp: "商品を削除されました"
+    }, "category-deleted": {
+        en: "Category Deleted",
+        jp: "カテゴリを削除されました"
     }, "error-occured": {
         en: "Error Occured",
         jp: "エラーが発生しました"
@@ -163,22 +166,22 @@ var dictionary = {
         jp: "注文済み"
     }, "order-delivered": {
         en: "Delivered",
-        jp: "お届けした"
+        jp: "配達完了"
     }, "order-received": {
         en: "Received",
-        jp: "受信された"
+        jp: "新規注文"
     }, "order-shipped": {
-        en: "Shipped",
-        jp: "発送された"
+        en: "order shipped",
+        jp: "配達準備完了"
     }, "order-on-way": {
         en: "On the way",
-        jp: "途中"
+        jp: "配達中"
     }, "order-ready": {
         en: "Order is ready",
-        jp: "準備ができた"
+        jp: "調理完了"
     }, "order-updated": {
-        en: "",
-        jp: ""
+        en: "Order Updated",
+        jp: "注文が更新されました"
     }, "staff-updated": {
         en: "Staff Updated",
         jp: "スタッフ更新しました。"
@@ -205,7 +208,7 @@ var dictionary = {
         jp: "訪問者"
     }, "sales": {
         en: "Sales",
-        jp: "販売"
+        jp: "売上"
     }, "username": {
         en: "Username",
         jp: "ユーザー名"
@@ -223,10 +226,10 @@ var dictionary = {
         jp: "ログインする"
     }, "average-delivery-time": {
         en: "Average Delivery Time",
-        jp: "平均配達時間"
+        jp: "待ち時間の変更"
     }, "documentation": {
         en: "Documentation",
-        jp: "ドキュメンテーション"
+        jp: "管理画面ガイド（準備中）"
     }, "faq": {
         en: "FAQs",
         jp: "よくある質問"
@@ -235,7 +238,7 @@ var dictionary = {
         jp: "ダッシュボード"
     }, "welcome-back": {
         en: "Welcome back, You can manage your entire online store operations here.",
-        jp: "ようこそ、ここでオンラインストアの運営全体を管理できます。"
+        jp: "こちらのダッシュボードでデリバリーサイトの運営管理ができます。"
     }, "increase": {
         en: "increase",
         jp: "増加する"
@@ -244,19 +247,19 @@ var dictionary = {
         jp: "減少"
     }, "total-customers": {
         en: "Total Customers",
-        jp: "総顧客数"
+        jp: "顧客数"
     }, "total-order": {
         en: "Total Order",
-        jp: "全順序"
+        jp: "注文合計"
     }, "weekly-visits": {
         en: "Weekly Visits",
-        jp: "毎週の訪問"
+        jp: "アクセス数"
     }, "orders": {
         en: "Orders",
         jp: "注文"
     }, "sales-performance": {
         en: "Sales performance revenue with time",
-        jp: "時間の経過に伴う販売実績収益"
+        jp: "販売分析"
     }, "customers": {
         en: "Customers",
         jp: "顧客"
@@ -265,7 +268,7 @@ var dictionary = {
         jp: "聴衆"
     }, "pending-orders": {
         en: "Pending Orders",
-        jp: "保留中の注文"
+        jp: "新規ご注文"
     }, "attend-to-pending-orders": {
         en: "Attend to pending order",
         jp: "保留中の注文に対して実行"
@@ -274,16 +277,16 @@ var dictionary = {
         jp: "お客様"
     }, "order-summary": {
         en: "Order Summary",
-        jp: "注文の概要"
+        jp: "注文詳細"
     }, "location": {
         en: "Location",
-        jp: "ロケーション"
+        jp: "住所"
     }, "delivery-status": {
         en: "Delivery Status",
         jp: "配送状況"
     }, "search": {
         en: "Search...",
-        jp: "探す..."
+        jp: "検索"
     }, "edit-profile": {
         en: "Edit profile",
         jp: "プロファイル編集"
@@ -301,7 +304,10 @@ var dictionary = {
         jp: "商品"
     }, "branches": {
         en: "Branches",
-        jp: "枝店"
+        jp: "支店"
+    }, "branches2": {
+        en: "Branches",
+        jp: "支店"
     }, "staffs": {
         en: "Staffs",
         jp: "スタッフ"
@@ -310,7 +316,7 @@ var dictionary = {
         jp: "プロモーション"
     }, "branch": {
         en: "Branch",
-        jp: "ブランチ"
+        jp: "支店"
     }, "info": {
         en: "Info",
         jp: "情報"
@@ -318,8 +324,8 @@ var dictionary = {
         en: "Add Credit Card",
         jp: "クレジットカードを追加する"
     }, "close": {
-        en: "Cancel",
-        jp: "キャンセル"
+        en: "close",
+        jp: "close"
     }, "add": {
         en: "Add",
         jp: "追加"
@@ -367,13 +373,16 @@ var dictionary = {
         jp: "価格"
     }, "available": {
         en: "Available",
-        jp: "在庫あり"
+        jp: "販売中"
     }, "unavailable": {
         en: "Unavailable",
-        jp: "在庫ない"
+        jp: "品切れ"
     }, "category": {
         en: "Category",
         jp: "カテゴリ"
+    }, "categories": {
+        en: "Categories",
+        jp: "全てのカテゴリ"
     }, "add-cat": {
         en: "Add Category",
         jp: "カテゴリを追加"
@@ -412,10 +421,10 @@ var dictionary = {
         jp: "レベル"
     }, "add-new-branch": {
         en: "Add New Branch",
-        jp: "新しいブランチを追加する"
+        jp: "新しい支店を追加する"
     }, "coming-soon": {
         en: "Coming soon",
-        jp: "近日公開"
+        jp: "準備中"
     }, "sunday": {
         en: "Sunday",
         jp: "日曜日"
@@ -445,13 +454,13 @@ var dictionary = {
         jp: "日々"
     }, "opening": {
         en: "Opening",
-        jp: "オープニング"
+        jp: "開店時間"
     }, "break-period": {
         en: "Break Period",
-        jp: "休憩期間"
+        jp: "間休み"
     }, "closing": {
         en: "Closing",
-        jp: "閉鎖"
+        jp: "閉店時間"
     }, "branch-info": {
         en: "Branch Information",
         jp: "支店情報"
@@ -533,6 +542,12 @@ var dictionary = {
     }, "delivery-location": {
         en: "Delivery Location",
         jp: "配達場所"
+    }, "loading": {
+        en: "Loading...",
+        jp: "処理中…"
+    }, "please-wait": {
+        en: "Please wait a moment",
+        jp: "しばらくお待ちください"
     }, "state": {
         en: "Municipality",
         jp: "Municipality"
@@ -542,9 +557,24 @@ var dictionary = {
     }, "create-new-product": {
         en: "Create New Product",
         jp: "新製品の作成"
-    }, "date-cleared": {
-        en: "Date Created",
-        jp: "作成日"
+    }, "product-name-ascending": {
+        en: "Name (Ascending)",
+        jp: "商品名 （上昇）"
+    }, "product-name-descending": {
+        en: "Name (Descending)",
+        jp: "商品名（降順）"
+    }, "price-ascending": {
+        en: "Price (Ascending)",
+        jp: "価格（上昇）"
+    }, "price-descending": {
+        en: "Price (Descending)",
+        jp: "価格（降順）"
+    }, "date-created-ascending": {
+        en: "Date Created (Ascending)",
+        jp: "作成日（上昇）"
+    }, "date-created-descending": {
+        en: "Date Created (Descending)",
+        jp: "作成日（降順）"
     }, "sort-by": {
         en: "Sort by",
         jp: "並び替え"
@@ -621,26 +651,29 @@ var dictionary = {
         en: "Plan",
         jp: "毎月"
     }, "monthly": {
-        en: "monthly",
+        en: "Monthly",
         jp: "毎月"
+    }, "main-branch": {
+        en: "Main Branch",
+        jp: "本社"
     }, "open": {
         en: "open",
-        jp: "開いた"
+        jp: "open"
     }, "break": {
         en: "Break",
-        jp: "ブレーク"
+        jp: "休憩"
     }, "ford": {
         en: "Ford",
         jp: "Ford"
     }, "takeout": {
         en: "Takeout",
-        jp: "取り出す"
+        jp: "テイクアウト"
     }, "operational-time": {
         en: "Operation Time",
-        jp: "稼働時間"
+        jp: "オペレーション時間"
     }, "staffs-instruct": {
         en: "You can change your staff positions, branch or add new staff here",
-        jp: "スタッフの位置を変更したり、ブランチしたり、新しいスタッフを追加したりできますe"
+        jp: "スタッフの位置を変更したり、ブランチしたり、新しいスタッフを追加したりできます."
     }, "add-new-staff": {
         en: "Add New Staff",
         jp: "新しいスタッフを追加する"
@@ -652,7 +685,7 @@ var dictionary = {
         jp: "配達"
     }, "reservations": {
         en: "Reservations",
-        jp: "予約"
+        jp: "事前予約"
     }, "due-date": {
         en: "Due Date",
         jp: "期日"
@@ -662,9 +695,9 @@ var dictionary = {
     }, "credit-card": {
         en: "Credit Card",
         jp: "クレジットカード"
-    }, "": {
-        en: "",
-        jp: ""
+    }, "total-earnings": {
+        en: "Total Earnings",
+        jp: "売上"
     }, "": {
         en: "",
         jp: ""
@@ -681,6 +714,4 @@ var dictionary = {
         en: "",
         jp: ""
     },
-
-
 }
