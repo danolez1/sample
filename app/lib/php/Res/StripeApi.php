@@ -12,7 +12,7 @@ require_once('app/lib/php/Res/stripe/init.php');
 class StripeApi
 {
     const CHARGE_URL = 'https://api.stripe.com/v1/charges';
-    const SECRET_KEY = "sk_test_51I3efdBTDlmC6SL422IENFLTqwo83qewTPurf6kB8u07Aqr10xoac6Ww10sgh8TgkFN13kl2QI5xNeu0iGok8trN00iGPPDXbr";
+    const SECRET_KEY = "sk_test_";
     // Actions
     const CHARGE  = "charge";
     const SUBSCRIPTIONS = "subscription";
